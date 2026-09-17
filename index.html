@@ -23,7 +23,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 1300px;
+            max-width: 1350px;
             margin: 0 auto;
         }
         .top-nav {
@@ -105,27 +105,27 @@
         /* KPI Cards */
         .kpi-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 25px;
         }
         .kpi-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 20px;
+            padding: 18px;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
         .kpi-title {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: 600;
         }
         .kpi-value {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             color: var(--text-main);
         }
@@ -158,18 +158,18 @@
             border: 1px solid var(--card-border);
         }
         th, td {
-            padding: 14px 16px;
+            padding: 12px 14px;
             text-align: left;
             border-bottom: 1px solid var(--card-border);
         }
         th {
             background-color: #0f2537;
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12px;
             text-transform: uppercase;
         }
         td {
-            font-size: 14px;
+            font-size: 13px;
         }
         .agent-name-link {
             color: var(--accent);
@@ -185,7 +185,7 @@
             color: var(--active-text);
             padding: 4px 10px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         .status-probation {
@@ -193,7 +193,7 @@
             color: #f87171;
             padding: 4px 10px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             border: 1px solid rgba(239, 68, 68, 0.4);
         }
@@ -202,7 +202,7 @@
             color: #facc15;
             padding: 4px 10px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         .status-newcomer {
@@ -210,7 +210,7 @@
             color: #60a5fa;
             padding: 4px 10px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             border: 1px solid rgba(59, 130, 246, 0.4);
         }
@@ -219,7 +219,7 @@
             color: #94a3b8;
             padding: 4px 10px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         .modal {
@@ -328,16 +328,20 @@
                 <span class="kpi-value" id="kpiTotal">0</span>
             </div>
             <div class="kpi-card">
-                <span class="kpi-title">Achieved (≥ 0.85)</span>
-                <span class="kpi-value" id="kpiAchieved" style="color: #4ade80;">0</span>
+                <span class="kpi-title">G2G Achieved (≥ 0.85)</span>
+                <span class="kpi-value" id="kpiG2gAchieved" style="color: #4ade80;">0</span>
             </div>
             <div class="kpi-card">
-                <span class="kpi-title">Below Target (< 0.85)</span>
-                <span class="kpi-value" id="kpiBelow" style="color: #f87171;">0</span>
+                <span class="kpi-title">G2G Below (< 0.85)</span>
+                <span class="kpi-value" id="kpiG2gBelow" style="color: #f87171;">0</span>
             </div>
             <div class="kpi-card">
-                <span class="kpi-title">Transfers / Attended Ratio</span>
-                <span class="kpi-value" id="kpiTransfersRatio" style="color: #38bdf8;">0.00</span>
+                <span class="kpi-title">Transfers (≥ 2)</span>
+                <span class="kpi-value" id="kpiTransHigh" style="color: #38bdf8;">0</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-title">Transfers (< 2)</span>
+                <span class="kpi-value" id="kpiTransLow" style="color: #fbbf24;">0</span>
             </div>
         </div>
 
@@ -381,14 +385,15 @@
                     <th>FT/PT</th>
                     <th>Attended</th>
                     <th>Transfers</th>
-                    <th>Ratio</th>
+                    <th>G2G Ratio</th>
+                    <th>Trans. Ratio</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="crmTableBody">
                 <tr>
-                    <td colspan="11" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
+                    <td colspan="12" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
                 </tr>
             </tbody>
         </table>
@@ -465,7 +470,6 @@
             <h3 id="notesModalTitle" style="margin-top: 0; color: var(--accent);">Agent Notes & Probation History</h3>
             <input type="hidden" id="notesAgentId">
 
-            <!-- Hiring Date Display & Quick Edit -->
             <div class="hiring-box">
                 <div>
                     <span style="font-size: 13px; color: var(--text-muted); font-weight: bold;">🗓️ Hiring Date:</span>
@@ -721,7 +725,10 @@
 
             const g2gs = Number(document.getElementById('addG2gs').value) || 0;
             const attended = Number(document.getElementById('addAttended').value) || 0;
+            const transfers = Number(document.getElementById('addTransfers').value) || 0;
+
             const ratio = attended > 0 ? (g2gs / attended) : 0;
+            const transRatio = attended > 0 ? (transfers / attended) : 0;
 
             const agentData = {
                 name: name,
@@ -732,8 +739,9 @@
                 g2gs: g2gs,
                 type: document.getElementById('addType').value,
                 attended: attended,
-                transfers: Number(document.getElementById('addTransfers').value) || 0,
+                transfers: transfers,
                 ratio: Number(ratio.toFixed(2)),
+                transRatio: Number(transRatio.toFixed(2)),
                 status: document.getElementById('addStatus').value,
                 updatedAt: serverTimestamp()
             };
@@ -780,39 +788,48 @@
 
         window.updateKPIs = function(data) {
             const total = data.length;
-            let achieved = 0;
-            let below = 0;
-            let totalTransfers = 0;
-            let totalAttended = 0;
+            let g2gAchieved = 0;
+            let g2gBelow = 0;
+            let transHigh = 0;
+            let transLow = 0;
 
             data.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
+                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
+
                 if (ratioVal >= 0.85) {
-                    achieved++;
+                    g2gAchieved++;
                 } else {
-                    below++;
+                    g2gBelow++;
                 }
-                totalTransfers += Number(item.transfers) || 0;
-                totalAttended += Number(item.attended) || 0;
+
+                if (transRatioVal >= 2) {
+                    transHigh++;
+                } else {
+                    transLow++;
+                }
             });
 
-            const transfersRatio = totalAttended > 0 ? (totalTransfers / totalAttended) : 0;
-
             document.getElementById('kpiTotal').innerText = total;
-            document.getElementById('kpiAchieved').innerText = achieved;
-            document.getElementById('kpiBelow').innerText = below;
-            document.getElementById('kpiTransfersRatio').innerText = transfersRatio.toFixed(2);
+            document.getElementById('kpiG2gAchieved').innerText = g2gAchieved;
+            document.getElementById('kpiG2gBelow').innerText = g2gBelow;
+            document.getElementById('kpiTransHigh').innerText = transHigh;
+            document.getElementById('kpiTransLow').innerText = transLow;
         }
 
         window.renderTable = function(data) {
             if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
                 return;
             }
             let html = "";
             data.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
+                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
+
                 const ratioColor = ratioVal < 0.85 ? '#f87171' : '#4ade80';
+                const transRatioColor = transRatioVal < 2 ? '#fbbf24' : '#38bdf8';
+
                 const safeName = item.name.replace(/'/g, "\\'");
                 const hiringDate = item.hiringDate || "";
                 const currentStatus = item.status || "Active";
@@ -838,6 +855,7 @@
                     <td>${item.attended}</td>
                     <td>${item.transfers}</td>
                     <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
+                    <td><span style="color: ${transRatioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${transRatioVal.toFixed(2)}</span></td>
                     <td>${statusBadge}</td>
                     <td style="display: flex; gap: 6px;">
                         <button class="btn btn-notes" onclick="openNotesModal('${item.id}', '${safeName}')">💬 Notes</button>
@@ -870,11 +888,12 @@
                 return;
             }
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Agent Name,Hiring Date,Team,PPO,CGM,Total G2Gs,Type,Attended Days,Transfers,Ratio,Status\r\n";
+            csvContent += "Agent Name,Hiring Date,Team,PPO,CGM,Total G2Gs,Type,Attended Days,Transfers,G2G Ratio,Transfers Ratio,Status\r\n";
 
             allAgents.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                let row = `"${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},"${item.status || 'Active'}"`;
+                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
+                let row = `"${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},${transRatioVal.toFixed(2)},"${item.status || 'Active'}"`;
                 csvContent += row + "\r\n";
             });
 
