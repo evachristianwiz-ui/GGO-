@@ -188,15 +188,6 @@
             font-size: 12px;
             font-weight: bold;
         }
-        .status-probation {
-            background-color: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            border: 1px solid rgba(239, 68, 68, 0.4);
-        }
         .modal {
             display: none;
             position: fixed;
@@ -332,7 +323,6 @@
                 <option value="">All Status</option>
                 <option value="Active">Active</option>
                 <option value="On Break">On Break</option>
-                <option value="Probation">On Probation</option>
             </select>
         </div>
 
@@ -519,6 +509,7 @@
             document.getElementById('agentModal').style.display = 'flex';
         }
 
+        // Notes & History Modal Functions (Triggers on name click as well)
         window.openNotesModal = function(id, name) {
             document.getElementById('notesAgentId').value = id;
             document.getElementById('notesModalTitle').innerText = `Notes & History: ${name}`;
@@ -573,8 +564,6 @@
             const newEntry = {
                 type: type,
                 details: entryDetails,
-                startDate: start || "",
-                endDate: end || "",
                 date: new Date().toISOString().split('T')[0]
             };
 
@@ -582,7 +571,6 @@
             let history = agent.history ? [...agent.history] : [];
             history.unshift(newEntry);
 
-            // Check if latest entry is a Probation and today's date falls within it, mark status automatically if needed
             try {
                 await updateDoc(doc(db, "agents_data", id), { history: history });
                 document.getElementById('noteText').value = "";
@@ -698,29 +686,6 @@
             document.getElementById('kpiBelow').innerText = below;
         }
 
-        // Helper function to check if agent is currently on probation based on history dates
-        window.isCurrentlyOnProbation = function(history) {
-            if (!history || history.length === 0) return false;
-            const todayStr = new Date().toISOString().split('T')[0];
-            
-            // Check if any probation entry covers today's date
-            for (let item of history) {
-                if (item.type === 'Probation' && item.startDate && item.endDate) {
-                    if (todayStr >= item.startDate && todayStr <= item.endDate) {
-                        return true;
-                    }
-                }
-            }
-            // If the latest history entry is a probation without explicit end date check or if just wants general latest probation status, 
-            // we can check if the top-most history item is of type Probation
-            if (history[0].type === 'Probation') {
-                if (history[0].endDate && todayStr <= history[0].endDate) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         window.renderTable = function(data) {
             if(data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
@@ -733,12 +698,6 @@
                 const safeName = item.name.replace(/'/g, "\\'");
                 const hiringDate = item.hiringDate || "";
 
-                // Check probation status dynamically from history
-                const onProbation = isCurrentlyOnProbation(item.history);
-                const statusBadge = onProbation 
-                    ? `<span class="status-probation">⚠️ On Probation</span>` 
-                    : `<span class="status-active">${item.status}</span>`;
-
                 html += `<tr>
                     <td><span class="agent-name-link" onclick="openNotesModal('${item.id}', '${safeName}')">${item.name}</span></td>
                     <td><span style="background: #1e3e62; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${item.team}</span></td>
@@ -749,7 +708,7 @@
                     <td>${item.attended}</td>
                     <td>${item.transfers}</td>
                     <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
-                    <td>${statusBadge}</td>
+                    <td><span class="status-active">${item.status}</span></td>
                     <td style="display: flex; gap: 6px;">
                         <button class="btn btn-notes" onclick="openNotesModal('${item.id}', '${safeName}')">💬 Notes</button>
                         <button class="btn btn-edit" onclick="editAgent('${item.id}', '${safeName}', '${hiringDate}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${item.status}')">✏️ Edit</button>
@@ -768,15 +727,7 @@
             const filtered = allAgents.filter(item => {
                 const matchName = item.name.toLowerCase().includes(search);
                 const matchTeam = team === "" || item.team === team;
-                
-                let matchStatus = true;
-                const onProb = isCurrentlyOnProbation(item.history);
-                if (status === "Probation") {
-                    matchStatus = onProb;
-                } else if (status !== "") {
-                    matchStatus = !onProb && item.status === status;
-                }
-
+                const matchStatus = status === "" || item.status === status;
                 return matchName && matchTeam && matchStatus;
             });
             renderTable(filtered);
@@ -792,9 +743,7 @@
 
             allAgents.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                const onProb = isCurrentlyOnProbation(item.history);
-                const currentStatus = onProb ? "On Probation" : item.status;
-                let row = `"${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},"${currentStatus}"`;
+                let row = `"${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},"${item.status}"`;
                 csvContent += row + "\r\n";
             });
 
