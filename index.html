@@ -46,6 +46,13 @@
             width: auto;
             object-fit: contain;
         }
+        .nav-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+        }
         .nav-buttons, .actions-bar {
             display: flex;
             gap: 10px;
@@ -164,6 +171,15 @@
         td {
             font-size: 14px;
         }
+        .agent-name-link {
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .agent-name-link:hover {
+            color: #38bdf8;
+        }
         .status-active {
             background-color: var(--active-bg);
             color: var(--active-text);
@@ -243,6 +259,16 @@
             border-radius: 4px;
             font-size: 10px;
         }
+        .hiring-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -252,6 +278,7 @@
         <div class="top-nav">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Gulf Global Outsourcing Logo" class="logo-img">
+                <div class="nav-title">Production per agent</div>
             </div>
             <div class="nav-buttons">
                 <button class="btn btn-success" onclick="exportToExcel()">📥 Export Excel</button>
@@ -333,6 +360,9 @@
             <label>Agent Name</label>
             <input type="text" id="addName" placeholder="Enter Full Name">
 
+            <label>Hiring Date</label>
+            <input type="date" id="addHiringDate">
+
             <label>Team</label>
             <select id="addTeam">
                 <option value="Wazowski#1">Wazowski#1</option>
@@ -388,6 +418,12 @@
             <h3 id="notesModalTitle" style="margin-top: 0; color: var(--accent);">Agent Notes & Probation History</h3>
             <input type="hidden" id="notesAgentId">
 
+            <!-- Hiring Date Display Box -->
+            <div class="hiring-box">
+                <span style="font-size: 13px; color: var(--text-muted); font-weight: bold;">🗓️ Hiring Date:</span>
+                <span id="displayHiringDate" style="font-size: 14px; color: #34d399; font-weight: bold;">Not specified</span>
+            </div>
+
             <div style="background: rgba(0, 180, 216, 0.05); border: 1px solid var(--card-border); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                 <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--accent);">Add New Entry / Probation</h4>
                 
@@ -412,7 +448,7 @@
             </div>
 
             <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted);">Historical Log</h4>
-            <div id="historyList" style="max-height: 250px; overflow-y: auto;">
+            <div id="historyList" style="max-height: 200px; overflow-y: auto;">
                 <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No history records yet.</div>
             </div>
 
@@ -444,6 +480,7 @@
             document.getElementById('modalTitle').innerText = "Add New Agent Production";
             document.getElementById('editAgentId').value = "";
             document.getElementById('addName').value = "";
+            document.getElementById('addHiringDate').value = "";
             document.getElementById('addPpo').value = "";
             document.getElementById('addCgm').value = "";
             document.getElementById('addG2gs').value = "";
@@ -456,10 +493,11 @@
             document.getElementById('agentModal').style.display = 'none'; 
         }
 
-        window.editAgent = function(id, name, team, ppo, cgm, g2gs, type, attended, transfers, status) {
+        window.editAgent = function(id, name, hiringDate, team, ppo, cgm, g2gs, type, attended, transfers, status) {
             document.getElementById('modalTitle').innerText = "Edit Agent Production";
             document.getElementById('editAgentId').value = id;
             document.getElementById('addName').value = name;
+            document.getElementById('addHiringDate').value = hiringDate || "";
             document.getElementById('addTeam').value = team;
             document.getElementById('addPpo').value = ppo;
             document.getElementById('addCgm').value = cgm;
@@ -471,7 +509,7 @@
             document.getElementById('agentModal').style.display = 'flex';
         }
 
-        // Notes & History Modal Functions
+        // Notes & History Modal Functions (Triggers on name click as well)
         window.openNotesModal = function(id, name) {
             document.getElementById('notesAgentId').value = id;
             document.getElementById('notesModalTitle').innerText = `Notes & History: ${name}`;
@@ -482,6 +520,12 @@
             toggleProbationFields();
 
             const agent = allAgents.find(a => a.id === id);
+            if (agent && agent.hiringDate) {
+                document.getElementById('displayHiringDate').innerText = agent.hiringDate;
+            } else {
+                document.getElementById('displayHiringDate').innerText = "Not specified";
+            }
+
             renderHistoryList(agent ? agent.history : []);
             document.getElementById('notesModal').style.display = 'flex';
         }
@@ -525,7 +569,7 @@
 
             const agent = allAgents.find(a => a.id === id);
             let history = agent.history ? [...agent.history] : [];
-            history.unshift(newEntry); // Add to top of history
+            history.unshift(newEntry);
 
             try {
                 await updateDoc(doc(db, "agents_data", id), { history: history });
@@ -570,6 +614,7 @@
 
             const agentData = {
                 name: name,
+                hiringDate: document.getElementById('addHiringDate').value || "",
                 team: document.getElementById('addTeam').value,
                 ppo: Number(document.getElementById('addPpo').value) || 0,
                 cgm: Number(document.getElementById('addCgm').value) || 0,
@@ -587,7 +632,7 @@
                     await updateDoc(doc(db, "agents_data", id), agentData);
                 } else {
                     agentData.createdAt = serverTimestamp();
-                    agentData.history = []; // Initialize empty history for new agent
+                    agentData.history = [];
                     await addDoc(collection(db, "agents_data"), agentData);
                 }
                 closeModal();
@@ -650,9 +695,11 @@
             data.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
                 const ratioColor = ratioVal < 0.85 ? '#f87171' : '#4ade80';
+                const safeName = item.name.replace(/'/g, "\\'");
+                const hiringDate = item.hiringDate || "";
 
                 html += `<tr>
-                    <td style="font-weight: bold;">${item.name}</td>
+                    <td><span class="agent-name-link" onclick="openNotesModal('${item.id}', '${safeName}')">${item.name}</span></td>
                     <td><span style="background: #1e3e62; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${item.team}</span></td>
                     <td>${item.ppo}</td>
                     <td>${item.cgm}</td>
@@ -663,8 +710,8 @@
                     <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
                     <td><span class="status-active">${item.status}</span></td>
                     <td style="display: flex; gap: 6px;">
-                        <button class="btn btn-notes" onclick="openNotesModal('${item.id}', '${item.name.replace(/'/g, "\\'")}')">💬 Notes</button>
-                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${item.status}')">✏️ Edit</button>
+                        <button class="btn btn-notes" onclick="openNotesModal('${item.id}', '${safeName}')">💬 Notes</button>
+                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${safeName}', '${hiringDate}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${item.status}')">✏️ Edit</button>
                         <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
                     </td>
                 </tr>`;
@@ -692,11 +739,11 @@
                 return;
             }
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Agent Name,Team,PPO,CGM,Total G2Gs,Type,Attended Days,Transfers,Ratio,Status\r\n";
+            csvContent += "Agent Name,Hiring Date,Team,PPO,CGM,Total G2Gs,Type,Attended Days,Transfers,Ratio,Status\r\n";
 
             allAgents.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                let row = `"${item.name}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},"${item.status}"`;
+                let row = `"${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},"${item.status}"`;
                 csvContent += row + "\r\n";
             });
 
