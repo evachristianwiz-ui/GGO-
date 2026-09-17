@@ -80,6 +80,12 @@
             padding: 5px 10px;
             font-size: 12px;
         }
+        .btn-notes {
+            background-color: #8b5cf6;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
         .btn-danger {
             background-color: #ef4444;
             color: white;
@@ -179,7 +185,7 @@
             background: var(--card-bg);
             padding: 25px;
             border-radius: 12px;
-            width: 420px;
+            width: 480px;
             max-height: 85vh;
             overflow-y: auto;
             border: 1px solid var(--card-border);
@@ -191,7 +197,7 @@
             display: block;
             margin-top: 8px;
         }
-        .modal-content input, .modal-content select {
+        .modal-content input, .modal-content select, .modal-content textarea {
             width: 100%;
             padding: 10px;
             margin-top: 4px;
@@ -201,6 +207,41 @@
             color: #fff;
             border-radius: 6px;
             box-sizing: border-box;
+            font-family: inherit;
+        }
+        .history-item {
+            background: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .history-text {
+            font-size: 13px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+        }
+        .badge-probation {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        .badge-note {
+            background: rgba(0, 180, 216, 0.2);
+            color: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -211,9 +252,6 @@
         <div class="top-nav">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Gulf Global Outsourcing Logo" class="logo-img">
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px;">ORT & CGM Command Center</div>
-                </div>
             </div>
             <div class="nav-buttons">
                 <button class="btn btn-success" onclick="exportToExcel()">📥 Export Excel</button>
@@ -344,6 +382,46 @@
         </div>
     </div>
 
+    <!-- Notes & Probation History Modal -->
+    <div id="notesModal" class="modal">
+        <div class="modal-content" style="width: 550px;">
+            <h3 id="notesModalTitle" style="margin-top: 0; color: var(--accent);">Agent Notes & Probation History</h3>
+            <input type="hidden" id="notesAgentId">
+
+            <div style="background: rgba(0, 180, 216, 0.05); border: 1px solid var(--card-border); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--accent);">Add New Entry / Probation</h4>
+                
+                <label>Entry Type</label>
+                <select id="noteType" onchange="toggleProbationFields()">
+                    <option value="Note">General Note</option>
+                    <option value="Probation">Probation Period</option>
+                </select>
+
+                <div id="probationFields" style="display: none;">
+                    <label>Probation Start Date</label>
+                    <input type="date" id="probStart">
+
+                    <label>Probation End Date</label>
+                    <input type="date" id="probEnd">
+                </div>
+
+                <label>Comment / Details</label>
+                <textarea id="noteText" rows="3" placeholder="Write details here..."></textarea>
+
+                <button class="btn btn-accent" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="saveAgentNote()">Add to History</button>
+            </div>
+
+            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted);">Historical Log</h4>
+            <div id="historyList" style="max-height: 250px; overflow-y: auto;">
+                <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No history records yet.</div>
+            </div>
+
+            <div style="margin-top: 15px; text-align: right;">
+                <button class="btn" style="background:#334155; width: 100%; justify-content: center;" onclick="closeNotesModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Script Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -393,6 +471,94 @@
             document.getElementById('agentModal').style.display = 'flex';
         }
 
+        // Notes & History Modal Functions
+        window.openNotesModal = function(id, name) {
+            document.getElementById('notesAgentId').value = id;
+            document.getElementById('notesModalTitle').innerText = `Notes & History: ${name}`;
+            document.getElementById('noteText').value = "";
+            document.getElementById('probStart').value = "";
+            document.getElementById('probEnd').value = "";
+            document.getElementById('noteType').value = "Note";
+            toggleProbationFields();
+
+            const agent = allAgents.find(a => a.id === id);
+            renderHistoryList(agent ? agent.history : []);
+            document.getElementById('notesModal').style.display = 'flex';
+        }
+
+        window.closeNotesModal = function() {
+            document.getElementById('notesModal').style.display = 'none';
+        }
+
+        window.toggleProbationFields = function() {
+            const type = document.getElementById('noteType').value;
+            const probFields = document.getElementById('probationFields');
+            probFields.style.display = (type === 'Probation') ? 'block' : 'none';
+        }
+
+        window.saveAgentNote = async function() {
+            const id = document.getElementById('notesAgentId').value;
+            const type = document.getElementById('noteType').value;
+            const text = document.getElementById('noteText').value;
+            const start = document.getElementById('probStart').value;
+            const end = document.getElementById('probEnd').value;
+
+            if(!text && type === 'Note') {
+                alert("Please write a comment.");
+                return;
+            }
+
+            let entryDetails = text;
+            if(type === 'Probation') {
+                if(!start || !end) {
+                    alert("Please specify start and end dates for probation.");
+                    return;
+                }
+                entryDetails = `[Probation Period] From: ${start} To: ${end}\nDetails: ${text}`;
+            }
+
+            const newEntry = {
+                type: type,
+                details: entryDetails,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            const agent = allAgents.find(a => a.id === id);
+            let history = agent.history ? [...agent.history] : [];
+            history.unshift(newEntry); // Add to top of history
+
+            try {
+                await updateDoc(doc(db, "agents_data", id), { history: history });
+                document.getElementById('noteText').value = "";
+                document.getElementById('probStart').value = "";
+                document.getElementById('probEnd').value = "";
+                renderHistoryList(history);
+            } catch(e) {
+                console.error(e);
+                alert("Error saving note: " + e.message);
+            }
+        }
+
+        window.renderHistoryList = function(history) {
+            const container = document.getElementById('historyList');
+            if(!history || history.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No history records yet.</div>`;
+                return;
+            }
+            let html = "";
+            history.forEach(item => {
+                const badgeClass = item.type === 'Probation' ? 'badge-probation' : 'badge-note';
+                html += `<div class="history-item">
+                    <div class="history-header">
+                        <span>📅 ${item.date}</span>
+                        <span class="${badgeClass}">${item.type}</span>
+                    </div>
+                    <div class="history-text">${item.details}</div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
         window.saveAgentData = async function() {
             const id = document.getElementById('editAgentId').value;
             const name = document.getElementById('addName').value;
@@ -421,6 +587,7 @@
                     await updateDoc(doc(db, "agents_data", id), agentData);
                 } else {
                     agentData.createdAt = serverTimestamp();
+                    agentData.history = []; // Initialize empty history for new agent
                     await addDoc(collection(db, "agents_data"), agentData);
                 }
                 closeModal();
@@ -496,6 +663,7 @@
                     <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
                     <td><span class="status-active">${item.status}</span></td>
                     <td style="display: flex; gap: 6px;">
+                        <button class="btn btn-notes" onclick="openNotesModal('${item.id}', '${item.name.replace(/'/g, "\\'")}')">💬 Notes</button>
                         <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${item.status}')">✏️ Edit</button>
                         <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
                     </td>
