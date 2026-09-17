@@ -41,13 +41,10 @@
             align-items: center;
             gap: 15px;
         }
-        .logo-badge {
-            background: #fff;
-            color: #000;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 18px;
+        .logo-img {
+            height: 45px; /* طول اللوجو مظبوط ومناسب للهيدر */
+            width: auto;
+            object-fit: contain;
         }
         .nav-buttons, .actions-bar {
             display: flex;
@@ -126,7 +123,6 @@
             font-size: 12px;
             font-weight: bold;
         }
-        /* Modal for adding */
         .modal {
             display: none;
             position: fixed;
@@ -160,10 +156,10 @@
         <!-- Top Nav -->
         <div class="top-nav">
             <div class="logo-area">
-                <div class="logo-badge">GGO</div>
+                <!-- هنا بيتم عرض اللوجو مباشرة من الملف المرفوع -->
+                <img src="GGO-White-Var2.png" alt="Gulf Global Outsourcing Logo" class="logo-img">
                 <div>
-                    <div style="font-weight: bold; color: var(--accent);">OPERATIONS CRM</div>
-                    <div style="font-size: 11px; color: var(--text-muted);">ORT & CGM Command Center</div>
+                    <div style="font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px;">ORT & CGM Command Center</div>
                 </div>
             </div>
             <div class="nav-buttons">
@@ -283,7 +279,6 @@
                     createdAt: serverTimestamp()
                 });
                 closeModal();
-                // Clear inputs
                 document.getElementById('addName').value = '';
             } catch(e) {
                 console.error(e);
