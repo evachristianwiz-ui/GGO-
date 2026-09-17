@@ -3,150 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gulf Global Outsourcing - CRM Dashboard</title>
+    <title>GGO - Operations CRM</title>
     <style>
         :root {
-            --navy: #0b192c;
-            --navy-light: #1e3e62;
+            --bg-dark: #070f1e;
+            --card-bg: #0b192c;
+            --card-border: #1e3e62;
             --accent: #00b4d8;
-            --bg: #f8fafc;
-            --text: #334155;
-            --white: #ffffff;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --active-bg: #d1fae5;
+            --active-text: #065f46;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             margin: 0;
             padding: 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
         }
-        header {
-            background-color: var(--navy);
-            color: var(--white);
-            padding: 20px;
-            border-radius: 8px;
+        .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
         }
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--accent);
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .card {
-            background: var(--white);
-            padding: 20px;
+        .logo-badge {
+            background: #fff;
+            color: #000;
+            font-weight: bold;
+            padding: 8px 12px;
             border-radius: 8px;
-            margin-top: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 18px;
+        }
+        .nav-buttons, .actions-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            background-color: var(--card-border);
+            color: var(--text-main);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background-color: #0077b6;
+        }
+        .btn-accent {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+        .filters-bar input, .filters-bar select {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+        }
+        .filters-bar input {
+            flex: 1;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
         }
         th, td {
-            padding: 12px;
+            padding: 14px 16px;
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--card-border);
         }
         th {
-            background-color: var(--navy-light);
-            color: var(--white);
+            background-color: #0f2537;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
         }
-        input, select {
-            padding: 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            width: 100%;
-            box-sizing: border-box;
+        td {
+            font-size: 14px;
         }
-        button {
-            background-color: var(--accent);
-            color: var(--white);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        .sync-status {
+        .status-active {
+            background-color: var(--active-bg);
+            color: var(--active-text);
+            padding: 4px 10px;
+            border-radius: 6px;
             font-size: 12px;
-            color: #10b981;
             font-weight: bold;
+        }
+        /* Modal for adding */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            width: 400px;
+            border: 1px solid var(--card-border);
+        }
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            border-radius: 6px;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header>
-            <div>
-                <h1>Gulf Global Outsourcing (GGO)</h1>
-                <p style="margin: 5px 0 0 0; font-size: 14px; color: #94a3b8;">Real-Time Agent Production Dashboard</p>
-            </div>
-            <div class="sync-status">🟢 Live Cloud Sync Active</div>
-        </header>
-
-        <div class="card">
-            <h3>Add / Update Agent Production</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <div class="logo-area">
+                <div class="logo-badge">GGO</div>
                 <div>
-                    <label>Agent Name</label>
-                    <input type="text" id="agentName" placeholder="Enter name">
-                </div>
-                <div>
-                    <label>Calls / Leads Handled</label>
-                    <input type="number" id="agentCalls" placeholder="0">
-                </div>
-                <div>
-                    <label>Status</label>
-                    <select id="agentStatus">
-                        <option value="Active">Active</option>
-                        <option value="On Break">On Break</option>
-                        <option value="Offline">Offline</option>
-                    </select>
-                </div>
-                <div>
-                    <button onclick="saveAgentData()">Save Data</button>
+                    <div style="font-weight: bold; color: var(--accent);">OPERATIONS CRM</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">ORT & CGM Command Center</div>
                 </div>
             </div>
+            <div class="nav-buttons">
+                <button class="btn">📊 Dashboard</button>
+                <button class="btn btn-primary">👥 Agent Directory</button>
+                <button class="btn">📁 Hosting Guide</button>
+            </div>
+            <button class="btn btn-accent" onclick="openModal()">+ Add Agent</button>
         </div>
 
-        <div class="card">
-            <h3>Live Performance Table</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Agent Name</th>
-                        <th>Calls Handled</th>
-                        <th>Status</th>
-                        <th>Last Updated</th>
-                    </tr>
-                >
-                <tbody id="agentTableBody">
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: #94a3b8;">Loading data from cloud...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Filters -->
+        <div class="filters-bar">
+            <input type="text" id="searchInput" placeholder="Search agent by name..." onkeyup="filterTable()">
+            <select id="teamFilter" onchange="filterTable()">
+                <option value="">All Teams</option>
+                <option value="ORT">ORT</option>
+                <option value="CGM">CGM</option>
+            </select>
+            <select id="statusFilter" onchange="filterTable()">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="On Break">On Break</option>
+            </select>
+        </div>
+
+        <!-- Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Agent Name</th>
+                    <th>Team</th>
+                    <th>PPO</th>
+                    <th>CGM</th>
+                    <th>RPM</th>
+                    <th>Total G2G's</th>
+                    <th>FT/PT</th>
+                    <th>Attended</th>
+                    <th>Transfers</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="crmTableBody">
+                <tr>
+                    <td colspan="10" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Agent Modal -->
+    <div id="agentModal" class="modal">
+        <div class="modal-content">
+            <h3>Add New Agent Production</h3>
+            <input type="text" id="addName" placeholder="Agent Name">
+            <select id="addTeam">
+                <option value="ORT">ORT</option>
+                <option value="CGM">CGM</option>
+            </select>
+            <input type="number" id="addPpo" placeholder="PPO">
+            <input type="number" id="addCgm" placeholder="CGM">
+            <input type="number" id="addRpm" placeholder="RPM">
+            <input type="number" id="addG2gs" placeholder="Total G2G's">
+            <select id="addType">
+                <option value="FT">FT</option>
+                <option value="PT">PT</option>
+            </select>
+            <input type="number" id="addAttended" placeholder="Attended">
+            <input type="number" id="addTransfers" placeholder="Transfers">
+            <select id="addStatus">
+                <option value="Active">Active</option>
+                <option value="On Break">On Break</option>
+            </select>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn btn-accent" style="flex:1;" onclick="saveNewAgent()">Save</button>
+                <button class="btn" style="flex:1;" onclick="closeModal()">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <!-- Firebase SDK Scripts -->
+    <!-- Firebase Script Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, add-Doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -161,49 +261,83 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.saveAgentData = async function() {
-            const name = document.getElementById('agentName').value;
-            const calls = document.getElementById('agentCalls').value;
-            const status = document.getElementById('agentStatus').value;
+        window.openModal = function() { document.getElementById('agentModal').style.display = 'flex'; }
+        window.closeModal = function() { document.getElementById('agentModal').style.display = 'none'; }
 
-            if(!name) {
-                alert("Please enter agent name");
-                return;
-            }
+        window.saveNewAgent = async function() {
+            const name = document.getElementById('addName').value;
+            if(!name) { alert("Please enter name"); return; }
 
             try {
-                await addDoc(collection(db, "agents"), {
+                await addDoc(collection(db, "agents_data"), {
                     name: name,
-                    calls: Number(calls) || 0,
-                    status: status,
-                    timestamp: serverTimestamp()
+                    team: document.getElementById('addTeam').value,
+                    ppo: Number(document.getElementById('addPpo').value) || 0,
+                    cgm: Number(document.getElementById('addCgm').value) || 0,
+                    rpm: Number(document.getElementById('addRpm').value) || 0,
+                    g2gs: Number(document.getElementById('addG2gs').value) || 0,
+                    type: document.getElementById('addType').value,
+                    attended: Number(document.getElementById('addAttended').value) || 0,
+                    transfers: Number(document.getElementById('addTransfers').value) || 0,
+                    status: document.getElementById('addStatus').value,
+                    createdAt: serverTimestamp()
                 });
-                document.getElementById('agentName').value = '';
-                document.getElementById('agentCalls').value = '';
-            } catch (e) {
-                console.error("Error adding document: ", e);
+                closeModal();
+                // Clear inputs
+                document.getElementById('addName').value = '';
+            } catch(e) {
+                console.error(e);
                 alert("Error saving data");
             }
         }
 
-        // Real-time listener
-        const tbody = document.getElementById('agentTableBody');
-        onSnapshot(collection(db, "agents"), (snapshot) => {
-            let html = "";
+        let allAgents = [];
+        const tbody = document.getElementById('crmTableBody');
+
+        onSnapshot(collection(db, "agents_data"), (snapshot) => {
+            allAgents = [];
             snapshot.forEach((doc) => {
-                const data = doc.data();
+                allAgents.push({ id: doc.id, ...doc.data() });
+            });
+            renderTable(allAgents);
+        });
+
+        window.renderTable = function(data) {
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
+                return;
+            }
+            let html = "";
+            data.forEach(item => {
                 html += `<tr>
-                    <td>${data.name}</td>
-                    <td>${data.calls}</td>
-                    <td><span style="padding: 4px 8px; border-radius: 4px; background: ${data.status==='Active'?'#d1fae5':'#fee2e2'}; color: ${data.status==='Active'?'#065f46':'#991b1b'}">${data.status}</span></td>
-                    <td>Just now</td>
+                    <td style="font-weight: bold;">${item.name}</td>
+                    <td><span style="background: #1e3e62; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${item.team}</span></td>
+                    <td>${item.ppo}</td>
+                    <td>${item.cgm}</td>
+                    <td>${item.rpm}</td>
+                    <td style="color: #00b4d8; font-weight: bold;">${item.g2gs}</td>
+                    <td><span style="color: #94a3b8;">${item.type}</span></td>
+                    <td>${item.attended}</td>
+                    <td>${item.transfers}</td>
+                    <td><span class="status-active">${item.status}</span></td>
                 </tr>`;
             });
-            if(html === "") {
-                html = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">No records found yet. Add one above!</td></tr>`;
-            }
             tbody.innerHTML = html;
-        });
+        }
+
+        window.filterTable = function() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const team = document.getElementById('teamFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            const filtered = allAgents.filter(item => {
+                const matchName = item.name.toLowerCase().includes(search);
+                const matchTeam = team === "" || item.team === team;
+                const matchStatus = status === "" || item.status === status;
+                return matchName && matchTeam && matchStatus;
+            });
+            renderTable(filtered);
+        }
     </script>
 </body>
 </html>
