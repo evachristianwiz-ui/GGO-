@@ -23,7 +23,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 1350px;
+            max-width: 1300px;
             margin: 0 auto;
         }
         .top-nav {
@@ -206,7 +206,8 @@
                 <option value="PGX">PGX</option>
                 <option value="MLA">MLA</option>
                 <option value="Bloom">Bloom</option>
-                <option value="epic & Peak">epic & Peak</option>
+                <option value="Epic">Epic</option>
+                <option value="Peak">Peak</option>
             </select>
             <select id="statusFilter" onchange="filterTable()">
                 <option value="">All Status</option>
@@ -223,7 +224,6 @@
                     <th>Team</th>
                     <th>PPO</th>
                     <th>CGM</th>
-                    <th>RPM</th>
                     <th>Total G2G's</th>
                     <th>FT/PT</th>
                     <th>Attended</th>
@@ -235,7 +235,7 @@
             </thead>
             <tbody id="crmTableBody">
                 <tr>
-                    <td colspan="12" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
+                    <td colspan="11" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
                 </tr>
             </tbody>
         </table>
@@ -261,7 +261,8 @@
                 <option value="PGX">PGX</option>
                 <option value="MLA">MLA</option>
                 <option value="Bloom">Bloom</option>
-                <option value="epic & Peak">epic & Peak</option>
+                <option value="Epic">Epic</option>
+                <option value="Peak">Peak</option>
             </select>
 
             <label>PPO</label>
@@ -269,9 +270,6 @@
 
             <label>CGM</label>
             <input type="number" id="addCgm" placeholder="0" step="any">
-
-            <label>RPM</label>
-            <input type="number" id="addRpm" placeholder="0" step="any">
 
             <label>Total G2G's</label>
             <input type="number" id="addG2gs" placeholder="0" step="any">
@@ -320,12 +318,11 @@
         const db = getFirestore(app);
 
         window.openModal = function() {
-            document.getElementById('modalTitleinnerText').innerText = "Add New Agent Production";
+            document.getElementById('modalTitle').innerText = "Add New Agent Production";
             document.getElementById('editAgentId').value = "";
             document.getElementById('addName').value = "";
             document.getElementById('addPpo').value = "";
             document.getElementById('addCgm').value = "";
-            document.getElementById('addRpm').value = "";
             document.getElementById('addG2gs').value = "";
             document.getElementById('addAttended').value = "";
             document.getElementById('addTransfers').value = "";
@@ -336,14 +333,13 @@
             document.getElementById('agentModal').style.display = 'none'; 
         }
 
-        window.editAgent = function(id, name, team, ppo, cgm, rpm, g2gs, type, attended, transfers, status) {
+        window.editAgent = function(id, name, team, ppo, cgm, g2gs, type, attended, transfers, status) {
             document.getElementById('modalTitle').innerText = "Edit Agent Production";
             document.getElementById('editAgentId').value = id;
             document.getElementById('addName').value = name;
             document.getElementById('addTeam').value = team;
             document.getElementById('addPpo').value = ppo;
             document.getElementById('addCgm').value = cgm;
-            document.getElementById('addRpm').value = rpm;
             document.getElementById('addG2gs').value = g2gs;
             document.getElementById('addType').value = type;
             document.getElementById('addAttended').value = attended;
@@ -366,7 +362,6 @@
                 team: document.getElementById('addTeam').value,
                 ppo: Number(document.getElementById('addPpo').value) || 0,
                 cgm: Number(document.getElementById('addCgm').value) || 0,
-                rpm: Number(document.getElementById('addRpm').value) || 0,
                 g2gs: g2gs,
                 type: document.getElementById('addType').value,
                 attended: attended,
@@ -378,10 +373,8 @@
 
             try {
                 if(id) {
-                    // Update existing
                     await updateDoc(doc(db, "agents_data", id), agentData);
                 } else {
-                    // Add new
                     agentData.createdAt = serverTimestamp();
                     await addDoc(collection(db, "agents_data"), agentData);
                 }
@@ -418,7 +411,7 @@
 
         window.renderTable = function(data) {
             if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
                 return;
             }
             let html = "";
@@ -431,7 +424,6 @@
                     <td><span style="background: #1e3e62; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${item.team}</span></td>
                     <td>${item.ppo}</td>
                     <td>${item.cgm}</td>
-                    <td>${item.rpm}</td>
                     <td style="color: #00b4d8; font-weight: bold;">${item.g2gs}</td>
                     <td><span style="color: #94a3b8;">${item.type}</span></td>
                     <td>${item.attended}</td>
@@ -439,7 +431,7 @@
                     <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
                     <td><span class="status-active">${item.status}</span></td>
                     <td style="display: flex; gap: 6px;">
-                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.rpm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${item.status}')">✏️ Edit</button>
+                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${item.status}')">✏️ Edit</button>
                         <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
                     </td>
                 </tr>`;
