@@ -70,6 +70,12 @@
             background-color: var(--accent);
             color: var(--bg-dark);
         }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
         .btn:hover {
             opacity: 0.9;
         }
@@ -123,7 +129,6 @@
             font-size: 12px;
             font-weight: bold;
         }
-        /* Modal Style fixed with Scroll */
         .modal {
             display: none;
             position: fixed;
@@ -211,11 +216,12 @@
                     <th>Transfers</th>
                     <th>Ratio</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="crmTableBody">
                 <tr>
-                    <td colspan="11" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
+                    <td colspan="12" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
                 </tr>
             </tbody>
         </table>
@@ -275,7 +281,7 @@
     <!-- Firebase Script Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -299,8 +305,6 @@
 
             const g2gs = Number(document.getElementById('addG2gs').value) || 0;
             const attended = Number(document.getElementById('addAttended').value) || 0;
-            
-            // Calculate Ratio (G2Gs / Attended Days)
             const ratio = attended > 0 ? (g2gs / attended) : 0;
 
             try {
@@ -319,7 +323,6 @@
                     createdAt: serverTimestamp()
                 });
                 closeModal();
-                // Clear inputs
                 document.getElementById('addName').value = '';
                 document.getElementById('addPpo').value = '';
                 document.getElementById('addCgm').value = '';
@@ -333,26 +336,37 @@
             }
         }
 
+        window.deleteAgent = async function(id) {
+            if(confirm("Are you sure you want to delete this agent?")) {
+                try {
+                    await deleteDoc(doc(db, "agents_data", id));
+                } catch(e) {
+                    console.error(e);
+                    alert("Error deleting agent");
+                }
+            }
+        }
+
         let allAgents = [];
         const tbody = document.getElementById('crmTableBody');
 
         onSnapshot(collection(db, "agents_data"), (snapshot) => {
             allAgents = [];
-            snapshot.forEach((doc) => {
-                allAgents.push({ id: doc.id, ...doc.data() });
+            snapshot.forEach((docSnap) => {
+                allAgents.push({ id: docSnap.id, ...docSnap.data() });
             });
             renderTable(allAgents);
         });
 
         window.renderTable = function(data) {
             if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
                 return;
             }
             let html = "";
             data.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                const ratioColor = ratioVal < 0.85 ? '#f87171' : '#4ade80'; // Red if < 0.85, Green if >= 0.85
+                const ratioColor = ratioVal < 0.85 ? '#f87171' : '#4ade80';
 
                 html += `<tr>
                     <td style="font-weight: bold;">${item.name}</td>
@@ -366,6 +380,9 @@
                     <td>${item.transfers}</td>
                     <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
                     <td><span class="status-active">${item.status}</span></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
+                    </td>
                 </tr>`;
             });
             tbody.innerHTML = html;
