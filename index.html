@@ -23,7 +23,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 1300px;
+            max-width: 1350px;
             margin: 0 auto;
         }
         .top-nav {
@@ -69,6 +69,12 @@
         .btn-accent {
             background-color: var(--accent);
             color: var(--bg-dark);
+        }
+        .btn-edit {
+            background-color: #3b82f6;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
         }
         .btn-danger {
             background-color: #ef4444;
@@ -191,8 +197,16 @@
             <input type="text" id="searchInput" placeholder="Search agent by name..." onkeyup="filterTable()">
             <select id="teamFilter" onchange="filterTable()">
                 <option value="">All Teams</option>
-                <option value="ORT">ORT</option>
-                <option value="CGM">CGM</option>
+                <option value="Wazowski#1">Wazowski#1</option>
+                <option value="Wazowski#2">Wazowski#2</option>
+                <option value="Wazowski#3">Wazowski#3</option>
+                <option value="Midblue. Prime">Midblue. Prime</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Unity">Unity</option>
+                <option value="PGX">PGX</option>
+                <option value="MLA">MLA</option>
+                <option value="Bloom">Bloom</option>
+                <option value="epic & Peak">epic & Peak</option>
             </select>
             <select id="statusFilter" onchange="filterTable()">
                 <option value="">All Status</option>
@@ -227,18 +241,27 @@
         </table>
     </div>
 
-    <!-- Add Agent Modal -->
+    <!-- Add / Edit Agent Modal -->
     <div id="agentModal" class="modal">
         <div class="modal-content">
-            <h3 style="margin-top: 0; color: var(--accent);">Add New Agent Production</h3>
+            <h3 id="modalTitle" style="margin-top: 0; color: var(--accent);">Add New Agent Production</h3>
+            <input type="hidden" id="editAgentId">
             
             <label>Agent Name</label>
             <input type="text" id="addName" placeholder="Enter Full Name">
 
             <label>Team</label>
             <select id="addTeam">
-                <option value="ORT">ORT</option>
-                <option value="CGM">CGM</option>
+                <option value="Wazowski#1">Wazowski#1</option>
+                <option value="Wazowski#2">Wazowski#2</option>
+                <option value="Wazowski#3">Wazowski#3</option>
+                <option value="Midblue. Prime">Midblue. Prime</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Unity">Unity</option>
+                <option value="PGX">PGX</option>
+                <option value="MLA">MLA</option>
+                <option value="Bloom">Bloom</option>
+                <option value="epic & Peak">epic & Peak</option>
             </select>
 
             <label>PPO</label>
@@ -272,7 +295,7 @@
             </select>
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-accent" style="flex:1;" onclick="saveNewAgent()">Save Agent</button>
+                <button class="btn btn-accent" style="flex:1;" onclick="saveAgentData()">Save Agent</button>
                 <button class="btn" style="flex:1; background:#334155;" onclick="closeModal()">Cancel</button>
             </div>
         </div>
@@ -281,7 +304,7 @@
     <!-- Firebase Script Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -296,10 +319,41 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.openModal = function() { document.getElementById('agentModal').style.display = 'flex'; }
-        window.closeModal = function() { document.getElementById('agentModal').style.display = 'none'; }
+        window.openModal = function() {
+            document.getElementById('modalTitleinnerText').innerText = "Add New Agent Production";
+            document.getElementById('editAgentId').value = "";
+            document.getElementById('addName').value = "";
+            document.getElementById('addPpo').value = "";
+            document.getElementById('addCgm').value = "";
+            document.getElementById('addRpm').value = "";
+            document.getElementById('addG2gs').value = "";
+            document.getElementById('addAttended').value = "";
+            document.getElementById('addTransfers').value = "";
+            document.getElementById('agentModal').style.display = 'flex';
+        }
 
-        window.saveNewAgent = async function() {
+        window.closeModal = function() { 
+            document.getElementById('agentModal').style.display = 'none'; 
+        }
+
+        window.editAgent = function(id, name, team, ppo, cgm, rpm, g2gs, type, attended, transfers, status) {
+            document.getElementById('modalTitle').innerText = "Edit Agent Production";
+            document.getElementById('editAgentId').value = id;
+            document.getElementById('addName').value = name;
+            document.getElementById('addTeam').value = team;
+            document.getElementById('addPpo').value = ppo;
+            document.getElementById('addCgm').value = cgm;
+            document.getElementById('addRpm').value = rpm;
+            document.getElementById('addG2gs').value = g2gs;
+            document.getElementById('addType').value = type;
+            document.getElementById('addAttended').value = attended;
+            document.getElementById('addTransfers').value = transfers;
+            document.getElementById('addStatus').value = status;
+            document.getElementById('agentModal').style.display = 'flex';
+        }
+
+        window.saveAgentData = async function() {
+            const id = document.getElementById('editAgentId').value;
             const name = document.getElementById('addName').value;
             if(!name) { alert("Please enter agent name"); return; }
 
@@ -307,32 +361,34 @@
             const attended = Number(document.getElementById('addAttended').value) || 0;
             const ratio = attended > 0 ? (g2gs / attended) : 0;
 
+            const agentData = {
+                name: name,
+                team: document.getElementById('addTeam').value,
+                ppo: Number(document.getElementById('addPpo').value) || 0,
+                cgm: Number(document.getElementById('addCgm').value) || 0,
+                rpm: Number(document.getElementById('addRpm').value) || 0,
+                g2gs: g2gs,
+                type: document.getElementById('addType').value,
+                attended: attended,
+                transfers: Number(document.getElementById('addTransfers').value) || 0,
+                ratio: Number(ratio.toFixed(2)),
+                status: document.getElementById('addStatus').value,
+                updatedAt: serverTimestamp()
+            };
+
             try {
-                await addDoc(collection(db, "agents_data"), {
-                    name: name,
-                    team: document.getElementById('addTeam').value,
-                    ppo: Number(document.getElementById('addPpo').value) || 0,
-                    cgm: Number(document.getElementById('addCgm').value) || 0,
-                    rpm: Number(document.getElementById('addRpm').value) || 0,
-                    g2gs: g2gs,
-                    type: document.getElementById('addType').value,
-                    attended: attended,
-                    transfers: Number(document.getElementById('addTransfers').value) || 0,
-                    ratio: Number(ratio.toFixed(2)),
-                    status: document.getElementById('addStatus').value,
-                    createdAt: serverTimestamp()
-                });
+                if(id) {
+                    // Update existing
+                    await updateDoc(doc(db, "agents_data", id), agentData);
+                } else {
+                    // Add new
+                    agentData.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "agents_data"), agentData);
+                }
                 closeModal();
-                document.getElementById('addName').value = '';
-                document.getElementById('addPpo').value = '';
-                document.getElementById('addCgm').value = '';
-                document.getElementById('addRpm').value = '';
-                document.getElementById('addG2gs').value = '';
-                document.getElementById('addAttended').value = '';
-                document.getElementById('addTransfers').value = '';
             } catch(e) {
                 console.error(e);
-                alert("Error saving data");
+                alert("Error saving data: " + e.message);
             }
         }
 
@@ -356,6 +412,8 @@
                 allAgents.push({ id: docSnap.id, ...docSnap.data() });
             });
             renderTable(allAgents);
+        }, (error) => {
+            console.error("Error listening to changes:", error);
         });
 
         window.renderTable = function(data) {
@@ -380,7 +438,8 @@
                     <td>${item.transfers}</td>
                     <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
                     <td><span class="status-active">${item.status}</span></td>
-                    <td>
+                    <td style="display: flex; gap: 6px;">
+                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.rpm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${item.status}')">✏️ Edit</button>
                         <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
                     </td>
                 </tr>`;
