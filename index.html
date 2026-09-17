@@ -1,0 +1,933 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Center Operations Manager Mini-CRM &amp; Hosting Guide</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for reactive UI state -->
+    <script defer="" src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.inset-y-0{top:0px;bottom:0px}.-right-1{right:-0.25rem}.-top-1{top:-0.25rem}.left-0{left:0px}.top-0{top:0px}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-8{margin-top:2rem;margin-bottom:2rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-12{height:3rem}.h-2\.5{height:0.625rem}.h-20{height:5rem}.h-3{height:0.75rem}.h-full{height:100%}.h-7{height:1.75rem}.h-8{height:2rem}.min-h-screen{min-height:100vh}.w-12{width:3rem}.w-3{width:0.75rem}.w-auto{width:auto}.w-full{width:100%}.w-7{width:1.75rem}.w-8{width:2rem}.max-w-2xl{max-width:42rem}.max-w-7xl{max-width:80rem}.max-w-lg{max-width:32rem}.flex-1{flex:1 1 0%}.border-collapse{border-collapse:collapse}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-700\/55 > :not([hidden]) ~ :not([hidden]){border-color:rgb(51 65 85 / 0.55)}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-t{border-top-width:1px}.border-amber-500\/20{border-color:rgb(245 158 11 / 0.2)}.border-emerald-500\/20{border-color:rgb(16 185 129 / 0.2)}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-emerald-500\/40{border-color:rgb(16 185 129 / 0.4)}.border-indigo-500\/20{border-color:rgb(99 102 241 / 0.2)}.border-purple-500\/20{border-color:rgb(168 85 247 / 0.2)}.border-sky-500\/20{border-color:rgb(14 165 233 / 0.2)}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-700\/50{border-color:rgb(51 65 85 / 0.5)}.border-slate-700\/60{border-color:rgb(51 65 85 / 0.6)}.border-slate-700\/80{border-color:rgb(51 65 85 / 0.8)}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-sky-500\/30{border-color:rgb(14 165 233 / 0.3)}.border-slate-700\/40{border-color:rgb(51 65 85 / 0.4)}.bg-amber-500\/10{background-color:rgb(245 158 11 / 0.1)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/10{background-color:rgb(16 185 129 / 0.1)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-indigo-500{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.bg-indigo-500\/10{background-color:rgb(99 102 241 / 0.1)}.bg-purple-500\/10{background-color:rgb(168 85 247 / 0.1)}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-sky-500{--tw-bg-opacity:1;background-color:rgb(14 165 233 / var(--tw-bg-opacity, 1))}.bg-sky-500\/10{background-color:rgb(14 165 233 / 0.1)}.bg-sky-600{--tw-bg-opacity:1;background-color:rgb(2 132 199 / var(--tw-bg-opacity, 1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/60{background-color:rgb(30 41 59 / 0.6)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/80{background-color:rgb(15 23 42 / 0.8)}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-sky-500\/20{background-color:rgb(14 165 233 / 0.2)}.bg-slate-900\/60{background-color:rgb(15 23 42 / 0.6)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-sky-500{--tw-gradient-from:#0ea5e9 var(--tw-gradient-from-position);--tw-gradient-to:rgb(14 165 233 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-slate-800{--tw-gradient-from:#1e293b var(--tw-gradient-from-position);--tw-gradient-to:rgb(30 41 59 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-blue-600{--tw-gradient-to:#2563eb var(--tw-gradient-to-position)}.to-slate-900{--tw-gradient-to:#0f172a var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.py-8{padding-top:2rem;padding-bottom:2rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.pb-4{padding-bottom:1rem}.pl-10{padding-left:2.5rem}.pl-3{padding-left:0.75rem}.pr-4{padding-right:1rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-sky-300{--tw-text-opacity:1;color:rgb(125 211 252 / var(--tw-text-opacity, 1))}.text-sky-400{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.text-slate-100{--tw-text-opacity:1;color:rgb(241 245 249 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-emerald-500{--tw-text-opacity:1;color:rgb(16 185 129 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.placeholder-slate-500::placeholder{--tw-placeholder-opacity:1;color:rgb(100 116 139 / var(--tw-placeholder-opacity, 1))}.opacity-75{opacity:0.75}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sky-500\/20{--tw-shadow-color:rgb(14 165 233 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-emerald-500\/50:hover{border-color:rgb(16 185 129 / 0.5)}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-purple-500:hover{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.hover\:bg-sky-500:hover{--tw-bg-opacity:1;background-color:rgb(14 165 233 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-600:hover{--tw-bg-opacity:1;background-color:rgb(71 85 105 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-950\/40:hover{background-color:rgb(2 44 34 / 0.4)}.hover\:bg-slate-700\/30:hover{background-color:rgb(51 65 85 / 0.3)}.hover\:bg-slate-700\/40:hover{background-color:rgb(51 65 85 / 0.4)}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.hover\:from-sky-400:hover{--tw-gradient-from:#38bdf8 var(--tw-gradient-from-position);--tw-gradient-to:rgb(56 189 248 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-blue-500:hover{--tw-gradient-to:#3b82f6 var(--tw-gradient-to-position)}.hover\:text-sky-300:hover{--tw-text-opacity:1;color:rgb(125 211 252 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:text-emerald-300:hover{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.hover\:text-rose-300:hover{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:border-sky-500:focus{--tw-border-opacity:1;border-color:rgb(14 165 233 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 640px){.sm\:block{display:block}.sm\:inline{display:inline}.sm\:w-40{width:10rem}.sm\:w-72{width:18rem}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:p-10{padding:2.5rem}.sm\:p-8{padding:2rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}@media (min-width: 768px){.md\:flex{display:flex}.md\:hidden{display:none}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:justify-between{justify-content:space-between}}@media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style></head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col" x-data="crmApp()">
+
+    <header class="bg-slate-950 border-b border-slate-800 shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <!-- Company Logo -->
+                <div class="flex items-center space-x-3 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 shadow-inner">
+                    <img src="GGO-White-Var2.png" onerror="this.onerror=null; this.src='https://placehold.co/140x45/0f172a/ffffff?text=GGO+Outsourcing';" alt="Gulf Global Outsourcing Logo" class="h-10 w-auto object-contain">
+                    <div class="hidden sm:block border-l border-slate-700 pl-3">
+                        <span class="text-xs font-semibold text-sky-400 tracking-wider uppercase block">Operations CRM</span>
+                        <span class="text-xs text-slate-400">ORT &amp; CGM Command Center</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs & Actions -->
+            <div class="flex items-center space-x-3">
+                <nav class="hidden md:flex space-x-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                    <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'bg-sky-600 text-white shadow' : 'text-slate-300 hover:text-white hover:bg-slate-800'" class="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button @click="currentTab = 'directory'" :class="currentTab === 'directory' ? 'bg-sky-600 text-white shadow' : 'text-slate-300 hover:text-white hover:bg-slate-800'" class="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Agent Directory</span>
+                    </button>
+                    <button @click="currentTab = 'guide'" :class="currentTab === 'guide' ? 'bg-sky-600 text-white shadow' : 'text-slate-300 hover:text-white hover:bg-slate-800'" class="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-book"></i>
+                        <span>Hosting Guide</span>
+                    </button>
+                    <!-- Prominent Publish & Host Tab -->
+                    <button @click="currentTab = 'publish'" :class="currentTab === 'publish' ? 'bg-emerald-600 text-white shadow' : 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40 border border-emerald-500/30'" class="px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center space-x-2 relative bg-emerald-600 text-white shadow">
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Publish &amp; Host</span>
+                    </button>
+                </nav>
+
+                <!-- Quick Action Button -->
+                <button @click="openAddModal()" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-medium px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-sky-500/20 flex items-center space-x-2 transition transform active:scale-95">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span class="hidden sm:inline">Add Agent</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Bar -->
+        <div class="md:hidden flex border-t border-slate-800 bg-slate-900 px-2 py-2 justify-around">
+            <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-sky-400 font-semibold' : 'text-slate-400'" class="text-xs flex flex-col items-center text-slate-400">
+                <i class="fa-solid fa-chart-line text-lg mb-1"></i> Dashboard
+            </button>
+            <button @click="currentTab = 'directory'" :class="currentTab === 'directory' ? 'text-sky-400 font-semibold' : 'text-slate-400'" class="text-xs flex flex-col items-center text-slate-400">
+                <i class="fa-solid fa-users text-lg mb-1"></i> Directory
+            </button>
+            <button @click="currentTab = 'guide'" :class="currentTab === 'guide' ? 'text-sky-400 font-semibold' : 'text-slate-400'" class="text-xs flex flex-col items-center text-slate-400">
+                <i class="fa-solid fa-book text-lg mb-1"></i> Guide
+            </button>
+            <button @click="currentTab = 'publish'" :class="currentTab === 'publish' ? 'text-emerald-400 font-semibold' : 'text-emerald-500'" class="text-xs flex flex-col items-center text-emerald-400 font-semibold">
+                <i class="fa-solid fa-cloud-arrow-up text-lg mb-1 animate-pulse"></i> Publish
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- DASHBOARD TAB -->
+        <div x-show="currentTab === 'dashboard'" x-transition="" class="space-y-6" style="display: none;">
+            <!-- Top Stats Overview -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Workforce</p>
+                            <h3 class="text-3xl font-bold text-white mt-1" x-text="agents.length">6</h3>
+                        </div>
+                        <div class="p-3 bg-sky-500/10 text-sky-400 rounded-xl border border-sky-500/20">
+                            <i class="fa-solid fa-users-gear text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-xs text-slate-400 space-x-2">
+                        <span class="text-emerald-400 font-medium" x-text="agents.filter(a =&gt; a.status === 'Active').length">6</span> Active Agents
+                        <span>•</span>
+                        <span class="text-sky-400 font-medium" x-text="agents.filter(a =&gt; a.ftPt === 'FT').length">5</span> Full-Time
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total G2G's Generated</p>
+                            <h3 class="text-3xl font-bold text-white mt-1" x-text="totalG2G.toLocaleString()">776</h3>
+                        </div>
+                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                            <i class="fa-solid fa-chart-pie text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-xs text-slate-400 space-x-2">
+                        <span class="text-emerald-400 font-medium" x-text="avgPPO">79</span> Avg PPO
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Avg RPM &amp; CGM</p>
+                            <h3 class="text-3xl font-bold text-white mt-1" x-text="avgRPM">4.4</h3>
+                        </div>
+                        <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                            <i class="fa-solid fa-gauge-high text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-xs text-slate-400 space-x-2">
+                        <span class="text-indigo-400 font-medium" x-text="avgCGM">88.4%</span> Avg CGM
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Transfers</p>
+                            <h3 class="text-3xl font-bold text-white mt-1" x-text="totalTransfers.toLocaleString()">1,680</h3>
+                        </div>
+                        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+                            <i class="fa-solid fa-phone-volume text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-xs text-slate-400 space-x-2">
+                        <span class="text-amber-400 font-medium" x-text="avgAttendance">20.3 Days</span> Avg Attended Days
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Division & Top Performers -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-base font-semibold text-white mb-2">Team Division Breakdown</h4>
+                        <p class="text-xs text-slate-400 mb-6">Distribution between ORT and CGM operational divisions.</p>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-slate-300 font-medium">ORT Team</span>
+                                    <span class="text-sky-400 font-bold" x-text="agents.filter(a =&gt; a.team === 'ORT').length + ' Agents'">3 Agents</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                    <div class="bg-sky-500 h-2.5 rounded-full" :style="`width: ${(agents.filter(a =&gt; a.team === 'ORT').length / (agents.length || 1)) * 100}%`" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-slate-300 font-medium">CGM Team</span>
+                                    <span class="text-indigo-400 font-bold" x-text="agents.filter(a =&gt; a.team === 'CGM').length + ' Agents'">3 Agents</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                    <div class="bg-indigo-500 h-2.5 rounded-full" :style="`width: ${(agents.filter(a =&gt; a.team === 'CGM').length / (agents.length || 1)) * 100}%`" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-700/50 flex justify-between items-center text-xs text-slate-400">
+                        <span>Data source: LocalStorage / GGO Sheet</span>
+                        <button @click="resetToDefaultData()" class="text-sky-400 hover:underline">Reset Demo Data</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-lg lg:col-span-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h4 class="text-base font-semibold text-white">Top Performing Agents (by Total G2G's)</h4>
+                            <p class="text-xs text-slate-400">Top ranked agents across ORT and CGM programs.</p>
+                        </div>
+                        <button @click="currentTab = 'directory'" class="text-xs text-sky-400 hover:text-sky-300 font-medium">View All →</button>
+                    </div>
+                    <div class="space-y-3">
+                        <template x-for="(agent, idx) in [...agents].sort((a,b) =&gt; b.totalG2G - a.totalG2G).slice(0, 4)" :key="agent.id">
+                            <div @click="openEditModal(agent)" class="flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-700/40 rounded-xl border border-slate-700/40 cursor-pointer transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs border border-sky-500/30" x-text="'#' + (idx + 1)"></div>
+                                    <div>
+                                        <h5 class="text-sm font-semibold text-white" x-text="agent.name"></h5>
+                                        <p class="text-xs text-slate-400"><span x-text="agent.team"></span> • <span x-text="agent.ftPt"></span></p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-bold text-emerald-400" x-text="agent.totalG2G + ' G2G\'s'"></div>
+                                    <div class="text-xs text-slate-400">PPO: <span x-text="agent.ppo"></span> | RPM: <span x-text="agent.rpm"></span></div>
+                                </div>
+                            </div>
+                        </template><div @click="openEditModal(agent)" class="flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-700/40 rounded-xl border border-slate-700/40 cursor-pointer transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs border border-sky-500/30" x-text="'#' + (idx + 1)">#1</div>
+                                    <div>
+                                        <h5 class="text-sm font-semibold text-white" x-text="agent.name">Amina Al-Farsi</h5>
+                                        <p class="text-xs text-slate-400"><span x-text="agent.team">ORT</span> • <span x-text="agent.ftPt">FT</span></p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-bold text-emerald-400" x-text="agent.totalG2G + ' G2G\'s'">165 G2G's</div>
+                                    <div class="text-xs text-slate-400">PPO: <span x-text="agent.ppo">91</span> | RPM: <span x-text="agent.rpm">5.1</span></div>
+                                </div>
+                            </div><div @click="openEditModal(agent)" class="flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-700/40 rounded-xl border border-slate-700/40 cursor-pointer transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs border border-sky-500/30" x-text="'#' + (idx + 1)">#2</div>
+                                    <div>
+                                        <h5 class="text-sm font-semibold text-white" x-text="agent.name">Sarah Jenkins</h5>
+                                        <p class="text-xs text-slate-400"><span x-text="agent.team">ORT</span> • <span x-text="agent.ftPt">FT</span></p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-bold text-emerald-400" x-text="agent.totalG2G + ' G2G\'s'">142 G2G's</div>
+                                    <div class="text-xs text-slate-400">PPO: <span x-text="agent.ppo">85</span> | RPM: <span x-text="agent.rpm">4.8</span></div>
+                                </div>
+                            </div><div @click="openEditModal(agent)" class="flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-700/40 rounded-xl border border-slate-700/40 cursor-pointer transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs border border-sky-500/30" x-text="'#' + (idx + 1)">#3</div>
+                                    <div>
+                                        <h5 class="text-sm font-semibold text-white" x-text="agent.name">Elena Rostova</h5>
+                                        <p class="text-xs text-slate-400"><span x-text="agent.team">ORT</span> • <span x-text="agent.ftPt">FT</span></p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-bold text-emerald-400" x-text="agent.totalG2G + ' G2G\'s'">134 G2G's</div>
+                                    <div class="text-xs text-slate-400">PPO: <span x-text="agent.ppo">82</span> | RPM: <span x-text="agent.rpm">4.6</span></div>
+                                </div>
+                            </div><div @click="openEditModal(agent)" class="flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-700/40 rounded-xl border border-slate-700/40 cursor-pointer transition">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs border border-sky-500/30" x-text="'#' + (idx + 1)">#4</div>
+                                    <div>
+                                        <h5 class="text-sm font-semibold text-white" x-text="agent.name">Michael Chang</h5>
+                                        <p class="text-xs text-slate-400"><span x-text="agent.team">CGM</span> • <span x-text="agent.ftPt">FT</span></p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-bold text-emerald-400" x-text="agent.totalG2G + ' G2G\'s'">128 G2G's</div>
+                                    <div class="text-xs text-slate-400">PPO: <span x-text="agent.ppo">78</span> | RPM: <span x-text="agent.rpm">4.2</span></div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGENT DIRECTORY TAB -->
+        <div x-show="currentTab === 'directory'" x-transition="" class="space-y-6" style="display: none;">
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex flex-col sm:flex-row items-center gap-3 flex-1">
+                    <div class="relative w-full sm:w-72">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" x-model="searchQuery" placeholder="Search agent by name..." class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500">
+                    </div>
+                    <select x-model="teamFilter" class="w-full sm:w-40 py-2 px-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-sky-500">
+                        <option value="">All Teams</option>
+                        <option value="ORT">ORT Team</option>
+                        <option value="CGM">CGM Team</option>
+                    </select>
+                    <select x-model="statusFilter" class="w-full sm:w-40 py-2 px-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-sky-500">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Leave">On Leave</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button @click="exportCSV()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Export CSV</span>
+                    </button>
+                    <button @click="openAddModal()" class="bg-sky-600 hover:bg-sky-500 text-white font-medium px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Add Agent</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/80 border-b border-slate-700 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                <th class="py-3.5 px-4">Agent Name</th>
+                                <th class="py-3.5 px-3">Team</th>
+                                <th class="py-3.5 px-3">PPO</th>
+                                <th class="py-3.5 px-3">CGM</th>
+                                <th class="py-3.5 px-3">RPM</th>
+                                <th class="py-3.5 px-3">Total G2G's</th>
+                                <th class="py-3.5 px-3">FT/PT</th>
+                                <th class="py-3.5 px-3">Attended</th>
+                                <th class="py-3.5 px-3">Transfers</th>
+                                <th class="py-3.5 px-3">Status</th>
+                                <th class="py-3.5 px-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700/55 text-sm">
+                            <template x-for="agent in filteredAgents" :key="agent.id">
+                                <tr class="hover:bg-slate-700/30 transition">
+                                    <td class="py-3.5 px-4 font-medium text-white flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-700 text-sky-400 flex items-center justify-center font-bold text-xs" x-text="agent.name.charAt(0)"></div>
+                                        <span x-text="agent.name"></span>
+                                    </td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold" :class="agent.team === 'ORT' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'" x-text="agent.team"></span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.ppo"></td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.cgm"></td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.rpm"></td>
+                                    <td class="py-3.5 px-3 font-semibold text-emerald-400" x-text="agent.totalG2G"></td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300" x-text="agent.ftPt"></span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.attendedDays"></td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.totalTransfers"></td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium" :class="agent.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'" x-text="agent.status"></span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right space-x-2">
+                                        <button @click="openEditModal(agent)" class="text-sky-400 hover:text-sky-300 p-1 rounded transition" title="Edit Agent">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button @click="deleteAgent(agent.id)" class="text-rose-400 hover:text-rose-300 p-1 rounded transition" title="Delete Agent">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template><tr class="hover:bg-slate-700/30 transition">
+                                    <td class="py-3.5 px-4 font-medium text-white flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-700 text-sky-400 flex items-center justify-center font-bold text-xs" x-text="agent.name.charAt(0)">S</div>
+                                        <span x-text="agent.name">Sarah Jenkins</span>
+                                    </td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20" :class="agent.team === 'ORT' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'" x-text="agent.team">ORT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.ppo">85</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.cgm">92.4</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.rpm">4.8</td>
+                                    <td class="py-3.5 px-3 font-semibold text-emerald-400" x-text="agent.totalG2G">142</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300" x-text="agent.ftPt">FT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.attendedDays">22</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.totalTransfers">310</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :class="agent.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'" x-text="agent.status">Active</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right space-x-2">
+                                        <button @click="openEditModal(agent)" class="text-sky-400 hover:text-sky-300 p-1 rounded transition" title="Edit Agent">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button @click="deleteAgent(agent.id)" class="text-rose-400 hover:text-rose-300 p-1 rounded transition" title="Delete Agent">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr><tr class="hover:bg-slate-700/30 transition">
+                                    <td class="py-3.5 px-4 font-medium text-white flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-700 text-sky-400 flex items-center justify-center font-bold text-xs" x-text="agent.name.charAt(0)">M</div>
+                                        <span x-text="agent.name">Michael Chang</span>
+                                    </td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" :class="agent.team === 'ORT' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'" x-text="agent.team">CGM</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.ppo">78</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.cgm">88.1</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.rpm">4.2</td>
+                                    <td class="py-3.5 px-3 font-semibold text-emerald-400" x-text="agent.totalG2G">128</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300" x-text="agent.ftPt">FT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.attendedDays">21</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.totalTransfers">285</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :class="agent.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'" x-text="agent.status">Active</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right space-x-2">
+                                        <button @click="openEditModal(agent)" class="text-sky-400 hover:text-sky-300 p-1 rounded transition" title="Edit Agent">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button @click="deleteAgent(agent.id)" class="text-rose-400 hover:text-rose-300 p-1 rounded transition" title="Delete Agent">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr><tr class="hover:bg-slate-700/30 transition">
+                                    <td class="py-3.5 px-4 font-medium text-white flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-700 text-sky-400 flex items-center justify-center font-bold text-xs" x-text="agent.name.charAt(0)">A</div>
+                                        <span x-text="agent.name">Amina Al-Farsi</span>
+                                    </td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20" :class="agent.team === 'ORT' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'" x-text="agent.team">ORT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.ppo">91</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.cgm">95</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.rpm">5.1</td>
+                                    <td class="py-3.5 px-3 font-semibold text-emerald-400" x-text="agent.totalG2G">165</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300" x-text="agent.ftPt">FT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.attendedDays">22</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.totalTransfers">340</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :class="agent.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'" x-text="agent.status">Active</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right space-x-2">
+                                        <button @click="openEditModal(agent)" class="text-sky-400 hover:text-sky-300 p-1 rounded transition" title="Edit Agent">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button @click="deleteAgent(agent.id)" class="text-rose-400 hover:text-rose-300 p-1 rounded transition" title="Delete Agent">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr><tr class="hover:bg-slate-700/30 transition">
+                                    <td class="py-3.5 px-4 font-medium text-white flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-700 text-sky-400 flex items-center justify-center font-bold text-xs" x-text="agent.name.charAt(0)">D</div>
+                                        <span x-text="agent.name">David Smith</span>
+                                    </td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" :class="agent.team === 'ORT' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'" x-text="agent.team">CGM</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.ppo">65</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.cgm">79.3</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.rpm">3.5</td>
+                                    <td class="py-3.5 px-3 font-semibold text-emerald-400" x-text="agent.totalG2G">95</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300" x-text="agent.ftPt">PT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.attendedDays">18</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.totalTransfers">210</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :class="agent.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'" x-text="agent.status">Active</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right space-x-2">
+                                        <button @click="openEditModal(agent)" class="text-sky-400 hover:text-sky-300 p-1 rounded transition" title="Edit Agent">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button @click="deleteAgent(agent.id)" class="text-rose-400 hover:text-rose-300 p-1 rounded transition" title="Delete Agent">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr><tr class="hover:bg-slate-700/30 transition">
+                                    <td class="py-3.5 px-4 font-medium text-white flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-700 text-sky-400 flex items-center justify-center font-bold text-xs" x-text="agent.name.charAt(0)">E</div>
+                                        <span x-text="agent.name">Elena Rostova</span>
+                                    </td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20" :class="agent.team === 'ORT' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'" x-text="agent.team">ORT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.ppo">82</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.cgm">90.5</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.rpm">4.6</td>
+                                    <td class="py-3.5 px-3 font-semibold text-emerald-400" x-text="agent.totalG2G">134</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300" x-text="agent.ftPt">FT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.attendedDays">20</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.totalTransfers">295</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :class="agent.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'" x-text="agent.status">Active</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right space-x-2">
+                                        <button @click="openEditModal(agent)" class="text-sky-400 hover:text-sky-300 p-1 rounded transition" title="Edit Agent">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button @click="deleteAgent(agent.id)" class="text-rose-400 hover:text-rose-300 p-1 rounded transition" title="Delete Agent">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr><tr class="hover:bg-slate-700/30 transition">
+                                    <td class="py-3.5 px-4 font-medium text-white flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-700 text-sky-400 flex items-center justify-center font-bold text-xs" x-text="agent.name.charAt(0)">J</div>
+                                        <span x-text="agent.name">James Wilson</span>
+                                    </td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" :class="agent.team === 'ORT' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'" x-text="agent.team">CGM</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.ppo">74</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.cgm">85</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.rpm">3.9</td>
+                                    <td class="py-3.5 px-3 font-semibold text-emerald-400" x-text="agent.totalG2G">112</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300" x-text="agent.ftPt">FT</span>
+                                    </td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.attendedDays">19</td>
+                                    <td class="py-3.5 px-3 text-slate-300" x-text="agent.totalTransfers">240</td>
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :class="agent.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'" x-text="agent.status">Active</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right space-x-2">
+                                        <button @click="openEditModal(agent)" class="text-sky-400 hover:text-sky-300 p-1 rounded transition" title="Edit Agent">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button @click="deleteAgent(agent.id)" class="text-rose-400 hover:text-rose-300 p-1 rounded transition" title="Delete Agent">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <template x-if="filteredAgents.length === 0">
+                                <tr>
+                                    <td colspan="11" class="py-8 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>
+                                        No agents found matching your search criteria.
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOSTING GUIDE TAB -->
+        <div x-show="currentTab === 'guide'" x-transition="" class="space-y-6" style="display: none;">
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 sm:p-8 shadow-lg space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Call Center Operations Mini-CRM &amp; Hosting Guide</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        This enterprise-grade mini-CRM is designed specifically for managing call center teams (ORT &amp; CGM), tracking key performance indicators (PPO, CGM, RPM, Total G2G's, Transfers, Attendance), and running coaching reviews.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                    <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-5 space-y-3">
+                        <div class="flex items-center space-x-3 text-sky-400">
+                            <i class="fa-solid fa-file-excel text-xl"></i>
+                            <h3 class="text-lg font-semibold text-white">Google Sheets &amp; Local Storage</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            All operational records are automatically synchronized with your browser's local storage. Any edits or additions are instantly saved.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-5 space-y-3">
+                        <div class="flex items-center space-x-3 text-emerald-400">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                            <h3 class="text-lg font-semibold text-white">Ready to Deploy Online</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Click the green <strong class="text-emerald-400">Publish &amp; Host</strong> tab above to get step-by-step instructions on putting this CRM live on the web for your team.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-700 flex items-center justify-between">
+                    <span class="text-xs text-slate-400">Gulf Global Outsourcing • Operations Suite v2.5</span>
+                    <button @click="currentTab = 'publish'" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-xl text-xs transition flex items-center space-x-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Go to Publish &amp; Host</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PUBLISH & HOST TAB (PROMINENTLY FEATURED) -->
+        <div x-show="currentTab === 'publish'" x-transition="" class="space-y-6">
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-emerald-500/40 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-semibold mb-3">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Zero Cost • Permanent Hosting</span>
+                        </div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Publish &amp; Host Your GGO CRM Online</h2>
+                        <p class="text-slate-300 text-sm mt-2 max-w-2xl">
+                            Because this application is packaged as a single standalone file containing all styles, logos, and features, you can deploy it to the web in under 60 seconds.
+                        </p>
+                    </div>
+                    <div class="hidden md:flex p-4 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/30 items-center justify-center">
+                        <i class="fa-solid fa-rocket text-3xl"></i>
+                    </div>
+                </div>
+
+                <!-- Hosting Options Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Option 1 -->
+                    <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-6 flex flex-col justify-between space-y-4 hover:border-emerald-500/50 transition shadow-lg">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-xl font-bold border border-sky-500/20">
+                                <i class="fa-brands fa-netlify"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">Netlify Drop (Easiest)</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Drag and drop your saved HTML file into Netlify Drop to get an instant live HTTPS link in 5 seconds. No account required!
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800">
+                            <a href="https://drop.netlify.com" target="_blank" class="block w-full text-center py-2.5 px-4 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-xl text-xs transition">
+                                Open Netlify Drop →
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Option 2 -->
+                    <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-6 flex flex-col justify-between space-y-4 hover:border-emerald-500/50 transition shadow-lg">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl font-bold border border-purple-500/20">
+                                <i class="fa-brands fa-github"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">GitHub Pages</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Create a public repository on GitHub, upload this code file named <code class="text-sky-300">index.html</code>, and enable GitHub Pages in your settings.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800">
+                            <a href="https://github.com" target="_blank" class="block w-full text-center py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl text-xs transition">
+                                Open GitHub →
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Option 3 -->
+                    <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-6 flex flex-col justify-between space-y-4 hover:border-emerald-500/50 transition shadow-lg">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl font-bold border border-emerald-500/20">
+                                <i class="fa-solid fa-server"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">Internal Company Server</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Place the HTML file on any internal Nginx, Apache, or IIS web server to give your supervisors direct local network access.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800">
+                            <span class="block w-full text-center py-2.5 px-4 bg-slate-800 text-slate-400 font-medium rounded-xl text-xs">
+                                Ready for Local Deployment
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download File Quick Action -->
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h4 class="text-sm font-semibold text-white">Need the source code file?</h4>
+                        <p class="text-xs text-slate-400">Download the complete standalone HTML application file for offline storage or uploading.</p>
+                    </div>
+                    <button @click="downloadAppFile()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition flex items-center space-x-2 shadow-lg">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Download CRM HTML File</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Add/Edit Agent -->
+    <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 overflow-y-auto" style="display: none;">
+        <div @click.outside="closeModal()" class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-6 relative my-8">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h3 class="text-lg font-bold text-white" x-text="isEditing ? 'Edit Agent Record' : 'Add New Agent'">Add New Agent</h3>
+                <button @click="closeModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="saveAgent()" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Agent Name</label>
+                        <input type="text" x-model="form.name" required="" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Team Division</label>
+                        <select x-model="form.team" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                            <option value="ORT">ORT</option>
+                            <option value="CGM">CGM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">PPO</label>
+                        <input type="number" x-model.number="form.ppo" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">CGM Score</label>
+                        <input type="number" step="0.1" x-model.number="form.cgm" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">RPM Score</label>
+                        <input type="number" step="0.1" x-model.number="form.rpm" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Total G2G's</label>
+                        <input type="number" x-model.number="form.totalG2G" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">FT / PT</label>
+                        <select x-model="form.ftPt" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                            <option value="FT">FT</option>
+                            <option value="PT">PT</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Attended Days</label>
+                        <input type="number" x-model.number="form.attendedDays" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Total Transfers</label>
+                        <input type="number" x-model.number="form.totalTransfers" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Status</label>
+                        <select x-model="form.status" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="On Leave">On Leave</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Coaching Notes / Feedback</label>
+                    <textarea x-model="form.notes" rows="2" placeholder="Add coaching session notes or performance remarks..." class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                    <button type="button" @click="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-xl text-sm transition" x-text="isEditing ? 'Save Changes' : 'Add Agent'">Add Agent</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function crmApp() {
+            return {
+                currentTab: 'dashboard',
+                searchQuery: '',
+                teamFilter: '',
+                statusFilter: '',
+                showModal: false,
+                isEditing: false,
+                agents: [],
+                form: {
+                    id: null,
+                    name: '',
+                    team: 'ORT',
+                    ppo: 0,
+                    cgm: 0,
+                    rpm: 0,
+                    totalG2G: 0,
+                    ftPt: 'FT',
+                    attendedDays: 20,
+                    totalTransfers: 0,
+                    status: 'Active',
+                    notes: ''
+                },
+
+                init() {
+                    const saved = localStorage.getItem('ggo_crm_agents');
+                    if (saved) {
+                        try {
+                            this.agents = JSON.parse(saved);
+                        } catch (e) {
+                            this.loadDefaultAgents();
+                        }
+                    } else {
+                        this.loadDefaultAgents();
+                    }
+                },
+
+                loadDefaultAgents() {
+                    this.agents = [
+                        { id: 1, name: 'Sarah Jenkins', team: 'ORT', ppo: 85, cgm: 92.4, rpm: 4.8, totalG2G: 142, ftPt: 'FT', attendedDays: 22, totalTransfers: 310, status: 'Active', notes: 'Consistently strong performer in ORT team.' },
+                        { id: 2, name: 'Michael Chang', team: 'CGM', ppo: 78, cgm: 88.1, rpm: 4.2, totalG2G: 128, ftPt: 'FT', attendedDays: 21, totalTransfers: 285, status: 'Active', notes: 'Excellent call handling and transfer conversion.' },
+                        { id: 3, name: 'Amina Al-Farsi', team: 'ORT', ppo: 91, cgm: 95.0, rpm: 5.1, totalG2G: 165, ftPt: 'FT', attendedDays: 22, totalTransfers: 340, status: 'Active', notes: 'Top G2G producer for the current month.' },
+                        { id: 4, name: 'David Smith', team: 'CGM', ppo: 65, cgm: 79.3, rpm: 3.5, totalG2G: 95, ftPt: 'PT', attendedDays: 18, totalTransfers: 210, status: 'Active', notes: 'Part-time agent showing steady improvement.' },
+                        { id: 5, name: 'Elena Rostova', team: 'ORT', ppo: 82, cgm: 90.5, rpm: 4.6, totalG2G: 134, ftPt: 'FT', attendedDays: 20, totalTransfers: 295, status: 'Active', notes: 'Reliable attendance and quality metrics.' },
+                        { id: 6, name: 'James Wilson', team: 'CGM', ppo: 74, cgm: 85.0, rpm: 3.9, totalG2G: 112, ftPt: 'FT', attendedDays: 19, totalTransfers: 240, status: 'Active', notes: 'Needs brief coaching on transfer pacing.' }
+                    ];
+                    this.persist();
+                },
+
+                resetToDefaultData() {
+                    if (confirm('Reset to default sample agent data?')) {
+                        this.loadDefaultAgents();
+                    }
+                },
+
+                persist() {
+                    localStorage.setItem('ggo_crm_agents', JSON.stringify(this.agents));
+                },
+
+                get filteredAgents() {
+                    return this.agents.filter(agent => {
+                        const matchName = agent.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+                        const matchTeam = this.teamFilter === '' || agent.team === this.teamFilter;
+                        const matchStatus = this.statusFilter === '' || agent.status === this.statusFilter;
+                        return matchName && matchTeam && matchStatus;
+                    });
+                },
+
+                get totalG2G() {
+                    return this.agents.reduce((sum, a) => sum + (Number(a.totalG2G) || 0), 0);
+                },
+
+                get avgPPO() {
+                    if (this.agents.length === 0) return 0;
+                    const sum = this.agents.reduce((s, a) => s + (Number(a.ppo) || 0), 0);
+                    return Math.round(sum / this.agents.length);
+                },
+
+                get avgRPM() {
+                    if (this.agents.length === 0) return 0;
+                    const sum = this.agents.reduce((s, a) => s + (Number(a.rpm) || 0), 0);
+                    return (sum / this.agents.length).toFixed(1);
+                },
+
+                get avgCGM() {
+                    if (this.agents.length === 0) return 0;
+                    const sum = this.agents.reduce((s, a) => s + (Number(a.cgm) || 0), 0);
+                    return (sum / this.agents.length).toFixed(1) + '%';
+                },
+
+                get totalTransfers() {
+                    return this.agents.reduce((sum, a) => sum + (Number(a.totalTransfers) || 0), 0);
+                },
+
+                get avgAttendance() {
+                    if (this.agents.length === 0) return 0;
+                    const sum = this.agents.reduce((s, a) => s + (Number(a.attendedDays) || 0), 0);
+                    return (sum / this.agents.length).toFixed(1) + ' Days';
+                },
+
+                openAddModal() {
+                    this.isEditing = false;
+                    this.form = {
+                        id: Date.now(),
+                        name: '',
+                        team: 'ORT',
+                        ppo: 75,
+                        cgm: 85.0,
+                        rpm: 4.0,
+                        totalG2G: 100,
+                        ftPt: 'FT',
+                        attendedDays: 22,
+                        totalTransfers: 250,
+                        status: 'Active',
+                        notes: ''
+                    };
+                    this.showModal = true;
+                },
+
+                openEditModal(agent) {
+                    this.isEditing = true;
+                    this.form = { ...agent };
+                    this.showModal = true;
+                },
+
+                closeModal() {
+                    this.showModal = false;
+                },
+
+                saveAgent() {
+                    if (this.isEditing) {
+                        const index = this.agents.findIndex(a => a.id === this.form.id);
+                        if (index !== -1) {
+                            this.agents[index] = { ...this.form };
+                        }
+                    } else {
+                        this.agents.push({ ...this.form, id: Date.now() });
+                    }
+                    this.persist();
+                    this.closeModal();
+                },
+
+                deleteAgent(id) {
+                    if (confirm('Are you sure you want to remove this agent record?')) {
+                        this.agents = this.agents.filter(a => a.id !== id);
+                        this.persist();
+                    }
+                },
+
+                exportCSV() {
+                    let csv = 'ID,Name,Team,PPO,CGM,RPM,Total G2G,FT/PT,Attended Days,Total Transfers,Status,Notes\n';
+                    this.agents.forEach(a => {
+                        csv += `"${a.id}","${a.name}","${a.team}",${a.ppo},${a.cgm},${a.rpm},${a.totalG2G},"${a.ftPt}",${a.attendedDays},${a.totalTransfers},"${a.status}","${(a.notes || '').replace(/"/g, '""')}"\n`;
+                    });
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'GGO_Call_Center_Agents.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+
+                downloadAppFile() {
+                    const htmlContent = document.documentElement.outerHTML;
+                    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'index.html');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        }
+    </script>
+
+</body></html>
