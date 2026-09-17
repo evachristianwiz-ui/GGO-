@@ -117,6 +117,13 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .kpi-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            background-color: #0f2537;
         }
         .kpi-title {
             font-size: 11px;
@@ -137,6 +144,7 @@
             padding: 15px;
             border-radius: 12px;
             border: 1px solid var(--card-border);
+            align-items: center;
         }
         .filters-bar input, .filters-bar select {
             background-color: var(--bg-dark);
@@ -321,26 +329,26 @@
             </div>
         </div>
 
-        <!-- KPI Insights Cards -->
+        <!-- KPI Insights Cards (Clickable for breakdown) -->
         <div class="kpi-container">
-            <div class="kpi-card">
-                <span class="kpi-title">Total Agents</span>
+            <div class="kpi-card" onclick="filterByKpi('all')" title="Click to view all agents">
+                <span class="kpi-title">Total Agents 📊</span>
                 <span class="kpi-value" id="kpiTotal">0</span>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">G2G Achieved (≥ 0.85)</span>
+            <div class="kpi-card" onclick="filterByKpi('g2g_achieved')" title="Click to view agents with G2G ≥ 0.85">
+                <span class="kpi-title">G2G Achieved (≥ 0.85) 🟢</span>
                 <span class="kpi-value" id="kpiG2gAchieved" style="color: #4ade80;">0</span>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">G2G Below (< 0.85)</span>
+            <div class="kpi-card" onclick="filterByKpi('g2g_below')" title="Click to view agents with G2G < 0.85">
+                <span class="kpi-title">G2G Below (< 0.85) 🔴</span>
                 <span class="kpi-value" id="kpiG2gBelow" style="color: #f87171;">0</span>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">Transfers (≥ 2)</span>
+            <div class="kpi-card" onclick="filterByKpi('trans_high')" title="Click to view agents with Transfers ≥ 2">
+                <span class="kpi-title">Transfers (≥ 2) 🔵</span>
                 <span class="kpi-value" id="kpiTransHigh" style="color: #38bdf8;">0</span>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">Transfers (< 2)</span>
+            <div class="kpi-card" onclick="filterByKpi('trans_low')" title="Click to view agents with Transfers < 2">
+                <span class="kpi-title">Transfers (< 2) 🟡</span>
                 <span class="kpi-value" id="kpiTransLow" style="color: #fbbf24;">0</span>
             </div>
         </div>
@@ -371,6 +379,7 @@
                 <option value="New Comer">New Comer</option>
                 <option value="Terminated">Terminated</option>
             </select>
+            <button class="btn" style="background:#334155; padding: 10px 14px; font-size: 13px;" onclick="resetAllFilters()">🔄 Reset Filters</button>
         </div>
 
         <!-- Table -->
@@ -538,6 +547,8 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        let activeKpiFilter = 'all';
 
         window.openModal = function() {
             document.getElementById('modalTitle').innerText = "Add New Agent Production";
@@ -781,7 +792,7 @@
                 allAgents.push({ id: docSnap.id, ...docSnap.data() });
             });
             updateKPIs(allAgents);
-            renderTable(allAgents);
+            filterTable();
         }, (error) => {
             console.error("Error listening to changes:", error);
         });
@@ -797,17 +808,11 @@
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
                 const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
 
-                if (ratioVal >= 0.85) {
-                    g2gAchieved++;
-                } else {
-                    g2gBelow++;
-                }
+                if (ratioVal >= 0.85) g2gAchieved++;
+                else g2gBelow++;
 
-                if (transRatioVal >= 2) {
-                    transHigh++;
-                } else {
-                    transLow++;
-                }
+                if (transRatioVal >= 2) transHigh++;
+                else transLow++;
             });
 
             document.getElementById('kpiTotal').innerText = total;
@@ -817,9 +822,22 @@
             document.getElementById('kpiTransLow').innerText = transLow;
         }
 
+        window.filterByKpi = function(kpiType) {
+            activeKpiFilter = kpiType;
+            filterTable();
+        }
+
+        window.resetAllFilters = function() {
+            document.getElementById('searchInput').value = "";
+            document.getElementById('teamFilter').value = "";
+            document.getElementById('statusFilter').value = "";
+            activeKpiFilter = 'all';
+            filterTable();
+        }
+
         window.renderTable = function(data) {
             if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found. Click "+ Add Agent" to start!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found matching criteria.</td></tr>`;
                 return;
             }
             let html = "";
@@ -877,7 +895,16 @@
                 const matchTeam = team === "" || item.team === team;
                 const matchStatus = status === "" || (item.status || "Active") === status;
 
-                return matchName && matchTeam && matchStatus;
+                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
+                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
+
+                let matchKpi = true;
+                if (activeKpiFilter === 'g2g_achieved') matchKpi = ratioVal >= 0.85;
+                else if (activeKpiFilter === 'g2g_below') matchKpi = ratioVal < 0.85;
+                else if (activeKpiFilter === 'trans_high') matchKpi = transRatioVal >= 2;
+                else if (activeKpiFilter === 'trans_low') matchKpi = transRatioVal < 2;
+
+                return matchName && matchTeam && matchStatus && matchKpi;
             });
             renderTable(filtered);
         }
