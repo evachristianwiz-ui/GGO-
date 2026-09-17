@@ -188,14 +188,6 @@
             font-size: 12px;
             font-weight: bold;
         }
-        .status-break {
-            background-color: rgba(234, 179, 8, 0.2);
-            color: #facc15;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-        }
         .status-probation {
             background-color: rgba(239, 68, 68, 0.2);
             color: #f87171;
@@ -204,6 +196,22 @@
             font-size: 12px;
             font-weight: bold;
             border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+        .status-resigned {
+            background-color: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-terminated {
+            background-color: rgba(100, 116, 139, 0.2);
+            color: #94a3b8;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
         }
         .modal {
             display: none;
@@ -340,8 +348,9 @@
             <select id="statusFilter" onchange="filterTable()">
                 <option value="">All Status</option>
                 <option value="Active">Active</option>
-                <option value="On Break">On Break</option>
-                <option value="Probation">On Probation</option>
+                <option value="Probation">Probation</option>
+                <option value="Resigned">Resigned</option>
+                <option value="Terminated">Terminated</option>
             </select>
         </div>
 
@@ -421,8 +430,9 @@
             <label>Status</label>
             <select id="addStatus">
                 <option value="Active">Active</option>
-                <option value="On Break">On Break</option>
-                <option value="Probation">On Probation</option>
+                <option value="Probation">Probation</option>
+                <option value="Resigned">Resigned</option>
+                <option value="Terminated">Terminated</option>
             </select>
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -783,11 +793,13 @@
                 const hiringDate = item.hiringDate || "";
                 const currentStatus = item.status || "Active";
 
-                let statusBadge = `<span class="status-active">${currentStatus}</span>`;
+                let statusBadge = `<span class="status-active">Active</span>`;
                 if (currentStatus === 'Probation') {
-                    statusBadge = `<span class="status-probation">⚠️ On Probation</span>`;
-                } else if (currentStatus === 'On Break') {
-                    statusBadge = `<span class="status-break">☕ On Break</span>`;
+                    statusBadge = `<span class="status-probation">⚠️ Probation</span>`;
+                } else if (currentStatus === 'Resigned') {
+                    statusBadge = `<span class="status-resigned">📄 Resigned</span>`;
+                } else if (currentStatus === 'Terminated') {
+                    statusBadge = `<span class="status-terminated">❌ Terminated</span>`;
                 }
 
                 html += `<tr>
