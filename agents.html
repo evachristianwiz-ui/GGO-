@@ -12,8 +12,6 @@
             --accent: #00b4d8;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --active-bg: #d1fae5;
-            --active-text: #065f46;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,7 +20,7 @@
             margin: 0;
             padding: 20px;
         }
-        .container { max-width: 1350px; margin: 0 auto; }
+        .container { max-width: 1450px; margin: 0 auto; }
         
         /* Navbar */
         .main-navbar {
@@ -80,7 +78,6 @@
         .btn-accent { background-color: var(--accent); color: var(--bg-dark); }
         .btn-success { background-color: #10b981; color: white; }
         .btn-edit { background-color: #3b82f6; color: white; padding: 5px 10px; font-size: 12px; }
-        .btn-notes { background-color: #8b5cf6; color: white; padding: 5px 10px; font-size: 12px; }
         .btn-danger { background-color: #ef4444; color: white; padding: 5px 10px; font-size: 12px; }
         .btn:hover { opacity: 0.9; }
 
@@ -137,14 +134,15 @@
         }
         th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
         th { background-color: #0f2537; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
-        td { font-size: 13px; }
-        .agent-name-link { color: var(--accent); cursor: pointer; text-decoration: underline; font-weight: bold; }
+        td { font-size: 13px; vertical-align: middle; }
         
-        .status-active { background-color: var(--active-bg); color: var(--active-text); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-probation { background-color: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-resigned { background-color: rgba(234, 179, 8, 0.2); color: #facc15; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-newcomer { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-terminated { background-color: rgba(100, 116, 139, 0.2); color: #94a3b8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        /* Status Badges */
+        .status-badge { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .status-active { background-color: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status-probation { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .status-resigned { background-color: rgba(234, 179, 8, 0.2); color: #facc15; }
+        .status-newcomer { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .status-terminated { background-color: rgba(100, 116, 139, 0.2); color: #94a3b8; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -171,14 +169,13 @@
             <div class="nav-links">
                 <a href="index.html" class="nav-link">📊 Dashboard</a>
                 <a href="agents.html" class="nav-link active">👥 Agents Production & Ranking</a>
-                <a href="#" class="nav-link" style="opacity: 0.5; cursor: not-allowed;">📅 Attendance (Soon)</a>
+                <a href="attendance.html" class="nav-link">📅 Attendance Tracker</a>
             </div>
         </div>
 
         <div class="top-action-bar">
             <div class="nav-title">Production per agent & Top Achievers</div>
             <div class="nav-buttons">
-                <button class="btn btn-success" onclick="exportToExcel()">📥 Export Excel</button>
                 <button class="btn btn-accent" onclick="openModal()">+ Add Agent</button>
             </div>
         </div>
@@ -260,6 +257,7 @@
                 <tr>
                     <th>Agent Name</th>
                     <th>Team</th>
+                    <th>Hiring Date</th>
                     <th>PPO</th>
                     <th>CGM</th>
                     <th>Total G2G's</th>
@@ -273,7 +271,7 @@
                 </tr>
             </thead>
             <tbody id="crmTableBody">
-                <tr><td colspan="12" style="text-align: center;">Loading data...</td></tr>
+                <tr><td colspan="13" style="text-align: center;">Loading data...</td></tr>
             </tbody>
         </table>
     </div>
@@ -300,6 +298,8 @@
                 <option value="Epic">Epic</option>
                 <option value="Peak">Peak</option>
             </select>
+            <label>Hiring Date</label>
+            <input type="date" id="addHiringDate">
             <label>PPO</label>
             <input type="number" id="addPpo" step="any">
             <label>CGM</label>
@@ -353,6 +353,7 @@
             document.getElementById('modalTitle').innerText = "Add New Agent";
             document.getElementById('editAgentId').value = "";
             document.getElementById('addName').value = "";
+            document.getElementById('addHiringDate').value = "";
             document.getElementById('addPpo').value = "";
             document.getElementById('addCgm').value = "";
             document.getElementById('addG2gs').value = "";
@@ -379,6 +380,7 @@
                 name: name,
                 month: document.getElementById('monthFilter').value,
                 team: document.getElementById('addTeam').value,
+                hiringDate: document.getElementById('addHiringDate').value || '',
                 ppo: Number(document.getElementById('addPpo').value) || 0,
                 cgm: Number(document.getElementById('addCgm').value) || 0,
                 g2gs: g2gs,
@@ -494,9 +496,18 @@
                     rankPrefix = `<span class="rank-badge">${rankEmoji} #${rankNum}</span>`;
                 }
 
+                // Determine badge style based on status
+                const currentStatus = item.status || 'Active';
+                let statusClass = 'status-active';
+                if (currentStatus === 'On probation') statusClass = 'status-probation';
+                else if (currentStatus === 'Resigned') statusClass = 'status-resigned';
+                else if (currentStatus === 'New Comer') statusClass = 'status-newcomer';
+                else if (currentStatus === 'Terminated') statusClass = 'status-terminated';
+
                 html += `<tr>
                     <td>${rankPrefix}${item.name}</td>
                     <td>${item.team}</td>
+                    <td>${item.hiringDate || '-'}</td>
                     <td>${item.ppo || 0}</td>
                     <td>${item.cgm || 0}</td>
                     <td><b style="color: var(--accent);">${item.g2gs || 0}</b></td>
@@ -505,21 +516,22 @@
                     <td>${item.transfers || 0}</td>
                     <td><span style="color: ${ratioVal < 0.85 ? '#f87171' : '#4ade80'}; font-weight: bold;">${ratioVal.toFixed(2)}</span></td>
                     <td><span style="color: ${transRatioVal < 2 ? '#fbbf24' : '#38bdf8'}; font-weight: bold;">${transRatioVal.toFixed(2)}</span></td>
-                    <td><span class="status-active">${item.status || 'Active'}</span></td>
+                    <td><span class="status-badge ${statusClass}">${currentStatus}</span></td>
                     <td style="display: flex; gap: 6px;">
-                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name}', '${item.team}', ${item.ppo || 0}, ${item.cgm || 0}, ${item.g2gs || 0}, '${item.type || 'FT'}', ${item.attended || 0}, ${item.transfers || 0}, '${item.status || 'Active'}')">✏️ Edit</button>
+                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name}', '${item.team}', '${item.hiringDate || ''}', ${item.ppo || 0}, ${item.cgm || 0}, ${item.g2gs || 0}, '${item.type || 'FT'}', ${item.attended || 0}, ${item.transfers || 0}, '${currentStatus}')">✏️ Edit</button>
                         <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
                     </td>
                 </tr>`;
             });
-            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found.</td></tr>`;
+            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="13" style="text-align: center; color: var(--text-muted);">No records found.</td></tr>`;
         }
 
-        window.editAgent = function(id, name, team, ppo, cgm, g2gs, type, attended, transfers, status) {
+        window.editAgent = function(id, name, team, hiringDate, ppo, cgm, g2gs, type, attended, transfers, status) {
             document.getElementById('modalTitle').innerText = "Edit Agent Production";
             document.getElementById('editAgentId').value = id;
             document.getElementById('addName').value = name;
             document.getElementById('addTeam').value = team;
+            document.getElementById('addHiringDate').value = hiringDate;
             document.getElementById('addPpo').value = ppo;
             document.getElementById('addCgm').value = cgm;
             document.getElementById('addG2gs').value = g2gs;
