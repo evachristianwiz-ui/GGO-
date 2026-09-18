@@ -23,7 +23,7 @@
             margin: 0;
             padding: 20px;
         }
-        .container { max-width: 1350px; margin: 0 auto; }
+        .container { max-width: 1450px; margin: 0 auto; }
         
         /* Navbar */
         .main-navbar {
@@ -79,7 +79,6 @@
             gap: 8px;
         }
         .btn-accent { background-color: var(--accent); color: var(--bg-dark); }
-        .btn-success { background-color: #10b981; color: white; }
         .btn-edit { background-color: #3b82f6; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; border: none; }
         .btn-danger { background-color: #ef4444; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; border: none; }
         .btn:hover { opacity: 0.9; }
@@ -138,10 +137,10 @@
         
         /* Status Badges */
         .status-active { background-color: rgba(16, 185, 129, 0.15); color: #34d399; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-probation { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .status-probation { background-color: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.4); }
         .status-resigned { background-color: rgba(234, 179, 8, 0.2); color: #facc15; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .status-newcomer { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-terminated { background-color: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .status-terminated { background-color: rgba(100, 116, 139, 0.2); color: #94a3b8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -237,13 +236,14 @@
                     <th>FT/PT</th>
                     <th>Attended</th>
                     <th>Transfers</th>
+                    <th>Transfers Ratio</th>
                     <th>G2G Ratio</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="crmTableBody">
-                <tr><td colspan="9" style="text-align: center;">Loading live data...</td></tr>
+                <tr><td colspan="10" style="text-align: center;">Loading live data...</td></tr>
             </tbody>
         </table>
     </div>
@@ -422,13 +422,22 @@
             filtered.forEach((item, index) => {
                 let rankPrefix = rankingMode !== 'default' ? `<span class="rank-badge">#${index + 1}</span>` : "";
                 const attended = item.attended > 0 ? item.attended : 1;
-                const ratio = (item.g2gs / attended).toFixed(2);
+                const g2gRatio = (item.g2gs / attended).toFixed(2);
+                const transfersRatio = (item.transfers / attended).toFixed(2);
 
                 let statusClass = 'status-active';
-                if (item.status === 'On Probation') statusClass = 'status-probation';
-                else if (item.status === 'New Comer') statusClass = 'status-newcomer';
-                else if (item.status === 'Resigned') statusClass = 'status-resigned';
-                else if (item.status === 'Terminated') statusClass = 'status-terminated';
+                let statusText = item.status || 'Active';
+                
+                if (item.status === 'On Probation') {
+                    statusClass = 'status-probation';
+                    statusText = '⚠️ On Probation';
+                } else if (item.status === 'New Comer') {
+                    statusClass = 'status-newcomer';
+                } else if (item.status === 'Resigned') {
+                    statusClass = 'status-resigned';
+                } else if (item.status === 'Terminated') {
+                    statusClass = 'status-terminated';
+                }
 
                 html += `<tr>
                     <td>${rankPrefix}${item.name}</td>
@@ -437,15 +446,16 @@
                     <td>${item.type || 'FT'}</td>
                     <td>${item.attended || 0}</td>
                     <td>${item.transfers || 0}</td>
-                    <td><b style="color: ${ratio >= 0.85 ? '#34d399' : '#f87171'};">${ratio}</b></td>
-                    <td><span class="${statusClass}">${item.status || 'Active'}</span></td>
+                    <td><b style="color: ${transfersRatio >= 2.0 ? '#34d399' : '#f87171'};">${transfersRatio}</b></td>
+                    <td><b style="color: ${g2gRatio >= 0.85 ? '#34d399' : '#f87171'};">${g2gRatio}</b></td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
                     <td>
                         <button class="btn-edit" onclick="editAgent('${item.id}')">Edit</button>
                         <button class="btn-danger" onclick="deleteAgent('${item.id}')">Delete</button>
                     </td>
                 </tr>`;
             });
-            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
+            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="10" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
         }
     </script>
 </body>
