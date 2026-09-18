@@ -23,7 +23,7 @@
             margin: 0;
             padding: 20px;
         }
-        .container { max-width: 1450px; margin: 0 auto; }
+        .container { max-width: 1550px; margin: 0 auto; }
         
         /* Navbar */
         .main-navbar {
@@ -123,13 +123,17 @@
         }
         .filters-bar input { flex: 1; min-width: 180px; }
 
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            background-color: var(--card-bg);
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
+            white-space: nowrap;
         }
         th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
         th { background-color: #0f2537; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
@@ -228,25 +232,29 @@
         </div>
 
         <!-- Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Agent Name</th>
-                    <th>Team</th>
-                    <th>Total G2G's</th>
-                    <th>FT/PT</th>
-                    <th>Attended</th>
-                    <th>Transfers</th>
-                    <th>Transfers Ratio</th>
-                    <th>G2G Ratio</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="crmTableBody">
-                <tr><td colspan="10" style="text-align: center;">Loading live data...</td></tr>
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Agent Name</th>
+                        <th>Team</th>
+                        <th>Total G2G's</th>
+                        <th>MLA G2G</th>
+                        <th>FT/PT</th>
+                        <th>Attended</th>
+                        <th>Transfers</th>
+                        <th>MLA Transfers</th>
+                        <th>Transfers Ratio</th>
+                        <th>G2G Ratio</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="crmTableBody">
+                    <tr><td colspan="12" style="text-align: center;">Loading live data...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Add / Edit Modal -->
@@ -279,10 +287,14 @@
             </select>
             <label>Total G2G's</label>
             <input type="number" id="addG2gs" placeholder="0">
+            <label>MLA G2G's</label>
+            <input type="number" id="addMlaG2gs" placeholder="0">
             <label>Attended Days</label>
             <input type="number" id="addAttended" step="0.1" placeholder="0">
             <label>Transfers</label>
             <input type="number" id="addTransfers" placeholder="0">
+            <label>MLA Transfers</label>
+            <input type="number" id="addMlaTransfers" placeholder="0">
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="btn btn-accent" style="flex:1;" onclick="saveAgentData()">Save</button>
                 <button class="btn" style="flex:1;" onclick="closeModal()">Cancel</button>
@@ -313,8 +325,10 @@
             document.getElementById('editAgentId').value = "";
             document.getElementById('addName').value = '';
             document.getElementById('addG2gs').value = '';
+            document.getElementById('addMlaG2gs').value = '';
             document.getElementById('addAttended').value = '';
             document.getElementById('addTransfers').value = '';
+            document.getElementById('addMlaTransfers').value = '';
             document.getElementById('agentModal').style.display = 'flex';
         }
 
@@ -330,8 +344,10 @@
             document.getElementById('addType').value = agent.type || 'FT';
             document.getElementById('addStatus').value = agent.status || 'Active';
             document.getElementById('addG2gs').value = agent.g2gs || 0;
+            document.getElementById('addMlaG2gs').value = agent.mlaG2gs || 0;
             document.getElementById('addAttended').value = agent.attended || 0;
             document.getElementById('addTransfers').value = agent.transfers || 0;
+            document.getElementById('addMlaTransfers').value = agent.mlaTransfers || 0;
             document.getElementById('agentModal').style.display = 'flex';
         }
 
@@ -357,8 +373,10 @@
                 type: document.getElementById('addType').value,
                 status: document.getElementById('addStatus').value,
                 g2gs: Number(document.getElementById('addG2gs').value) || 0,
+                mlaG2gs: Number(document.getElementById('addMlaG2gs').value) || 0,
                 attended: Number(document.getElementById('addAttended').value) || 0,
-                transfers: Number(document.getElementById('addTransfers').value) || 0
+                transfers: Number(document.getElementById('addTransfers').value) || 0,
+                mlaTransfers: Number(document.getElementById('addMlaTransfers').value) || 0
             };
 
             try {
@@ -445,9 +463,11 @@
                     <td>${rankPrefix}${item.name}</td>
                     <td>${item.team}</td>
                     <td><b>${item.g2gs || 0}</b></td>
+                    <td style="color: var(--accent); font-weight: bold;">${item.mlaG2gs || 0}</td>
                     <td>${item.type || 'FT'}</td>
                     <td>${item.attended || 0}</td>
                     <td>${item.transfers || 0}</td>
+                    <td style="color: var(--accent); font-weight: bold;">${item.mlaTransfers || 0}</td>
                     <td><b style="color: ${transfersRatio >= 2.0 ? '#34d399' : '#f87171'};">${transfersRatio}</b></td>
                     <td><b style="color: ${g2gRatio >= 0.85 ? '#34d399' : '#f87171'};">${g2gRatio}</b></td>
                     <td>${statusBadgeHTML}</td>
@@ -457,7 +477,7 @@
                     </td>
                 </tr>`;
             });
-            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="10" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
+            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
         }
     </script>
 </body>
