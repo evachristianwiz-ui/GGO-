@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGO - Login Portal</title>
+    <style>
+        :root {
+            --bg-dark: #070f1e;
+            --card-bg: #0b192c;
+            --card-border: #1e3e62;
+            --accent: #00b4d8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 40px;
+            border-radius: 16px;
+            width: 380px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .logo-img { height: 50px; margin-bottom: 20px; object-fit: contain; }
+        h2 { color: var(--accent); margin-bottom: 10px; font-size: 22px; }
+        p { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: opacity 0.2s;
+        }
+        .btn-admin { background-color: var(--accent); color: var(--bg-dark); }
+        .btn-agent { background-color: #10b981; color: white; }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <img src="GGO-White-Var2.png" alt="Logo" class="logo-img">
+        <h2>Welcome to GGO Portal</h2>
+        <p>Please select your access role to continue</p>
+
+        <button class="btn btn-admin" onclick="loginAs('admin')">🔐 Login as Admin (Manager)</button>
+        <button class="btn btn-agent" onclick="loginAs('agent')">👤 Login as Agent (View Only)</button>
+    </div>
+
+    <script>
+        function loginAs(role) {
+            if (role === 'admin') {
+                // حفظ الصلاحية في المتصفح وتوجيهه للداشبورد الكاملة
+                localStorage.setItem('ggo_role', 'admin');
+                window.location.href = 'dashboard.html';
+            } else {
+                // حفظ الصلاحية وتوجيهه لصفحة الرانكينج أو الداشبورد المخصصة للموظفين
+                localStorage.setItem('ggo_role', 'agent');
+                window.location.href = 'today-ranking.html';
+            }
+        }
+    </script>
+</body>
+</html>
