@@ -239,6 +239,7 @@
 
         let agentsDataMap = {};
 
+        // جلب البيانات ومزامنتها فورياً مع السيرفر وعند كل الناس
         agentsRef.on('value', (snapshot) => {
             agentsDataMap = snapshot.val() || {};
             renderTable();
