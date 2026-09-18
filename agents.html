@@ -409,14 +409,14 @@
             if (!agent) return;
             document.getElementById('modalTitle').innerText = "Edit Agent Production Record";
             document.getElementById('editFirebaseKey').value = firebaseKey;
-            document.getElementById('agentName').value = agent.name;
-            document.getElementById('agentTeam').value = agent.team;
-            document.getElementById('agentType').value = agent.type;
-            document.getElementById('agentHiring').value = agent.hiring;
-            document.getElementById('agentStatus').value = agent.status;
-            document.getElementById('agentAttended').value = agent.attended;
-            document.getElementById('agentTransfers').value = agent.transfers;
-            document.getElementById('agentG2G').value = agent.g2g;
+            document.getElementById('agentName').value = agent.name || '';
+            document.getElementById('agentTeam').value = agent.team || 'Wazowski#1';
+            document.getElementById('agentType').value = agent.type || 'FT';
+            document.getElementById('agentHiring').value = agent.hiring || '';
+            document.getElementById('agentStatus').value = agent.status || 'Active';
+            document.getElementById('agentAttended').value = agent.attended || 0;
+            document.getElementById('agentTransfers').value = agent.transfers || 0;
+            document.getElementById('agentG2G').value = agent.g2g || 0;
             document.getElementById('agentModalCard').style.display = 'block';
         }
 
@@ -496,7 +496,7 @@
                 const agent = agentsDataMap[key];
                 agent.key = key;
                 
-                const matchesSearch = agent.name.toLowerCase().includes(searchVal);
+                const matchesSearch = (agent.name || '').toLowerCase().includes(searchVal);
                 const matchesTeam = teamVal === "" || agent.team === teamVal;
                 const matchesStatus = statusVal === "" || agent.status === statusVal;
                 const matchesMonth = monthVal === "" || (agent.hiring && agent.hiring.startsWith(monthVal));
@@ -540,16 +540,16 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${agent.name}</b></td>
-                        <td>${agent.team}</td>
+                        <td><b>${agent.name || ''}</b></td>
+                        <td>${agent.team || ''}</td>
                         <td><span style="background:var(--card-border); padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold; color:var(--accent);">${campaign}</span></td>
-                        <td><span class="badge ${typeBadgeClass}">${agent.type}</span></td>
-                        <td>${agent.hiring}</td>
-                        <td><span class="badge ${statusBadgeClass}">${agent.status}</span></td>
-                        <td><b style="color: var(--accent);">${agent.attended}</b> days</td>
-                        <td><b>${agent.transfers}</b></td>
+                        <td><span class="badge ${typeBadgeClass}">${agent.type || 'FT'}</span></td>
+                        <td>${agent.hiring || ''}</td>
+                        <td><span class="badge ${statusBadgeClass}">${agent.status || 'Active'}</span></td>
+                        <td><b style="color: var(--accent);">${agent.attended || 0}</b> days</td>
+                        <td><b>${agent.transfers || 0}</b></td>
                         <td><b style="font-size:14px;">${transRatio}</b> ${transBadge}</td>
-                        <td><b>${agent.g2g}</b></td>
+                        <td><b>${agent.g2g || 0}</b></td>
                         <td><b style="font-size:14px;">${g2gRatio}</b> ${g2gBadge}</td>
                         <td>
                             <button class="btn-action" onclick="editAgent('${agent.key}')">Edit</button>
