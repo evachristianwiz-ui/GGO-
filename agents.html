@@ -23,7 +23,7 @@
             margin: 0;
             padding: 20px;
         }
-        .container { max-width: 1550px; margin: 0 auto; }
+        .container { max-width: 1600px; margin: 0 auto; }
         
         /* Navbar */
         .main-navbar {
@@ -237,6 +237,7 @@
                 <thead>
                     <tr>
                         <th>Agent Name</th>
+                        <th>Hiring Date</th>
                         <th>Team</th>
                         <th>Total G2G's</th>
                         <th>MLA G2G</th>
@@ -251,7 +252,7 @@
                     </tr>
                 </thead>
                 <tbody id="crmTableBody">
-                    <tr><td colspan="12" style="text-align: center;">Loading live data...</td></tr>
+                    <tr><td colspan="13" style="text-align: center;">Loading live data...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -264,6 +265,8 @@
             <input type="hidden" id="editAgentId">
             <label>Agent Name</label>
             <input type="text" id="addName" placeholder="Full name...">
+            <label>Hiring Date</label>
+            <input type="date" id="addHiring">
             <label>Team</label>
             <select id="addTeam">
                 <option value="Wazowski#1">Wazowski#1</option>
@@ -324,6 +327,7 @@
             document.getElementById('modalTitle').innerText = "Add Agent";
             document.getElementById('editAgentId').value = "";
             document.getElementById('addName').value = '';
+            document.getElementById('addHiring').value = '';
             document.getElementById('addG2gs').value = '';
             document.getElementById('addMlaG2gs').value = '';
             document.getElementById('addAttended').value = '';
@@ -340,6 +344,7 @@
             document.getElementById('modalTitle').innerText = "Edit Agent";
             document.getElementById('editAgentId').value = agent.id;
             document.getElementById('addName').value = agent.name || '';
+            document.getElementById('addHiring').value = agent.hiring || '';
             document.getElementById('addTeam').value = agent.team || 'Wazowski#1';
             document.getElementById('addType').value = agent.type || 'FT';
             document.getElementById('addStatus').value = agent.status || 'Active';
@@ -368,6 +373,7 @@
 
             const agentData = {
                 name: name,
+                hiring: document.getElementById('addHiring').value,
                 month: document.getElementById('monthFilter').value,
                 team: document.getElementById('addTeam').value,
                 type: document.getElementById('addType').value,
@@ -461,6 +467,7 @@
 
                 html += `<tr>
                     <td>${rankPrefix}${item.name}</td>
+                    <td style="color: var(--text-muted); font-size: 12px;">${item.hiring || '-'}</td>
                     <td>${item.team}</td>
                     <td><b>${item.g2gs || 0}</b></td>
                     <td style="color: var(--accent); font-weight: bold;">${item.mlaG2gs || 0}</td>
@@ -477,7 +484,7 @@
                     </td>
                 </tr>`;
             });
-            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
+            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="13" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
         }
     </script>
 </body>
