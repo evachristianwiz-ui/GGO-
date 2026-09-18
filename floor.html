@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGO - Day to Day Floor Production</title>
+    <title>GGO - Day-to-Day Floor</title>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -13,49 +13,110 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --success: #10b981;
-            --danger: #ef4444;
             --warning: #f59e0b;
+            --danger: #ef4444;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-dark); color: var(--text-main); margin: 0; padding: 20px; }
-        .container { max-width: 1700px; margin: 0 auto; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
         
-        .main-navbar { display: flex; justify-content: space-between; align-items: center; background-color: var(--card-bg); padding: 12px 25px; border-radius: 12px; border: 1px solid var(--card-border); margin-bottom: 25px; }
+        /* Navbar */
+        .main-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+        }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 40px; width: auto; object-fit: contain; }
         .nav-links { display: flex; gap: 15px; }
-        .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 600; padding: 8px 14px; border-radius: 8px; transition: all 0.2s; }
-        .nav-link:hover, .nav-link.active { background-color: var(--accent); color: var(--bg-dark); }
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+        }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--card-border); }
-        .date-picker-area { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--accent); }
-        .date-picker-area input { background: var(--bg-dark); border: 1px solid var(--card-border); color: #fff; padding: 8px 12px; border-radius: 6px; }
+        .top-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .nav-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+        }
+        .btn {
+            background-color: var(--card-border);
+            color: var(--text-main);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-accent { background-color: var(--accent); color: var(--bg-dark); }
+        .btn:hover { opacity: 0.9; }
 
-        .floor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .team-column { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; }
-        .team-header { background: #0f2537; padding: 12px; text-align: center; font-weight: bold; font-size: 16px; color: var(--accent); border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
-        .team-badge { background: var(--card-border); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: #facc15; }
+        /* Team Section */
+        .team-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+        .team-title { font-size: 16px; font-weight: bold; color: var(--accent); }
+        .team-leader { font-size: 13px; color: var(--text-muted); }
 
-        .agent-row { display: grid; grid-template-columns: 2fr 1fr 1.5fr; border-bottom: 1px solid var(--card-border); align-items: center; font-size: 13px; }
-        .agent-name { padding: 10px; font-weight: 600; border-right: 1px solid var(--card-border); }
-        .agent-val { padding: 10px; text-align: center; font-weight: bold; border-right: 1px solid var(--card-border); }
-        .agent-status { padding: 8px; text-align: center; font-size: 11px; font-weight: bold; }
-
-        .status-g2g { background: rgba(16, 185, 129, 0.25); color: #34d399; }
-        .status-bad { background: rgba(239, 68, 68, 0.25); color: #f87171; }
-        .status-postponed { background: rgba(245, 158, 11, 0.25); color: #fbbf24; }
-
-        .total-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; display: flex; justify-content: space-around; align-items: center; }
-        .total-box { text-align: center; }
-        .total-box h3 { margin: 0 0 5px 0; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
-        .total-box .num { font-size: 28px; font-weight: bold; color: var(--accent); }
-
-        .btn-add-lead { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn-add-lead:hover { opacity: 0.9; }
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--card-border); }
+        th { background-color: #0f2537; color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+        td { font-size: 13px; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 12px; width: 400px; border: 1px solid var(--card-border); }
-        .modal-content label { display: block; font-size: 12px; color: var(--text-muted); margin-top: 10px; }
-        .modal-content input, .modal-content select { width: 100%; padding: 10px; margin-top: 5px; background: var(--bg-dark); border: 1px solid var(--card-border); color: #fff; border-radius: 6px; box-sizing: border-box; }
+        input.floor-input {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 6px;
+            width: 80px;
+            outline: none;
+        }
+        input.floor-input:focus { border-color: var(--accent); }
+
+        .total-row {
+            background-color: rgba(0, 180, 216, 0.1);
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -73,177 +134,300 @@
             </div>
         </div>
 
-        <div class="top-bar">
-            <div class="date-picker-area">
-                <span>Select Date:</span>
-                <input type="date" id="floorDate" onchange="loadFloorData()">
-            </div>
-            <button class="btn-add-lead" onclick="openLeadModal()">+ Add Floor Entry</button>
-        </div>
-
-        <!-- Floor Grid per Team -->
-        <div class="floor-grid" id="floorGridContainer"></div>
-
-        <!-- Total Production Summary -->
-        <div class="total-section">
-            <div class="total-box">
-                <h3>CGM Total Production</h3>
-                <div class="num" id="totalCgmFloor">0</div>
-            </div>
-            <div class="total-box">
-                <h3>MLA Total Production</h3>
-                <div class="num" id="totalMlaFloor" style="color: #f59e0b;">0</div>
-            </div>
-            <div class="total-box">
-                <h3>Total Floor Entries</h3>
-                <div class="num" id="totalFloorCount">0</div>
+        <div class="top-action-bar">
+            <div class="nav-title">Day-to-Day Floor Tracking & Daily Log</div>
+            <div>
+                <button class="btn btn-accent" onclick="saveFloorData()">💾 Save Daily Sheet</button>
             </div>
         </div>
+
+        <!-- Team 1: Wazowski -->
+        <div class="team-section" data-team="Wazowski">
+            <div class="team-header">
+                <span class="team-title">Team: Wazowski</span>
+                <span class="team-leader">Team Leader: Mavis Miller</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent Name</th>
+                            <th>Attended (1/0)</th>
+                            <th>G2G's</th>
+                            <th>MLA G2G's</th>
+                            <th>Transfers</th>
+                            <th>MLA Transfers</th>
+                            <th>Status / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Adam</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Rafy</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Victor</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Mia</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Charlotte</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Jessy</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Amy</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr class="total-row">
+                            <td>Total Wazowski</td>
+                            <td class="team-tot-attended">0</td>
+                            <td class="team-tot-g2g">0</td>
+                            <td class="team-tot-mla-g2g">0</td>
+                            <td class="team-tot-trans">0</td>
+                            <td class="team-tot-mla-trans">0</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team 2: Unity -->
+        <div class="team-section" data-team="Unity">
+            <div class="team-header">
+                <span class="team-title">Team: Unity</span>
+                <span class="team-leader">Team Leader: William White</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent Name</th>
+                            <th>Attended (1/0)</th>
+                            <th>G2G's</th>
+                            <th>MLA G2G's</th>
+                            <th>Transfers</th>
+                            <th>MLA Transfers</th>
+                            <th>Status / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Ray</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Coby</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Scarlett</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Cloe</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Ian</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Jacob</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr class="total-row">
+                            <td>Total Unity</td>
+                            <td class="team-tot-attended">0</td>
+                            <td class="team-tot-g2g">0</td>
+                            <td class="team-tot-mla-g2g">0</td>
+                            <td class="team-tot-trans">0</td>
+                            <td class="team-tot-mla-trans">0</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team 3: Bloom -->
+        <div class="team-section" data-team="Bloom">
+            <div class="team-header">
+                <span class="team-title">Team: Bloom</span>
+                <span class="team-leader">Team Leader: Donna Bell</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent Name</th>
+                            <th>Attended (1/0)</th>
+                            <th>G2G's</th>
+                            <th>MLA G2G's</th>
+                            <th>Transfers</th>
+                            <th>MLA Transfers</th>
+                            <th>Status / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Anna</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Heaven</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Katherine</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Maddy</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Celine</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Jules</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Kim</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Jennifer</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Austin</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Grace</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Paris</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Eric</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr class="total-row">
+                            <td>Total Bloom</td>
+                            <td class="team-tot-attended">0</td>
+                            <td class="team-tot-g2g">0</td>
+                            <td class="team-tot-mla-g2g">0</td>
+                            <td class="team-tot-trans">0</td>
+                            <td class="team-tot-mla-trans">0</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team 4: PGX -->
+        <div class="team-section" data-team="PGX">
+            <div class="team-header">
+                <span class="team-title">Team: PGX</span>
+                <span class="team-leader">Team Leader: Jordan Kelly</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent Name</th>
+                            <th>Attended (1/0)</th>
+                            <th>G2G's</th>
+                            <th>MLA G2G's</th>
+                            <th>Transfers</th>
+                            <th>MLA Transfers</th>
+                            <th>Status / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Stewart</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Micheal</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Jeremy</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Daisy</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Diana</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Hannah</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Camila</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Catilyn</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Emma</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Owen</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr class="total-row">
+                            <td>Total PGX</td>
+                            <td class="team-tot-attended">0</td>
+                            <td class="team-tot-g2g">0</td>
+                            <td class="team-tot-mla-g2g">0</td>
+                            <td class="team-tot-trans">0</td>
+                            <td class="team-tot-mla-trans">0</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team 5: Saint Fatima -->
+        <div class="team-section" data-team="Saint Fatima">
+            <div class="team-header">
+                <span class="team-title">Team: Saint Fatima</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent Name</th>
+                            <th>Attended (1/0)</th>
+                            <th>G2G's</th>
+                            <th>MLA G2G's</th>
+                            <th>Transfers</th>
+                            <th>MLA Transfers</th>
+                            <th>Status / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Lexi</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Katie</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Elena</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Daisy</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr class="total-row">
+                            <td>Total Saint Fatima</td>
+                            <td class="team-tot-attended">0</td>
+                            <td class="team-tot-g2g">0</td>
+                            <td class="team-tot-mla-g2g">0</td>
+                            <td class="team-tot-trans">0</td>
+                            <td class="team-tot-mla-trans">0</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team 6: MLA Team -->
+        <div class="team-section" data-team="MLA Team">
+            <div class="team-header">
+                <span class="team-title">Team: MLA Team</span>
+                <span class="team-leader">Team Leader: Ashley & Williams</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent Name</th>
+                            <th>Attended (1/0)</th>
+                            <th>G2G's</th>
+                            <th>MLA G2G's</th>
+                            <th>Transfers</th>
+                            <th>MLA Transfers</th>
+                            <th>Status / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Roben</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Ryan</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Haley</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Nina</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Kai</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Elle</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Monica</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Jennie</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Tia</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr><td>Riley</td><td><input type="number" class="floor-input attended" value="1" min="0" max="1" oninput="calculateTotals()"></td><td><input type="number" class="floor-input g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-g2g" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
+                        <tr class="total-row">
+                            <td>Total MLA Team</td>
+                            <td class="team-tot-attended">0</td>
+                            <td class="team-tot-g2g">0</td>
+                            <td class="team-tot-mla-g2g">0</td>
+                            <td class="team-tot-trans">0</td>
+                            <td class="team-tot-mla-trans">0</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Add Lead Modal -->
-    <div id="leadModal" class="modal">
-        <div class="modal-content">
-            <h3 style="color: var(--accent); margin-top:0;">Add Floor Production Entry</h3>
-            <label>Agent Name</label>
-            <input type="text" id="leadAgentName" placeholder="Agent name...">
-            <label>Team</label>
-            <select id="leadTeam">
-                <option value="Wazowski#1">Wazowski#1</option>
-                <option value="Wazowski#2">Wazowski#2</option>
-                <option value="Midblue">Midblue</option>
-                <option value="Prime">Prime</option>
-                <option value="Mla">Mla</option>
-            </select>
-            <label>Campaign</label>
-            <select id="leadCampaign">
-                <option value="CGM">CGM</option>
-                <option value="MLA">MLA</option>
-            </select>
-            <label>Value / Count</label>
-            <input type="number" id="leadValue" value="1">
-            <label>Status</label>
-            <select id="leadStatus">
-                <option value="G2G">G2G 🟢</option>
-                <option value="Bad">Bad 🔴</option>
-                <option value="Postponed">Postponed 🟡</option>
-            </select>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-add-lead" style="flex:1; margin:0;" onclick="saveFloorLead()">Save</button>
-                <button class="btn-add-lead" style="flex:1; margin:0; background:var(--card-border);" onclick="closeLeadModal()">Cancel</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        function calculateTotals() {
+            const sections = document.querySelectorAll('.team-section');
+            sections.forEach(section => {
+                let totAttended = 0;
+                let totG2g = 0;
+                let totMlaG2g = 0;
+                let totTrans = 0;
+                let totMlaTrans = 0;
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
-            authDomain: "ggo-production-per-agent.firebaseapp.com",
-            projectId: "ggo-production-per-agent",
-            storageBucket: "ggo-production-per-agent.firebasestorage.app",
-            messagingSenderId: "825359557967",
-            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        document.getElementById('floorDate').valueAsDate = new Date();
-
-        window.openLeadModal = () => { document.getElementById('leadModal').style.display = 'flex'; }
-        window.closeLeadModal = () => { document.getElementById('leadModal').style.display = 'none'; }
-
-        window.saveFloorLead = async function() {
-            const date = document.getElementById('floorDate').value;
-            const name = document.getElementById('leadAgentName').value.trim();
-            const team = document.getElementById('leadTeam').value;
-            const campaign = document.getElementById('leadCampaign').value;
-            const val = Number(document.getElementById('leadValue').value) || 0;
-            const status = document.getElementById('leadStatus').value;
-
-            if(!name) { alert("Please enter agent name"); return; }
-
-            try {
-                await addDoc(collection(db, "floor_production"), { date, name, team, campaign, val, status });
-                closeLeadModal();
-                loadFloorData();
-            } catch(e) {
-                alert("Error saving: " + e.message);
-            }
-        }
-
-        window.loadFloorData = function() {
-            const selectedDate = document.getElementById('floorDate').value;
-            
-            onSnapshot(collection(db, "floor_production"), (snapshot) => {
-                let entries = [];
-                snapshot.forEach(docSnap => {
-                    let data = docSnap.data();
-                    if(data.date === selectedDate) {
-                        entries.push({ id: docSnap.id, ...data });
-                    }
+                const rows = section.querySelectorAll('tbody tr:not(.total-row)');
+                rows.forEach(row => {
+                    totAttended += Number(row.querySelector('.attended').value) || 0;
+                    totG2g += Number(row.querySelector('.g2g').value) || 0;
+                    totMlaG2g += Number(row.querySelector('.mla-g2g').value) || 0;
+                    totTrans += Number(row.querySelector('.trans').value) || 0;
+                    totMlaTrans += Number(row.querySelector('.mla-trans').value) || 0;
                 });
-                renderFloor(entries);
+
+                section.querySelector('.team-tot-attended').innerText = totAttended;
+                section.querySelector('.team-tot-g2g').innerText = totG2g;
+                section.querySelector('.team-tot-mla-g2g').innerText = totMlaG2g;
+                section.querySelector('.team-tot-trans').innerText = totTrans;
+                section.querySelector('.team-tot-mla-trans').innerText = totMlaTrans;
             });
         }
 
-        function renderFloor(entries) {
-            let teamsMap = {};
-            let cgmTotal = 0;
-            let mlaTotal = 0;
-
-            entries.forEach(item => {
-                if(!teamsMap[item.team]) teamsMap[item.team] = [];
-                teamsMap[item.team].push(item);
-
-                if(item.campaign === 'MLA' && item.status === 'G2G') mlaTotal += item.val;
-                if(item.campaign === 'CGM' && item.status === 'G2G') cgmTotal += item.val;
-            });
-
-            document.getElementById('totalCgmFloor').innerText = cgmTotal;
-            document.getElementById('totalMlaFloor').innerText = mlaTotal;
-            document.getElementById('totalFloorCount').innerText = entries.length;
-
-            let gridHtml = "";
-            const teamsList = ["Wazowski#1", "Wazowski#2", "Midblue", "Prime", "Mla"];
-
-            teamsList.forEach(tName => {
-                let tEntries = teamsMap[tName] || [];
-                gridHtml += `
-                    <div class="team-column">
-                        <div class="team-header">
-                            <span>${tName}</span>
-                            <span class="team-badge">${tEntries.length} Entries</span>
-                        </div>
-                `;
-
-                if(tEntries.length === 0) {
-                    gridHtml += `<div style="padding: 15px; text-align: center; color: var(--text-muted); font-size: 12px;">No entries for this date</div>`;
-                } else {
-                    tEntries.forEach(entry => {
-                        let statusClass = 'status-g2g';
-                        if(entry.status === 'Bad') statusClass = 'status-bad';
-                        if(entry.status === 'Postponed') statusClass = 'status-postponed';
-
-                        gridHtml += `
-                            <div class="agent-row">
-                                <div class="agent-name">${entry.name}</div>
-                                <div class="agent-val">${entry.val}</div>
-                                <div class="agent-status ${statusClass}">${entry.status}</div>
-                            </div>
-                        `;
-                    });
-                }
-                gridHtml += `</div>`;
-            });
-
-            document.getElementById('floorGridContainer').innerHTML = gridHtml;
+        function saveFloorData() {
+            alert("Daily floor sheet calculated and ready! (You can connect this to Firebase easily if you wish to store daily logs).");
         }
 
-        loadFloorData();
+        // Run calculation on load
+        window.onload = calculateTotals;
     </script>
 </body>
 </html>
