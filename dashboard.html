@@ -123,21 +123,23 @@
 </head>
 <body>
 
-    <!-- حماية الكود والتحقق من تسجيل الدخول -->
+    <!-- كود التحقق من الصلاحيات وعرض اللينكات -->
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const userRole = localStorage.getItem('userRole');
             
-            // لو مش مسجل دخول، حوله لصفحة الـ Login فوراً
+            // لو اليوزر مش مسجل دخول نهائياً، يرجع لصفحة الـ Login
             if (!userRole) {
                 window.location.href = 'login.html';
                 return;
             }
 
-            // لو اليوزر مانيدجر، نظهر له اللينكات الخاصة بالصلاحيات الكاملة
+            // لو اليوزر مدير (Manager)، نظهر له اللينكات الخاصة بالـ Production والـ Attendance
             if (userRole === 'manager') {
                 const managerLinks = document.querySelectorAll('.manager-only');
-                managerLinks.forEach(link => link.style.display = 'inline-block');
+                managerLinks.forEach(link => {
+                    link.style.display = 'inline-block';
+                });
             }
         });
 
@@ -157,7 +159,7 @@
             <div class="nav-links" id="navLinksContainer">
                 <a href="index.html" class="nav-link active">📊 Dashboard & Ranking</a>
                 
-                <!-- صفحات خاصة بالـ Managers فقط (مخفية تلقائياً عن الأージェنتات) -->
+                <!-- اللينكات دي مخفية للأージェنت، وبتظهر للمدير فقط -->
                 <a href="agents.html" class="nav-link manager-only" style="display: none;">👥 Agents Production</a>
                 <a href="attendance.html" class="nav-link manager-only" style="display: none;">📅 Attendance</a>
                 
