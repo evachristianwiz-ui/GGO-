@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGO - Operations CRM</title>
+    <title>GGO CRM - Dashboard</title>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -12,8 +12,6 @@
             --accent: #00b4d8;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --active-bg: #d1fae5;
-            --active-text: #065f46;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,544 +20,88 @@
             margin: 0;
             padding: 20px;
         }
-        .container {
-            max-width: 1350px;
-            margin: 0 auto;
-        }
-        .top-nav {
+        .container { max-width: 1350px; margin: 0 auto; }
+        
+        /* Navbar الموحد للتنقل بين الصفحات */
+        .main-navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: var(--card-bg);
-            padding: 15px 25px;
+            padding: 12px 25px;
             border-radius: 12px;
             border: 1px solid var(--card-border);
             margin-bottom: 25px;
         }
-        .logo-area {
+        .nav-links {
             display: flex;
-            align-items: center;
             gap: 15px;
         }
-        .logo-img {
-            height: 45px;
-            width: auto;
-            object-fit: contain;
-        }
-        .nav-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--accent);
-            border-left: 3px solid var(--accent);
-            padding-left: 12px;
-        }
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .btn {
-            background-color: var(--card-border);
-            color: var(--text-main);
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
-        .btn-accent {
+        .nav-link:hover, .nav-link.active {
             background-color: var(--accent);
             color: var(--bg-dark);
         }
-        .btn-success {
-            background-color: #10b981;
-            color: white;
-        }
-        .btn-edit {
-            background-color: #3b82f6;
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        .btn-notes {
-            background-color: #8b5cf6;
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        .btn:hover {
-            opacity: 0.9;
-        }
-        /* KPI Cards */
-        .kpi-container {
+        .logo-img { height: 40px; width: auto; object-fit: contain; }
+
+        /* Dashboard Cards */
+        .grid-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
             margin-bottom: 25px;
         }
-        .kpi-card {
+        .card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 18px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .kpi-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            background-color: #0f2537;
-        }
-        .kpi-title {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        .kpi-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--text-main);
-        }
-        .filters-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            background-color: var(--card-bg);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .filters-bar input, .filters-bar select {
-            background-color: var(--bg-dark);
-            border: 1px solid var(--card-border);
-            color: var(--text-main);
-            padding: 10px;
-            border-radius: 8px;
-            outline: none;
-        }
-        .filters-bar input {
-            flex: 1;
-            min-width: 180px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-        }
-        th, td {
-            padding: 12px 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--card-border);
-        }
-        th {
-            background-color: #0f2537;
-            color: var(--text-muted);
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        td {
-            font-size: 13px;
-        }
-        .agent-name-link {
-            color: var(--accent);
-            cursor: pointer;
-            text-decoration: underline;
-            font-weight: bold;
-        }
-        .agent-name-link:hover {
-            color: #38bdf8;
-        }
-        .status-active {
-            background-color: var(--active-bg);
-            color: var(--active-text);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .status-probation {
-            background-color: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            border: 1px solid rgba(239, 68, 68, 0.4);
-        }
-        .status-resigned {
-            background-color: rgba(234, 179, 8, 0.2);
-            color: #facc15;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .status-newcomer {
-            background-color: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-        }
-        .status-terminated {
-            background-color: rgba(100, 116, 139, 0.2);
-            color: #94a3b8;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.75);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: var(--card-bg);
             padding: 25px;
             border-radius: 12px;
-            width: 480px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        .modal-content label {
-            font-size: 12px;
-            color: var(--text-muted);
-            display: block;
-            margin-top: 8px;
-        }
-        .modal-content input, .modal-content select, .modal-content textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 4px;
-            margin-bottom: 10px;
-            background: var(--bg-dark);
-            border: 1px solid var(--card-border);
-            color: #fff;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-        .history-item {
-            background: var(--bg-dark);
-            border: 1px solid var(--card-border);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            position: relative;
-        }
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--accent);
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .history-text {
-            font-size: 13px;
-            color: var(--text-main);
-            white-space: pre-wrap;
-        }
-        .badge-probation {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-        }
-        .badge-note {
-            background: rgba(0, 180, 216, 0.2);
-            color: var(--accent);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-        }
-        .hiring-box {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .rank-badge {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #fff;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 11px;
-            margin-right: 6px;
-        }
+        .card h3 { margin-top: 0; color: var(--accent); font-size: 16px; }
+        .stat-num { font-size: 32px; font-weight: bold; margin-top: 10px; color: #fff; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- Top Nav -->
-        <div class="top-nav">
-            <div class="logo-area">
-                <img src="GGO-White-Var2.png" alt="Gulf Global Outsourcing Logo" class="logo-img">
-                <div class="nav-title">Production per agent</div>
-            </div>
-            <div class="nav-buttons">
-                <button class="btn btn-success" onclick="exportToExcel()">📥 Export Excel</button>
-                <button class="btn btn-accent" onclick="openModal()">+ Add Agent</button>
+        <!-- Navbar -->
+        <div class="main-navbar">
+            <img src="GGO-White-Var2.png" alt="Logo" class="logo-img">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">📊 Dashboard</a>
+                <a href="agents.html" class="nav-link">👥 Agents Production & Ranking</a>
+                <a href="#" class="nav-link" style="opacity: 0.5; cursor: not-allowed;">📅 Attendance (Soon)</a>
             </div>
         </div>
 
-        <!-- KPI Insights Cards -->
-        <div class="kpi-container">
-            <div class="kpi-card" onclick="filterByKpi('all')" title="Click to view all agents">
-                <span class="kpi-title">Total Agents 📊</span>
-                <span class="kpi-value" id="kpiTotal">0</span>
+        <!-- Dashboard Content -->
+        <h2 style="color: var(--text-main); margin-bottom: 20px;">Operations Overview</h2>
+        <div class="grid-cards">
+            <div class="card">
+                <h3>Total Active Agents</h3>
+                <div class="stat-num" id="dashTotalAgents">0</div>
             </div>
-            <div class="kpi-card" onclick="filterByKpi('g2g_achieved')" title="Click to view agents with G2G ≥ 0.85">
-                <span class="kpi-title">G2G Achieved (≥ 0.85) 🟢</span>
-                <span class="kpi-value" id="kpiG2gAchieved" style="color: #4ade80;">0</span>
+            <div class="card">
+                <h3>Total G2Gs This Month</h3>
+                <div class="stat-num" id="dashTotalG2gs" style="color: #4ade80;">0</div>
             </div>
-            <div class="kpi-card" onclick="filterByKpi('g2g_below')" title="Click to view agents with G2G < 0.85">
-                <span class="kpi-title">G2G Below (< 0.85) 🔴</span>
-                <span class="kpi-value" id="kpiG2gBelow" style="color: #f87171;">0</span>
-            </div>
-            <div class="kpi-card" onclick="filterByKpi('trans_high')" title="Click to view agents with Transfers ≥ 2">
-                <span class="kpi-title">Transfers (≥ 2) 🔵</span>
-                <span class="kpi-value" id="kpiTransHigh" style="color: #38bdf8;">0</span>
-            </div>
-            <div class="kpi-card" onclick="filterByKpi('trans_low')" title="Click to view agents with Transfers < 2">
-                <span class="kpi-title">Transfers (< 2) 🟡</span>
-                <span class="kpi-value" id="kpiTransLow" style="color: #fbbf24;">0</span>
-            </div>
-        </div>
-
-        <!-- Filters & Ranking Bar -->
-        <div class="filters-bar">
-            <select id="monthFilter" onchange="filterTable()" style="background-color: #0f2537; font-weight: bold; color: var(--accent);">
-                <option value="2026-09" selected>📅 September 2026</option>
-                <option value="2026-10">📅 October 2026</option>
-                <option value="2026-11">📅 November 2026</option>
-                <option value="2026-12">📅 December 2026</option>
-                <option value="2027-01">📅 January 2027</option>
-            </select>
-
-            <select id="rankingFilter" onchange="filterTable()" style="background-color: #0f2537; font-weight: bold; color: #f59e0b; border-color: #f59e0b;">
-                <option value="default">📊 View: Default List</option>
-                <option value="rank_g2gs">🏆 Top Achievers: Total G2Gs (High to Low)</option>
-                <option value="rank_ratio">🎯 Top Achievers: G2G Ratio (High to Low)</option>
-                <option value="rank_transfers">📞 Top Achievers: Transfers (High to Low)</option>
-            </select>
-
-            <input type="text" id="searchInput" placeholder="Search agent by name..." onkeyup="filterTable()">
-            
-            <select id="teamFilter" onchange="filterTable()">
-                <option value="">All Teams</option>
-                <option value="Wazowski#1">Wazowski#1</option>
-                <option value="Wazowski#2">Wazowski#2</option>
-                <option value="Wazowski#3">Wazowski#3</option>
-                <option value="Midblue">Midblue</option>
-                <option value="Prime">Prime</option>
-                <option value="Sunny">Sunny</option>
-                <option value="Unity">Unity</option>
-                <option value="PGX">PGX</option>
-                <option value="MLA">MLA</option>
-                <option value="Bloom">Bloom</option>
-                <option value="Epic">Epic</option>
-                <option value="Peak">Peak</option>
-            </select>
-
-            <select id="statusFilter" onchange="filterTable()">
-                <option value="">All Status</option>
-                <option value="Active">Active</option>
-                <option value="On probation">On probation</option>
-                <option value="Resigned">Resigned</option>
-                <option value="New Comer">New Comer</option>
-                <option value="Terminated">Terminated</option>
-            </select>
-            
-            <button class="btn" style="background:#334155; padding: 10px 14px; font-size: 13px;" onclick="resetAllFilters()">🔄 Reset</button>
-        </div>
-
-        <!-- Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Agent Name</th>
-                    <th>Team</th>
-                    <th>PPO</th>
-                    <th>CGM</th>
-                    <th>Total G2G's</th>
-                    <th>FT/PT</th>
-                    <th>Attended</th>
-                    <th>Transfers</th>
-                    <th>G2G Ratio</th>
-                    <th>Trans. Ratio</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="crmTableBody">
-                <tr>
-                    <td colspan="12" style="text-align: center; color: var(--text-muted);">Syncing live data from cloud...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Add / Edit Agent Modal -->
-    <div id="agentModal" class="modal">
-        <div class="modal-content">
-            <h3 id="modalTitle" style="margin-top: 0; color: var(--accent);">Add New Agent Production</h3>
-            <input type="hidden" id="editAgentId">
-            
-            <label>Agent Name</label>
-            <input type="text" id="addName" placeholder="Enter Full Name">
-
-            <label>Hiring Date</label>
-            <input type="date" id="addHiringDate">
-
-            <label>Team</label>
-            <select id="addTeam">
-                <option value="Wazowski#1">Wazowski#1</option>
-                <option value="Wazowski#2">Wazowski#2</option>
-                <option value="Wazowski#3">Wazowski#3</option>
-                <option value="Midblue">Midblue</option>
-                <option value="Prime">Prime</option>
-                <option value="Sunny">Sunny</option>
-                <option value="Unity">Unity</option>
-                <option value="PGX">PGX</option>
-                <option value="MLA">MLA</option>
-                <option value="Bloom">Bloom</option>
-                <option value="Epic">Epic</option>
-                <option value="Peak">Peak</option>
-            </select>
-
-            <label>PPO</label>
-            <input type="number" id="addPpo" placeholder="0" step="any">
-
-            <label>CGM</label>
-            <input type="number" id="addCgm" placeholder="0" step="any">
-
-            <label>Total G2G's</label>
-            <input type="number" id="addG2gs" placeholder="0" step="any">
-
-            <label>FT / PT</label>
-            <select id="addType">
-                <option value="FT">FT</option>
-                <option value="PT">PT</option>
-            </select>
-
-            <label>Attended Days (Allows decimals like 1.5)</label>
-            <input type="number" id="addAttended" placeholder="e.g. 1.5" step="0.1">
-
-            <label>Transfers</label>
-            <input type="number" id="addTransfers" placeholder="0">
-
-            <label>Status</label>
-            <select id="addStatus">
-                <option value="Active">Active</option>
-                <option value="On probation">On probation</option>
-                <option value="Resigned">Resigned</option>
-                <option value="New Comer">New Comer</option>
-                <option value="Terminated">Terminated</option>
-            </select>
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-accent" style="flex:1;" onclick="saveAgentData()">Save Agent</button>
-                <button class="btn" style="flex:1; background:#334155;" onclick="closeModal()">Cancel</button>
+            <div class="card">
+                <h3>Total Transfers</h3>
+                <div class="stat-num" id="dashTotalTransfers" style="color: #38bdf8;">0</div>
             </div>
         </div>
     </div>
 
-    <!-- Notes & Probation History Modal -->
-    <div id="notesModal" class="modal">
-        <div class="modal-content" style="width: 550px;">
-            <h3 id="notesModalTitle" style="margin-top: 0; color: var(--accent);">Agent Notes & Probation History</h3>
-            <input type="hidden" id="notesAgentId">
-
-            <div class="hiring-box">
-                <div>
-                    <span style="font-size: 13px; color: var(--text-muted); font-weight: bold;">🗓️ Hiring Date:</span>
-                    <span id="displayHiringDate" style="font-size: 14px; color: #34d399; font-weight: bold; margin-left: 5px;">Not specified</span>
-                </div>
-                <button class="btn" style="padding: 4px 10px; font-size: 11px; background: #065f46;" onclick="enableQuickEditHiring()">✏️ Edit Date</button>
-            </div>
-
-            <div id="quickHiringEditBox" style="display: none; background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                <label style="margin-top:0;">Update Hiring Date</label>
-                <input type="date" id="quickHiringDateInput">
-                <div style="display: flex; gap: 5px;">
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveQuickHiringDate()">Save Date</button>
-                    <button class="btn" style="padding: 6px 12px; font-size: 12px; background: #334155;" onclick="cancelQuickEditHiring()">Cancel</button>
-                </div>
-            </div>
-
-            <div style="background: rgba(0, 180, 216, 0.05); border: 1px solid var(--card-border); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--accent);">Add New Entry / Probation</h4>
-                
-                <label>Entry Type</label>
-                <select id="noteType" onchange="toggleProbationFields()">
-                    <option value="Note">General Note / Meeting</option>
-                    <option value="Probation">Probation Period</option>
-                </select>
-
-                <div id="probationFields" style="display: none;">
-                    <label>Probation Start Date</label>
-                    <input type="date" id="probStart">
-
-                    <label>Probation End Date</label>
-                    <input type="date" id="probEnd">
-                </div>
-
-                <label>Comment / Details</label>
-                <textarea id="noteText" rows="3" placeholder="Write meeting notes or details here..."></textarea>
-
-                <button class="btn btn-accent" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="saveAgentNote()">Add to History</button>
-            </div>
-
-            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted);">Historical Log</h4>
-            <div id="historyList" style="max-height: 200px; overflow-y: auto;">
-                <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No history records yet.</div>
-            </div>
-
-            <div style="margin-top: 15px; text-align: right;">
-                <button class="btn" style="background:#334155; width: 100%; justify-content: center;" onclick="closeNotesModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase Script Integration -->
+    <!-- Firebase Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -567,436 +109,28 @@
             projectId: "ggo-production-per-agent",
             storageBucket: "ggo-production-per-agent.firebasestorage.app",
             messagingSenderId: "825359557967",
-            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a",
-            measurementId: "G-5LNSFZXGX5"
+            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let activeKpiFilter = 'all';
-        let allAgents = [];
-
-        window.openModal = function() {
-            document.getElementById('modalTitle').innerText = "Add New Agent Production";
-            document.getElementById('editAgentId').value = "";
-            document.getElementById('addName').value = "";
-            document.getElementById('addHiringDate').value = "";
-            document.getElementById('addPpo').value = "";
-            document.getElementById('addCgm').value = "";
-            document.getElementById('addG2gs').value = "";
-            document.getElementById('addAttended').value = "";
-            document.getElementById('addTransfers').value = "";
-            document.getElementById('addStatus').value = "Active";
-            document.getElementById('agentModal').style.display = 'flex';
-        }
-
-        window.closeModal = function() { 
-            document.getElementById('agentModal').style.display = 'none'; 
-        }
-
-        window.editAgent = function(id, name, hiringDate, team, ppo, cgm, g2gs, type, attended, transfers, status) {
-            document.getElementById('modalTitle').innerText = "Edit Agent Production";
-            document.getElementById('editAgentId').value = id;
-            document.getElementById('addName').value = name;
-            document.getElementById('addHiringDate').value = hiringDate || "";
-            document.getElementById('addTeam').value = team;
-            document.getElementById('addPpo').value = ppo;
-            document.getElementById('addCgm').value = cgm;
-            document.getElementById('addG2gs').value = g2gs;
-            document.getElementById('addType').value = type;
-            document.getElementById('addAttended').value = attended;
-            document.getElementById('addTransfers').value = transfers;
-            document.getElementById('addStatus').value = status || "Active";
-            document.getElementById('agentModal').style.display = 'flex';
-        }
-
-        window.openNotesModal = function(id, name) {
-            document.getElementById('notesAgentId').value = id;
-            document.getElementById('notesModalTitle').innerText = `Notes & History: ${name}`;
-            document.getElementById('noteText').value = "";
-            document.getElementById('probStart').value = "";
-            document.getElementById('probEnd').value = "";
-            document.getElementById('noteType').value = "Note";
-            document.getElementById('quickHiringEditBox').style.display = 'none';
-            toggleProbationFields();
-
-            const agent = allAgents.find(a => a.id === id);
-            if (agent && agent.hiringDate) {
-                document.getElementById('displayHiringDate').innerText = agent.hiringDate;
-                document.getElementById('quickHiringDateInput').value = agent.hiringDate;
-            } else {
-                document.getElementById('displayHiringDate').innerText = "Not specified";
-                document.getElementById('quickHiringDateInput').value = "";
-            }
-
-            renderHistoryList(agent ? agent.history : []);
-            document.getElementById('notesModal').style.display = 'flex';
-        }
-
-        window.closeNotesModal = function() {
-            document.getElementById('notesModal').style.display = 'none';
-        }
-
-        window.enableQuickEditHiring = function() {
-            document.getElementById('quickHiringEditBox').style.display = 'block';
-        }
-
-        window.cancelQuickEditHiring = function() {
-            document.getElementById('quickHiringEditBox').style.display = 'none';
-        }
-
-        window.saveQuickHiringDate = async function() {
-            const id = document.getElementById('notesAgentId').value;
-            const newDate = document.getElementById('quickHiringDateInput').value;
-            try {
-                await updateDoc(doc(db, "agents_data", id), { hiringDate: newDate });
-                document.getElementById('displayHiringDate').innerText = newDate || "Not specified";
-                document.getElementById('quickHiringEditBox').style.display = 'none';
-            } catch(e) {
-                console.error(e);
-                alert("Error updating hiring date: " + e.message);
-            }
-        }
-
-        window.toggleProbationFields = function() {
-            const type = document.getElementById('noteType').value;
-            const probFields = document.getElementById('probationFields');
-            probFields.style.display = (type === 'Probation') ? 'block' : 'none';
-        }
-
-        window.saveAgentNote = async function() {
-            const id = document.getElementById('notesAgentId').value;
-            const type = document.getElementById('noteType').value;
-            const text = document.getElementById('noteText').value;
-            const start = document.getElementById('probStart').value;
-            const end = document.getElementById('probEnd').value;
-
-            if(!text && type === 'Note') {
-                alert("Please write a comment.");
-                return;
-            }
-
-            let entryDetails = text;
-            if(type === 'Probation') {
-                if(!start || !end) {
-                    alert("Please specify start and end dates for probation.");
-                    return;
-                }
-                entryDetails = `[Probation Period] From: ${start} To: ${end}\nDetails: ${text}`;
-            }
-
-            const newEntry = {
-                type: type,
-                details: entryDetails,
-                startDate: start || "",
-                endDate: end || "",
-                date: new Date().toISOString().split('T')[0]
-            };
-
-            const agent = allAgents.find(a => a.id === id);
-            let history = agent.history ? [...agent.history] : [];
-            history.unshift(newEntry);
-
-            let updatedFields = { history: history };
-            if (type === 'Probation') {
-                updatedFields.status = 'On probation';
-            }
-
-            try {
-                await updateDoc(doc(db, "agents_data", id), updatedFields);
-                document.getElementById('noteText').value = "";
-                document.getElementById('probStart').value = "";
-                document.getElementById('probEnd').value = "";
-                renderHistoryList(history);
-            } catch(e) {
-                console.error(e);
-                alert("Error saving note: " + e.message);
-            }
-        }
-
-        window.deleteHistoryItem = async function(index) {
-            if(!confirm("Are you sure you want to delete this log entry?")) return;
-            const id = document.getElementById('notesAgentId').value;
-            const agent = allAgents.find(a => a.id === id);
-            if(!agent || !agent.history) return;
-
-            let history = [...agent.history];
-            history.splice(index, 1);
-
-            try {
-                await updateDoc(doc(db, "agents_data", id), { history: history });
-                renderHistoryList(history);
-            } catch(e) {
-                console.error(e);
-                alert("Error deleting history record");
-            }
-        }
-
-        window.renderHistoryList = function(history) {
-            const container = document.getElementById('historyList');
-            if(!history || history.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No history records yet.</div>`;
-                return;
-            }
-            let html = "";
-            history.forEach((item, index) => {
-                const badgeClass = item.type === 'Probation' ? 'badge-probation' : 'badge-note';
-                html += `<div class="history-item">
-                    <div class="history-header">
-                        <span>📅 ${item.date}</span>
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <span class="${badgeClass}">${item.type}</span>
-                            <span style="color: #ef4444; cursor: pointer; font-size: 12px;" onclick="deleteHistoryItem(${index})" title="Delete log">🗑️</span>
-                        </div>
-                    </div>
-                    <div class="history-text">${item.details}</div>
-                </div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        window.saveAgentData = async function() {
-            const id = document.getElementById('editAgentId').value;
-            const name = document.getElementById('addName').value;
-            if(!name) { alert("Please enter agent name"); return; }
-
-            const currentMonth = document.getElementById('monthFilter').value;
-            const g2gs = Number(document.getElementById('addG2gs').value) || 0;
-            const attended = Number(document.getElementById('addAttended').value) || 0;
-            const transfers = Number(document.getElementById('addTransfers').value) || 0;
-
-            const ratio = attended > 0 ? (g2gs / attended) : 0;
-            const transRatio = attended > 0 ? (transfers / attended) : 0;
-
-            const agentData = {
-                name: name,
-                month: currentMonth,
-                hiringDate: document.getElementById('addHiringDate').value || "",
-                team: document.getElementById('addTeam').value,
-                ppo: Number(document.getElementById('addPpo').value) || 0,
-                cgm: Number(document.getElementById('addCgm').value) || 0,
-                g2gs: g2gs,
-                type: document.getElementById('addType').value,
-                attended: attended,
-                transfers: transfers,
-                ratio: Number(ratio.toFixed(2)),
-                transRatio: Number(transRatio.toFixed(2)),
-                status: document.getElementById('addStatus').value,
-                updatedAt: serverTimestamp()
-            };
-
-            try {
-                if(id) {
-                    await updateDoc(doc(db, "agents_data", id), agentData);
-                } else {
-                    agentData.createdAt = serverTimestamp();
-                    agentData.history = [];
-                    await addDoc(collection(db, "agents_data"), agentData);
-                }
-                closeModal();
-            } catch(e) {
-                console.error(e);
-                alert("Error saving data: " + e.message);
-            }
-        }
-
-        window.deleteAgent = async function(id) {
-            if(confirm("Are you sure you want to delete this agent?")) {
-                try {
-                    await deleteDoc(doc(db, "agents_data", id));
-                } catch(e) {
-                    console.error(e);
-                    alert("Error deleting agent");
-                }
-            }
-        }
-
-        const tbody = document.getElementById('crmTableBody');
-
         onSnapshot(collection(db, "agents_data"), (snapshot) => {
-            allAgents = [];
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                if (!data.month) data.month = "2026-09"; 
-                allAgents.push({ id: docSnap.id, ...data });
+            let totalAgents = 0;
+            let totalG2gs = 0;
+            let totalTransfers = 0;
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                totalAgents++;
+                totalG2gs += Number(data.g2gs || 0);
+                totalTransfers += Number(data.transfers || 0);
             });
-            filterTable();
-        }, (error) => {
-            console.error("Error listening to changes:", error);
+
+            document.getElementById('dashTotalAgents').innerText = totalAgents;
+            document.getElementById('dashTotalG2gs').innerText = totalG2gs;
+            document.getElementById('dashTotalTransfers').innerText = totalTransfers;
         });
-
-        window.updateKPIs = function(data) {
-            const total = data.length;
-            let g2gAchieved = 0;
-            let g2gBelow = 0;
-            let transHigh = 0;
-            let transLow = 0;
-
-            data.forEach(item => {
-                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
-
-                if (ratioVal >= 0.85) g2gAchieved++;
-                else g2gBelow++;
-
-                if (transRatioVal >= 2) transHigh++;
-                else transLow++;
-            });
-
-            document.getElementById('kpiTotal').innerText = total;
-            document.getElementById('kpiG2gAchieved').innerText = g2gAchieved;
-            document.getElementById('kpiG2gBelow').innerText = g2gBelow;
-            document.getElementById('kpiTransHigh').innerText = transHigh;
-            document.getElementById('kpiTransLow').innerText = transLow;
-        }
-
-        window.filterByKpi = function(kpiType) {
-            activeKpiFilter = kpiType;
-            filterTable();
-        }
-
-        window.resetAllFilters = function() {
-            document.getElementById('searchInput').value = "";
-            document.getElementById('teamFilter').value = "";
-            document.getElementById('statusFilter').value = "";
-            document.getElementById('rankingFilter').value = "default";
-            activeKpiFilter = 'all';
-            filterTable();
-        }
-
-        window.renderTable = function(data) {
-            if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found for this month. Click "+ Add Agent" to start.</td></tr>`;
-                return;
-            }
-            let html = "";
-            const currentRankingMode = document.getElementById('rankingFilter').value;
-
-            data.forEach((item, index) => {
-                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
-
-                const ratioColor = ratioVal < 0.85 ? '#f87171' : '#4ade80';
-                const transRatioColor = transRatioVal < 2 ? '#fbbf24' : '#38bdf8';
-
-                const safeName = item.name.replace(/'/g, "\\'");
-                const hiringDate = item.hiringDate || "";
-                const currentStatus = item.status || "Active";
-
-                let statusBadge = `<span class="status-active">Active</span>`;
-                if (currentStatus === 'On probation') {
-                    statusBadge = `<span class="status-probation">⚠️ On probation</span>`;
-                } else if (currentStatus === 'Resigned') {
-                    statusBadge = `<span class="status-resigned">📄 Resigned</span>`;
-                } else if (currentStatus === 'New Comer') {
-                    statusBadge = `<span class="status-newcomer">🆕 New Comer</span>`;
-                } else if (currentStatus === 'Terminated') {
-                    statusBadge = `<span class="status-terminated">❌ Terminated</span>`;
-                }
-
-                // Display rank number if ranking mode is active
-                let namePrefix = "";
-                if (currentRankingMode !== 'default') {
-                    const rankNum = index + 1;
-                    let rankEmoji = "🏅";
-                    if (rankNum === 1) rankEmoji = "🥇";
-                    else if (rankNum === 2) rankEmoji = "🥈";
-                    else if (rankNum === 3) rankEmoji = "🥉";
-                    namePrefix = `<span class="rank-badge">${rankEmoji} #${rankNum}</span>`;
-                }
-
-                html += `<tr>
-                    <td>${namePrefix}<span class="agent-name-link" onclick="openNotesModal('${item.id}', '${safeName}')" title="Click to view notes and history">${item.name}</span></td>
-                    <td><span style="background: #1e3e62; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${item.team}</span></td>
-                    <td>${item.ppo}</td>
-                    <td>${item.cgm}</td>
-                    <td style="color: #00b4d8; font-weight: bold;">${item.g2gs}</td>
-                    <td><span style="color: #94a3b8;">${item.type}</span></td>
-                    <td>${item.attended}</td>
-                    <td>${item.transfers}</td>
-                    <td><span style="color: ${ratioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${ratioVal.toFixed(2)}</span></td>
-                    <td><span style="color: ${transRatioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${transRatioVal.toFixed(2)}</span></td>
-                    <td>${statusBadge}</td>
-                    <td style="display: flex; gap: 6px;">
-                        <button class="btn btn-notes" onclick="openNotesModal('${item.id}', '${safeName}')">💬 Notes</button>
-                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${safeName}', '${hiringDate}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${currentStatus}')">✏️ Edit</button>
-                        <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
-                    </td>
-                </tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        window.filterTable = function() {
-            const selectedMonth = document.getElementById('monthFilter').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const team = document.getElementById('teamFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            const rankingMode = document.getElementById('rankingFilter').value;
-
-            const monthFiltered = allAgents.filter(item => item.month === selectedMonth);
-            updateKPIs(monthFiltered);
-
-            let filtered = monthFiltered.filter(item => {
-                const matchName = item.name.toLowerCase().includes(search);
-                const matchTeam = team === "" || item.team === team;
-                const matchStatus = status === "" || (item.status || "Active") === status;
-
-                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
-
-                let matchKpi = true;
-                if (activeKpiFilter === 'g2g_achieved') matchKpi = ratioVal >= 0.85;
-                else if (activeKpiFilter === 'g2g_below') matchKpi = ratioVal < 0.85;
-                else if (activeKpiFilter === 'trans_high') matchKpi = transRatioVal >= 2;
-                else if (activeKpiFilter === 'trans_low') matchKpi = transRatioVal < 2;
-
-                return matchName && matchTeam && matchStatus && matchKpi;
-            });
-
-            // Apply Sorting/Ranking if selected
-            if (rankingMode === 'rank_g2gs') {
-                filtered.sort((a, b) => (b.g2gs || 0) - (a.g2gs || 0));
-            } else if (rankingMode === 'rank_ratio') {
-                filtered.sort((a, b) => {
-                    const ratioA = a.ratio !== undefined ? a.ratio : (a.attended > 0 ? (a.g2gs / a.attended) : 0);
-                    const ratioB = b.ratio !== undefined ? b.ratio : (b.attended > 0 ? (b.g2gs / b.attended) : 0);
-                    return ratioB - ratioA;
-                });
-            } else if (rankingMode === 'rank_transfers') {
-                filtered.sort((a, b) => (b.transfers || 0) - (a.transfers || 0));
-            }
-
-            renderTable(filtered);
-        }
-
-        window.exportToExcel = function() {
-            const selectedMonth = document.getElementById('monthFilter').value;
-            const monthFiltered = allAgents.filter(item => item.month === selectedMonth);
-            
-            if(monthFiltered.length === 0) {
-                alert("No data available for this month to export.");
-                return;
-            }
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Month,Agent Name,Hiring Date,Team,PPO,CGM,Total G2Gs,Type,Attended Days,Transfers,G2G Ratio,Transfers Ratio,Status\r\n";
-
-            monthFiltered.forEach(item => {
-                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
-                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
-                let row = `"${item.month}","${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},${transRatioVal.toFixed(2)},"${item.status || 'Active'}"`;
-                csvContent += row + "\r\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `GGO_CRM_Report_${selectedMonth}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
     </script>
 </body>
 </html>
