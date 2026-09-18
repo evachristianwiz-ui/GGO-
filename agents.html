@@ -137,9 +137,8 @@
         
         /* Status Badges */
         .status-active { background-color: rgba(16, 185, 129, 0.15); color: #34d399; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-probation { background-color: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.4); }
-        .status-resigned { background-color: rgba(234, 179, 8, 0.2); color: #facc15; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .status-newcomer { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .status-resigned { background-color: rgba(234, 179, 8, 0.2); color: #facc15; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .status-terminated { background-color: rgba(100, 116, 139, 0.2); color: #94a3b8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
 
         .modal {
@@ -425,18 +424,16 @@
                 const g2gRatio = (item.g2gs / attended).toFixed(2);
                 const transfersRatio = (item.transfers / attended).toFixed(2);
 
-                let statusClass = 'status-active';
-                let statusText = item.status || 'Active';
+                let statusBadgeHTML = `<span class="status-active">Active</span>`;
                 
                 if (item.status === 'On Probation') {
-                    statusClass = 'status-probation';
-                    statusText = '⚠️ On Probation';
+                    statusBadgeHTML = `<span style="background-color: rgba(239, 68, 68, 0.25); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid #ef4444;">⚠️ On Probation</span>`;
                 } else if (item.status === 'New Comer') {
-                    statusClass = 'status-newcomer';
+                    statusBadgeHTML = `<span class="status-newcomer">New Comer</span>`;
                 } else if (item.status === 'Resigned') {
-                    statusClass = 'status-resigned';
+                    statusBadgeHTML = `<span class="status-resigned">Resigned</span>`;
                 } else if (item.status === 'Terminated') {
-                    statusClass = 'status-terminated';
+                    statusBadgeHTML = `<span class="status-terminated">Terminated</span>`;
                 }
 
                 html += `<tr>
@@ -448,9 +445,9 @@
                     <td>${item.transfers || 0}</td>
                     <td><b style="color: ${transfersRatio >= 2.0 ? '#34d399' : '#f87171'};">${transfersRatio}</b></td>
                     <td><b style="color: ${g2gRatio >= 0.85 ? '#34d399' : '#f87171'};">${g2gRatio}</b></td>
-                    <td><span class="${statusClass}">${statusText}</span></td>
+                    <td>${statusBadgeHTML}</td>
                     <td>
-                        <button class="btn-edit" onclick="editAgent('${item.id}')">Edit</button>
+                        <button class="btn-status" onclick="editAgent('${item.id}')" style="background-color: #3b82f6; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; border: none;">Edit</button>
                         <button class="btn-danger" onclick="deleteAgent('${item.id}')">Delete</button>
                     </td>
                 </tr>`;
