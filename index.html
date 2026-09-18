@@ -46,6 +46,7 @@
             padding: 8px 14px;
             border-radius: 8px;
             transition: all 0.2s;
+            cursor: pointer;
         }
         .nav-link:hover, .nav-link.active {
             background-color: var(--accent);
@@ -65,6 +66,10 @@
         .header-title h1 { margin: 0 0 5px 0; font-size: 22px; color: var(--accent); }
         .header-title p { margin: 0; font-size: 13px; color: var(--text-muted); }
         .date-badge { background-color: var(--bg-dark); border: 1px solid var(--card-border); padding: 8px 15px; border-radius: 8px; font-weight: bold; color: var(--accent); font-size: 14px; }
+
+        /* Tabs Sections */
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: block; }
 
         /* KPI Grid */
         .kpi-grid {
@@ -128,6 +133,32 @@
         }
         .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
         .stat-val { font-size: 16px; font-weight: bold; }
+
+        /* Floor Section Styles */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--card-border); }
+        .date-picker-area { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--accent); }
+        .date-picker-area input { background: var(--bg-dark); border: 1px solid var(--card-border); color: #fff; padding: 8px 12px; border-radius: 6px; }
+        .floor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .team-column { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; }
+        .team-header { background: #0f2537; padding: 12px; text-align: center; font-weight: bold; font-size: 16px; color: var(--accent); border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+        .team-badge { background: var(--card-border); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: #facc15; }
+        .agent-row { display: grid; grid-template-columns: 2fr 1fr 1.5fr; border-bottom: 1px solid var(--card-border); align-items: center; font-size: 13px; }
+        .agent-name { padding: 10px; font-weight: 600; border-right: 1px solid var(--card-border); }
+        .agent-val { padding: 10px; text-align: center; font-weight: bold; border-right: 1px solid var(--card-border); }
+        .agent-status { padding: 8px; text-align: center; font-size: 11px; font-weight: bold; }
+        .status-g2g { background: rgba(16, 185, 129, 0.25); color: #34d399; }
+        .status-bad { background: rgba(239, 68, 68, 0.25); color: #f87171; }
+        .status-postponed { background: rgba(245, 158, 11, 0.25); color: #fbbf24; }
+        .total-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; display: flex; justify-content: space-around; align-items: center; margin-bottom: 25px; }
+        .total-box { text-align: center; }
+        .total-box h3 { margin: 0 0 5px 0; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
+        .total-box .num { font-size: 28px; font-weight: bold; color: var(--accent); }
+        .btn-add-lead { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .btn-add-lead:hover { opacity: 0.9; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 12px; width: 400px; border: 1px solid var(--card-border); }
+        .modal-content label { display: block; font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+        .modal-content input, .modal-content select { width: 100%; padding: 10px; margin-top: 5px; background: var(--bg-dark); border: 1px solid var(--card-border); color: #fff; border-radius: 6px; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -139,106 +170,171 @@
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             </div>
             <div class="nav-links">
-                <a href="index.html" class="nav-link active">📊 Dashboard</a>
+                <a onclick="switchTab('dashboard')" id="navDashBtn" class="nav-link active">📊 Dashboard</a>
                 <a href="agents.html" class="nav-link">👥 Agents Production & Ranking</a>
+                <a onclick="switchTab('floor')" id="navFloorBtn" class="nav-link">📋 Day-to-Day Floor</a>
             </div>
         </div>
 
-        <!-- Header & Today Date -->
-        <div class="header-section">
-            <div class="header-title">
-                <h1>GGO Call Center Overview Dashboard</h1>
-                <p>Real-time synchronization from Agents Production Database</p>
+        <!-- ================= TAB 1: DASHBOARD ================= -->
+        <div id="dashboardTab" class="tab-content active-tab">
+            <div class="header-section">
+                <div class="header-title">
+                    <h1>GGO Call Center Overview Dashboard</h1>
+                    <p>Real-time synchronization from Agents Production Database</p>
+                </div>
+                <div class="date-badge" id="todayDateDisplay">📅 Loading date...</div>
             </div>
-            <div class="date-badge" id="todayDateDisplay">📅 Loading date...</div>
+
+            <!-- General KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <span class="kpi-title">👥 Total Active Agents</span>
+                    <span class="kpi-value" id="totalAgentsCount">0</span>
+                    <span class="kpi-sub">Across all registered records</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-title">📅 Total Work / Attended Days</span>
+                    <span class="kpi-value" id="totalWorkDays" style="color: var(--accent);">0</span>
+                    <span class="kpi-sub">Combined attendance days</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-title">🎯 Total G2Gs (Company Wide)</span>
+                    <span class="kpi-value" id="totalCompanyG2Gs" style="color: var(--success);">0</span>
+                    <span class="kpi-sub">Total targets achieved</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-title">📈 Company Overall G2G Ratio</span>
+                    <span class="kpi-value" id="companyOverallRatio" style="color: #f59e0b;">0.00</span>
+                    <span class="kpi-sub">Target Benchmark: ≥ 0.85</span>
+                </div>
+            </div>
+
+            <!-- Active Campaigns Overview (CGM & MLA) -->
+            <h2 style="font-size: 18px; color: var(--accent); margin-bottom: 15px; border-left: 3px solid var(--accent); padding-left: 10px;">Active Campaigns Performance</h2>
+            <div class="campaigns-container">
+                <!-- CGM Campaign -->
+                <div class="campaign-box">
+                    <div class="campaign-header">
+                        <span class="campaign-name">🚀 CGM Campaign</span>
+                        <span id="cgmAgentsCount" style="background:var(--card-border); padding:4px 10px; border-radius:6px; font-size:12px;">0 Agents</span>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Work Days</div>
+                            <div class="stat-val" id="cgmWorkDays">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total G2Gs</div>
+                            <div class="stat-val" id="cgmG2gs" style="color: var(--success);">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Transfers</div>
+                            <div class="stat-val" id="cgmTransfers">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">CGM G2G Ratio</div>
+                            <div class="stat-val" id="cgmRatio" style="color: var(--accent);">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MLA Campaign -->
+                <div class="campaign-box">
+                    <div class="campaign-header">
+                        <span class="campaign-name">🌟 MLA Campaign</span>
+                        <span id="mlaAgentsCount" style="background:var(--card-border); padding:4px 10px; border-radius:6px; font-size:12px;">0 Agents</span>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Work Days</div>
+                            <div class="stat-val" id="mlaWorkDays">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total G2Gs</div>
+                            <div class="stat-val" id="mlaG2gs" style="color: var(--success);">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Transfers</div>
+                            <div class="stat-val" id="mlaTransfers">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">MLA G2G Ratio</div>
+                            <div class="stat-val" id="mlaRatio" style="color: var(--accent);">0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- General KPIs -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <span class="kpi-title">👥 Total Active Agents</span>
-                <span class="kpi-value" id="totalAgentsCount">0</span>
-                <span class="kpi-sub">Across all registered records</span>
+        <!-- ================= TAB 2: DAY-TO-DAY FLOOR ================= -->
+        <div id="floorTab" class="tab-content">
+            <div class="top-bar">
+                <div class="date-picker-area">
+                    <span>Select Date:</span>
+                    <input type="date" id="floorDate" onchange="loadFloorData()">
+                </div>
+                <button class="btn-add-lead" onclick="openLeadModal()">+ Add Floor Entry</button>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">📅 Total Work / Attended Days</span>
-                <span class="kpi-value" id="totalWorkDays" style="color: var(--accent);">0</span>
-                <span class="kpi-sub">Combined attendance days</span>
+
+            <!-- Total Production Summary -->
+            <div class="total-section">
+                <div class="total-box">
+                    <h3>CGM Total Production</h3>
+                    <div class="num" id="totalCgmFloor">0</div>
+                </div>
+                <div class="total-box">
+                    <h3>MLA Total Production</h3>
+                    <div class="num" id="totalMlaFloor" style="color: #f59e0b;">0</div>
+                </div>
+                <div class="total-box">
+                    <h3>Total Floor Entries</h3>
+                    <div class="num" id="totalFloorCount">0</div>
+                </div>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">🎯 Total G2Gs (Company Wide)</span>
-                <span class="kpi-value" id="totalCompanyG2Gs" style="color: var(--success);">0</span>
-                <span class="kpi-sub">Total targets achieved</span>
-            </div>
-            <div class="kpi-card">
-                <span class="kpi-title">📈 Company Overall G2G Ratio</span>
-                <span class="kpi-value" id="companyOverallRatio" style="color: #f59e0b;">0.00</span>
-                <span class="kpi-sub">Target Benchmark: ≥ 0.85</span>
-            </div>
+
+            <!-- Floor Grid per Team -->
+            <div class="floor-grid" id="floorGridContainer"></div>
         </div>
+    </div>
 
-        <!-- Active Campaigns Overview (CGM & MLA) -->
-        <h2 style="font-size: 18px; color: var(--accent); margin-bottom: 15px; border-left: 3px solid var(--accent); padding-left: 10px;">Active Campaigns Performance</h2>
-        <div class="campaigns-container">
-            <!-- CGM Campaign -->
-            <div class="campaign-box">
-                <div class="campaign-header">
-                    <span class="campaign-name">🚀 CGM Campaign</span>
-                    <span id="cgmAgentsCount" style="background:var(--card-border); padding:4px 10px; border-radius:6px; font-size:12px;">0 Agents</span>
-                </div>
-                <div class="campaign-stats">
-                    <div class="stat-item">
-                        <div class="stat-label">Total Work Days</div>
-                        <div class="stat-val" id="cgmWorkDays">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Total G2Gs</div>
-                        <div class="stat-val" id="cgmG2gs" style="color: var(--success);">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Total Transfers</div>
-                        <div class="stat-val" id="cgmTransfers">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">CGM G2G Ratio</div>
-                        <div class="stat-val" id="cgmRatio" style="color: var(--accent);">0.00</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MLA Campaign -->
-            <div class="campaigns-container" style="display:contents;">
-            <div class="campaign-box">
-                <div class="campaign-header">
-                    <span class="campaign-name">🌟 MLA Campaign</span>
-                    <span id="mlaAgentsCount" style="background:var(--card-border); padding:4px 10px; border-radius:6px; font-size:12px;">0 Agents</span>
-                </div>
-                <div class="campaign-stats">
-                    <div class="stat-item">
-                        <div class="stat-label">Total Work Days</div>
-                        <div class="stat-val" id="mlaWorkDays">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Total G2Gs</div>
-                        <div class="stat-val" id="mlaG2gs" style="color: var(--success);">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Total Transfers</div>
-                        <div class="stat-val" id="mlaTransfers">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">MLA G2G Ratio</div>
-                        <div class="stat-val" id="mlaRatio" style="color: var(--accent);">0.00</div>
-                    </div>
-                </div>
-            </div>
+    <!-- Add Lead Modal -->
+    <div id="leadModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--accent); margin-top:0;">Add Floor Production Entry</h3>
+            <label>Agent Name</label>
+            <input type="text" id="leadAgentName" placeholder="Agent name...">
+            <label>Team</label>
+            <select id="leadTeam">
+                <option value="Wazowski#1">Wazowski#1</option>
+                <option value="Wazowski#2">Wazowski#2</option>
+                <option value="Midblue">Midblue</option>
+                <option value="Prime">Prime</option>
+                <option value="Mla">Mla</option>
+            </select>
+            <label>Campaign</label>
+            <select id="leadCampaign">
+                <option value="CGM">CGM</option>
+                <option value="MLA">MLA</option>
+            </select>
+            <label>Value / Count</label>
+            <input type="number" id="leadValue" value="1">
+            <label>Status</label>
+            <select id="leadStatus">
+                <option value="G2G">G2G 🟢</option>
+                <option value="Bad">Bad 🔴</option>
+                <option value="Postponed">Postponed 🟡</option>
+            </select>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-add-lead" style="flex:1; margin:0;" onclick="saveFloorLead()">Save</button>
+                <button class="btn-add-lead" style="flex:1; margin:0; background:var(--card-border);" onclick="closeLeadModal()">Cancel</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -252,12 +348,123 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Tab Switching Logic
+        window.switchTab = function(tabName) {
+            document.getElementById('dashboardTab').classList.remove('active-tab');
+            document.getElementById('floorTab').classList.remove('active-tab');
+            document.getElementById('navDashBtn').classList.remove('active');
+            document.getElementById('navFloorBtn').classList.remove('active');
+
+            if(tabName === 'dashboard') {
+                document.getElementById('dashboardTab').classList.add('active-tab');
+                document.getElementById('navDashBtn').classList.add('active');
+            } else if(tabName === 'floor') {
+                document.getElementById('floorTab').classList.add('active-tab');
+                document.getElementById('navFloorBtn').classList.add('active');
+                loadFloorData();
+            }
+        }
+
         // عرض تاريخ اليوم بشكل احترافي
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const todayStr = new Date().toLocaleDateString('en-US', options);
         document.getElementById('todayDateDisplay').innerText = `📅 Today: ${todayStr}`;
+        document.getElementById('floorDate').valueAsDate = new Date();
 
-        // سحب البيانات من نفس جدول agents_data لعمل Overview فوري
+        // Modal Controls
+        window.openLeadModal = () => { document.getElementById('leadModal').style.display = 'flex'; }
+        window.closeLeadModal = () => { document.getElementById('leadModal').style.display = 'none'; }
+
+        // Save Floor Lead to Firestore
+        window.saveFloorLead = async function() {
+            const date = document.getElementById('floorDate').value;
+            const name = document.getElementById('leadAgentName').value.trim();
+            const team = document.getElementById('leadTeam').value;
+            const campaign = document.getElementById('leadCampaign').value;
+            const val = Number(document.getElementById('leadValue').value) || 0;
+            const status = document.getElementById('leadStatus').value;
+
+            if(!name) { alert("Please enter agent name"); return; }
+
+            try {
+                await addDoc(collection(db, "floor_production"), { date, name, team, campaign, val, status });
+                closeLeadModal();
+                document.getElementById('leadAgentName').value = '';
+            } catch(e) {
+                alert("Error saving: " + e.message);
+            }
+        }
+
+        // Load Floor Data
+        window.loadFloorData = function() {
+            const selectedDate = document.getElementById('floorDate').value;
+            
+            onSnapshot(collection(db, "floor_production"), (snapshot) => {
+                let entries = [];
+                snapshot.forEach(docSnap => {
+                    let data = docSnap.data();
+                    if(data.date === selectedDate) {
+                        entries.push({ id: docSnap.id, ...data });
+                    }
+                });
+                renderFloor(entries);
+            });
+        }
+
+        function renderFloor(entries) {
+            let teamsMap = {};
+            let cgmTotal = 0;
+            let mlaTotal = 0;
+
+            entries.forEach(item => {
+                if(!teamsMap[item.team]) teamsMap[item.team] = [];
+                teamsMap[item.team].push(item);
+
+                if(item.campaign === 'MLA' && item.status === 'G2G') mlaTotal += item.val;
+                if(item.campaign === 'CGM' && item.status === 'G2G') cgmTotal += item.val;
+            });
+
+            document.getElementById('totalCgmFloor').innerText = cgmTotal;
+            document.getElementById('totalMlaFloor').innerText = mlaTotal;
+            document.getElementById('totalFloorCount').innerText = entries.length;
+
+            let gridHtml = "";
+            const teamsList = ["Wazowski#1", "Wazowski#2", "Midblue", "Prime", "Mla"];
+
+            teamsList.forEach(tName => {
+                let tEntries = teamsMap[tName] || [];
+                gridHtml += `
+                    <div class="team-column">
+                        <div class="team-header">
+                            <span>${tName}</span>
+                            <span class="team-badge">${tEntries.length} Entries</span>
+                        </div>
+                `;
+
+                if(tEntries.length === 0) {
+                    gridHtml += `<div style="padding: 15px; text-align: center; color: var(--text-muted); font-size: 12px;">No entries for this date</div>`;
+                } else {
+                    tEntries.forEach(entry => {
+                        let statusClass = 'status-g2g';
+                        if(entry.status === 'Bad') statusClass = 'status-bad';
+                        if(entry.status === 'Postponed') statusClass = 'status-postponed';
+
+                        gridHtml += `
+                            <div class="agent-row">
+                                <div class="agent-name">${entry.name}</div>
+                                <div class="agent-val">${entry.val}</div>
+                                <div class="agent-status ${statusClass}">${entry.status}</div>
+                            </div>
+                        `;
+                    });
+                }
+                gridHtml += `</div>`;
+            });
+
+            document.getElementById('floorGridContainer').innerHTML = gridHtml;
+        }
+
+        // سحب البيانات من جدول agents_data لعمل Overview للـ Dashboard
         onSnapshot(collection(db, "agents_data"), (snapshot) => {
             let agents = [];
             snapshot.forEach(docSnap => agents.push(docSnap.data()));
@@ -278,14 +485,12 @@
                 totalDays += attended;
                 totalG2gs += g2gs;
 
-                // تصنيف الحملات (حسب الـ Team المختار أو Campaign)
                 if (team.includes('mla')) {
                     mlaAgents++;
                     mlaDays += attended;
                     mlaG2Gs += g2gs;
                     mlaTrans += transfers;
                 } else {
-                    // باقي التيمات تتبع حملة CGM
                     cgmAgents++;
                     cgmDays += attended;
                     cgmG2gs += g2gs;
@@ -293,27 +498,21 @@
                 }
             });
 
-            // حساب الـ Ratios للشركة بالكامل
             const companyRatio = totalDays > 0 ? (totalG2gs / totalDays).toFixed(2) : "0.00";
-            
-            // حساب الـ Ratios للحملات
             const cgmRatioVal = cgmDays > 0 ? (cgmG2gs / cgmDays).toFixed(2) : "0.00";
             const mlaRatioVal = mlaDays > 0 ? (mlaG2Gs / mlaDays).toFixed(2) : "0.00";
 
-            // حقن الأرقام في الـ Dashboard
             document.getElementById('totalAgentsCount').innerText = totalAgents;
             document.getElementById('totalWorkDays').innerText = totalDays;
             document.getElementById('totalCompanyG2Gs').innerText = totalG2gs;
             document.getElementById('companyOverallRatio').innerText = companyRatio;
 
-            // CGM stats
             document.getElementById('cgmAgentsCount').innerText = `${cgmAgents} Agents`;
             document.getElementById('cgmWorkDays').innerText = cgmDays;
             document.getElementById('cgmG2gs').innerText = cgmG2gs;
             document.getElementById('cgmTransfers').innerText = cgmTrans;
             document.getElementById('cgmRatio').innerText = cgmRatioVal;
 
-            // MLA stats
             document.getElementById('mlaAgentsCount').innerText = `${mlaAgents} Agents`;
             document.getElementById('mlaWorkDays').innerText = mlaDays;
             document.getElementById('mlaG2gs').innerText = mlaG2Gs;
