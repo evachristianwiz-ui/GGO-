@@ -145,6 +145,7 @@
             border-radius: 12px;
             border: 1px solid var(--card-border);
             align-items: center;
+            flex-wrap: wrap;
         }
         .filters-bar input, .filters-bar select {
             background-color: var(--bg-dark);
@@ -156,6 +157,7 @@
         }
         .filters-bar input {
             flex: 1;
+            min-width: 200px;
         }
         table {
             width: 100%;
@@ -329,7 +331,7 @@
             </div>
         </div>
 
-        <!-- KPI Insights Cards (Clickable for breakdown) -->
+        <!-- KPI Insights Cards -->
         <div class="kpi-container">
             <div class="kpi-card" onclick="filterByKpi('all')" title="Click to view all agents">
                 <span class="kpi-title">Total Agents 📊</span>
@@ -353,8 +355,15 @@
             </div>
         </div>
 
-        <!-- Filters -->
+        <!-- Filters Bar including Month Selector -->
         <div class="filters-bar">
+            <select id="monthFilter" onchange="filterTable()" style="background-color: #0f2537; font-weight: bold; color: var(--accent);">
+                <option value="2026-09" selected>📅 September 2026 (Month 9)</option>
+                <option value="2026-10">📅 October 2026 (Month 10)</option>
+                <option value="2026-11">📅 November 2026 (Month 11)</option>
+                <option value="2026-12">📅 December 2026 (Month 12)</option>
+                <option value="2027-01">📅 January 2027 (Month 1)</option>
+            </select>
             <input type="text" id="searchInput" placeholder="Search agent by name..." onkeyup="filterTable()">
             <select id="teamFilter" onchange="filterTable()">
                 <option value="">All Teams</option>
@@ -734,6 +743,7 @@
             const name = document.getElementById('addName').value;
             if(!name) { alert("Please enter agent name"); return; }
 
+            const currentMonth = document.getElementById('monthFilter').value;
             const g2gs = Number(document.getElementById('addG2gs').value) || 0;
             const attended = Number(document.getElementById('addAttended').value) || 0;
             const transfers = Number(document.getElementById('addTransfers').value) || 0;
@@ -743,6 +753,7 @@
 
             const agentData = {
                 name: name,
+                month: currentMonth,
                 hiringDate: document.getElementById('addHiringDate').value || "",
                 team: document.getElementById('addTeam').value,
                 ppo: Number(document.getElementById('addPpo').value) || 0,
@@ -789,9 +800,11 @@
         onSnapshot(collection(db, "agents_data"), (snapshot) => {
             allAgents = [];
             snapshot.forEach((docSnap) => {
-                allAgents.push({ id: docSnap.id, ...docSnap.data() });
+                const data = docSnap.data();
+                // Backward compatibility for old records without a month property
+                if (!data.month) data.month = "2026-09"; 
+                allAgents.push({ id: docSnap.id, ...data });
             });
-            updateKPIs(allAgents);
             filterTable();
         }, (error) => {
             console.error("Error listening to changes:", error);
@@ -837,7 +850,7 @@
 
         window.renderTable = function(data) {
             if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found matching criteria.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found for this month. Click "+ Add Agent" to start.</td></tr>`;
                 return;
             }
             let html = "";
@@ -886,11 +899,19 @@
         }
 
         window.filterTable = function() {
+            const selectedMonth = document.getElementById('monthFilter').value;
             const search = document.getElementById('searchInput').value.toLowerCase();
             const team = document.getElementById('teamFilter').value;
             const status = document.getElementById('statusFilter').value;
 
-            const filtered = allAgents.filter(item => {
+            // First filter by selected month
+            const monthFiltered = allAgents.filter(item => item.month === selectedMonth);
+
+            // Update KPIs based on the selected month's data
+            updateKPIs(monthFiltered);
+
+            // Then apply other search/team/status filters
+            const filtered = monthFiltered.filter(item => {
                 const matchName = item.name.toLowerCase().includes(search);
                 const matchTeam = team === "" || item.team === team;
                 const matchStatus = status === "" || (item.status || "Active") === status;
@@ -910,24 +931,27 @@
         }
 
         window.exportToExcel = function() {
-            if(allAgents.length === 0) {
-                alert("No data available to export.");
+            const selectedMonth = document.getElementById('monthFilter').value;
+            const monthFiltered = allAgents.filter(item => item.month === selectedMonth);
+            
+            if(monthFiltered.length === 0) {
+                alert("No data available for this month to export.");
                 return;
             }
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Agent Name,Hiring Date,Team,PPO,CGM,Total G2Gs,Type,Attended Days,Transfers,G2G Ratio,Transfers Ratio,Status\r\n";
+            csvContent += "Month,Agent Name,Hiring Date,Team,PPO,CGM,Total G2Gs,Type,Attended Days,Transfers,G2G Ratio,Transfers Ratio,Status\r\n";
 
-            allAgents.forEach(item => {
+            monthFiltered.forEach(item => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
                 const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
-                let row = `"${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},${transRatioVal.toFixed(2)},"${item.status || 'Active'}"`;
+                let row = `"${item.month}","${item.name}","${item.hiringDate || ''}","${item.team}",${item.ppo},${item.cgm},${item.g2gs},"${item.type}",${item.attended},${item.transfers},${ratioVal.toFixed(2)},${transRatioVal.toFixed(2)},"${item.status || 'Active'}"`;
                 csvContent += row + "\r\n";
             });
 
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "GGO_CRM_Report.csv");
+            link.setAttribute("download", `GGO_CRM_Report_${selectedMonth}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
