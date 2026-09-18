@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGO - Today's Live Ranking</title>
+    <style>
+        :root {
+            --bg-dark: #070f1e;
+            --card-bg: #0b192c;
+            --card-border: #1e3e62;
+            --accent: #00b4d8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
+        .page-header {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px 30px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .page-title h2 { margin: 0; color: var(--accent); font-size: 24px; }
+        .page-title p { margin: 5px 0 0 0; color: var(--text-muted); font-size: 13px; }
+        .date-badge {
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Teams Container */
+        .team-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .team-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 14px;
+        }
+        th {
+            background-color: rgba(30, 62, 98, 0.4);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        tr:hover { background-color: rgba(255, 255, 255, 0.02); }
+        .agent-name { font-weight: 600; color: #fff; }
+        .badge-val {
+            background: rgba(0, 180, 216, 0.15);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .empty-msg {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="page-title">
+                <h2>🏆 GGO - Today's Live Ranking</h2>
+                <p>Real-time daily performance tracking for agents and teams</p>
+            </div>
+            <div class="date-badge" id="currentDateDisplay">📅 Loading date...</div>
+        </div>
+
+        <!-- Dynamic Teams Lists -->
+        <div id="teamsContainer">
+            <div class="empty-msg">Loading daily rankings data...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
+            authDomain: "ggo-production-per-agent.firebaseapp.com",
+            projectId: "ggo-production-per-agent",
+            storageBucket: "ggo-production-per-agent.firebasestorage.app",
+            messagingSenderId: "825359557967",
+            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Date Display
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDateDisplay').innerText = "📅 " + new Date().toLocaleDateString('en-US', options);
+
+        onSnapshot(collection(db, "agents_data"), (snapshot) => {
+            let allAgents = [];
+            snapshot.forEach(docSnap => allAgents.push({ id: docSnap.id, ...docSnap.data() }));
+
+            // تصنيف البيانات حسب الشهر الحالي (مثال: 2026-09) أو جلب البيانات اليومية المتاحة
+            const currentMonth = "2026-09";
+            const monthData = allAgents.filter(item => (item.month || "2026-09") === currentMonth);
+
+            // تجميع الموظفين حسب التيم (Team)
+            let teamsMap = {};
+            monthData.forEach(item => {
+                let teamName = String(item.team || "General Team").trim();
+                if (!teamsMap[teamName]) {
+                    teamsMap[teamName] = [];
+                }
+                teamsMap[teamName].push(item);
+            });
+
+            const container = document.getElementById('teamsContainer');
+            container.innerHTML = "";
+
+            if (Object.keys(teamsMap).length === 0) {
+                container.innerHTML = `<div class="empty-msg">No active agents found for today.</div>`;
+                return;
+            }
+
+            // رسم جدول لكل تيم على حدة
+            for (const [teamName, agents] of Object.entries(teamsMap)) {
+                // ترتيب الموظفين داخل التيم تنازلياً حسب الـ G2G أو الـ Transfers بتاعت اليوم
+                agents.sort((a, b) => (Number(b.g2gs) || 0) - (Number(a.g2gs) || 0));
+
+                let teamDiv = document.createElement('div');
+                teamDiv.className = 'team-section';
+
+                let totalTeamTransfers = agents.reduce((sum, ag) => sum + (Number(ag.transfers) || 0), 0);
+                let totalTeamG2gs = agents.reduce((sum, ag) => sum + (Number(ag.g2gs) || 0), 0);
+
+                let rowsHtml = agents.map((ag, index) => `
+                    <tr>
+                        <td>#${index + 1}</td>
+                        <td class="agent-name">👤 ${ag.name || ag.agentName || 'Unknown Agent'}</td>
+                        <td><span class="badge-val">🔄 ${Number(ag.transfers) || 0}</span></td>
+                        <td><span class="badge-val" style="background: rgba(16,185,129,0.15); color: #34d399;">📊 ${Number(ag.g2gs) || 0}</span></td>
+                    </tr>
+                `).join('');
+
+                teamDiv.innerHTML = `
+                    <div class="team-header">
+                        <span>🚀 Team: ${teamName}</span>
+                        <span style="font-size: 13px; color: var(--text-muted);">
+                            Total Transfers: <b style="color: var(--accent);">${totalTeamTransfers}</b> | 
+                            Total G2Gs: <b style="color: #34d399;">${totalTeamG2gs}</b>
+                        </span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">Rank</th>
+                                <th>Agent Name</th>
+                                <th>Transfers</th>
+                                <th>G2Gs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                `;
+
+                container.appendChild(teamDiv);
+            }
+        });
+    </script>
+</body>
+</html>
