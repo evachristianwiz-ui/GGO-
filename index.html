@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GGO - Operations CRM</title>
-    <!-- Chart.js for Performance Trends -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -268,6 +266,51 @@
             box-sizing: border-box;
             font-family: inherit;
         }
+        .history-item {
+            background: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .history-text {
+            font-size: 13px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+        }
+        .badge-probation {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        .badge-note {
+            background: rgba(0, 180, 216, 0.2);
+            color: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        .hiring-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -436,34 +479,59 @@
         </div>
     </div>
 
-    <!-- Agent Trend & Daily Analytics Modal -->
-    <div id="chartModal" class="modal">
-        <div class="modal-content" style="width: 700px; max-width: 95vw;">
-            <h3 id="chartModalTitle" style="margin-top: 0; color: var(--accent);">Agent Performance Trend</h3>
-            <input type="hidden" id="chartAgentId">
+    <!-- Notes & Probation History Modal -->
+    <div id="notesModal" class="modal">
+        <div class="modal-content" style="width: 550px;">
+            <h3 id="notesModalTitle" style="margin-top: 0; color: var(--accent);">Agent Notes & Probation History</h3>
+            <input type="hidden" id="notesAgentId">
 
-            <div style="background: rgba(0, 180, 216, 0.05); border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; align-items: flex-end;">
-                <div style="flex: 1;">
-                    <label style="margin-top:0;">Date</label>
-                    <input type="date" id="logDate" style="margin-bottom:0;">
+            <div class="hiring-box">
+                <div>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: bold;">🗓️ Hiring Date:</span>
+                    <span id="displayHiringDate" style="font-size: 14px; color: #34d399; font-weight: bold; margin-left: 5px;">Not specified</span>
                 </div>
-                <div style="flex: 1;">
-                    <label style="margin-top:0;">G2G's</label>
-                    <input type="number" id="logG2gs" placeholder="0" step="any" style="margin-bottom:0;">
-                </div>
-                <div style="flex: 1;">
-                    <label style="margin-top:0;">Transfers</label>
-                    <input type="number" id="logTrans" placeholder="0" style="margin-bottom:0;">
-                </div>
-                <button class="btn btn-accent" style="padding: 10px 15px;" onclick="addDailyLog()">+ Add Log</button>
+                <button class="btn" style="padding: 4px 10px; font-size: 11px; background: #065f46;" onclick="enableQuickEditHiring()">✏️ Edit Date</button>
             </div>
 
-            <div style="background: var(--bg-dark); padding: 15px; border-radius: 8px; border: 1px solid var(--card-border); position: relative; height: 280px;">
-                <canvas id="agentTrendChart"></canvas>
+            <div id="quickHiringEditBox" style="display: none; background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                <label style="margin-top:0;">Update Hiring Date</label>
+                <input type="date" id="quickHiringDateInput">
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveQuickHiringDate()">Save Date</button>
+                    <button class="btn" style="padding: 6px 12px; font-size: 12px; background: #334155;" onclick="cancelQuickEditHiring()">Cancel</button>
+                </div>
             </div>
 
-            <div style="margin-top: 20px; text-align: right;">
-                <button class="btn" style="background:#334155; width: 100%; justify-content: center;" onclick="closeChartModal()">Close</button>
+            <div style="background: rgba(0, 180, 216, 0.05); border: 1px solid var(--card-border); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--accent);">Add New Entry / Probation</h4>
+                
+                <label>Entry Type</label>
+                <select id="noteType" onchange="toggleProbationFields()">
+                    <option value="Note">General Note / Meeting</option>
+                    <option value="Probation">Probation Period</option>
+                </select>
+
+                <div id="probationFields" style="display: none;">
+                    <label>Probation Start Date</label>
+                    <input type="date" id="probStart">
+
+                    <label>Probation End Date</label>
+                    <input type="date" id="probEnd">
+                </div>
+
+                <label>Comment / Details</label>
+                <textarea id="noteText" rows="3" placeholder="Write meeting notes or details here..."></textarea>
+
+                <button class="btn btn-accent" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="saveAgentNote()">Add to History</button>
+            </div>
+
+            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted);">Historical Log</h4>
+            <div id="historyList" style="max-height: 200px; overflow-y: auto;">
+                <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No history records yet.</div>
+            </div>
+
+            <div style="margin-top: 15px; text-align: right;">
+                <button class="btn" style="background:#334155; width: 100%; justify-content: center;" onclick="closeNotesModal()">Close</button>
             </div>
         </div>
     </div>
@@ -487,7 +555,6 @@
         const db = getFirestore(app);
 
         let activeKpiFilter = 'all';
-        let trendChartInstance = null;
         let allAgents = [];
 
         window.openModal = function() {
@@ -524,96 +591,149 @@
             document.getElementById('agentModal').style.display = 'flex';
         }
 
-        // Open Chart / Daily Logs Modal
-        window.openChartModal = function(id, name) {
-            document.getElementById('chartAgentId').value = id;
-            document.getElementById('chartModalTitle').innerText = `Performance Trend: ${name}`;
-            document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('logG2gs').value = "";
-            document.getElementById('logTrans').value = "";
+        window.openNotesModal = function(id, name) {
+            document.getElementById('notesAgentId').value = id;
+            document.getElementById('notesModalTitle').innerText = `Notes & History: ${name}`;
+            document.getElementById('noteText').value = "";
+            document.getElementById('probStart').value = "";
+            document.getElementById('probEnd').value = "";
+            document.getElementById('noteType').value = "Note";
+            document.getElementById('quickHiringEditBox').style.display = 'none';
+            toggleProbationFields();
 
             const agent = allAgents.find(a => a.id === id);
-            renderChart(agent ? agent.logs : []);
-            document.getElementById('chartModal').style.display = 'flex';
+            if (agent && agent.hiringDate) {
+                document.getElementById('displayHiringDate').innerText = agent.hiringDate;
+                document.getElementById('quickHiringDateInput').value = agent.hiringDate;
+            } else {
+                document.getElementById('displayHiringDate').innerText = "Not specified";
+                document.getElementById('quickHiringDateInput').value = "";
+            }
+
+            renderHistoryList(agent ? agent.history : []);
+            document.getElementById('notesModal').style.display = 'flex';
         }
 
-        window.closeChartModal = function() {
-            document.getElementById('chartModal').style.display = 'none';
+        window.closeNotesModal = function() {
+            document.getElementById('notesModal').style.display = 'none';
         }
 
-        window.addDailyLog = async function() {
-            const id = document.getElementById('chartAgentId').value;
-            const date = document.getElementById('logDate').value;
-            const g2gs = Number(document.getElementById('logG2gs').value) || 0;
-            const trans = Number(document.getElementById('logTrans').value) || 0;
+        window.enableQuickEditHiring = function() {
+            document.getElementById('quickHiringEditBox').style.display = 'block';
+        }
 
-            if(!date) {
-                alert("Please select a date.");
+        window.cancelQuickEditHiring = function() {
+            document.getElementById('quickHiringEditBox').style.display = 'none';
+        }
+
+        window.saveQuickHiringDate = async function() {
+            const id = document.getElementById('notesAgentId').value;
+            const newDate = document.getElementById('quickHiringDateInput').value;
+            try {
+                await updateDoc(doc(db, "agents_data", id), { hiringDate: newDate });
+                document.getElementById('displayHiringDate').innerText = newDate || "Not specified";
+                document.getElementById('quickHiringEditBox').style.display = 'none';
+            } catch(e) {
+                console.error(e);
+                alert("Error updating hiring date: " + e.message);
+            }
+        }
+
+        window.toggleProbationFields = function() {
+            const type = document.getElementById('noteType').value;
+            const probFields = document.getElementById('probationFields');
+            probFields.style.display = (type === 'Probation') ? 'block' : 'none';
+        }
+
+        window.saveAgentNote = async function() {
+            const id = document.getElementById('notesAgentId').value;
+            const type = document.getElementById('noteType').value;
+            const text = document.getElementById('noteText').value;
+            const start = document.getElementById('probStart').value;
+            const end = document.getElementById('probEnd').value;
+
+            if(!text && type === 'Note') {
+                alert("Please write a comment.");
                 return;
             }
 
+            let entryDetails = text;
+            if(type === 'Probation') {
+                if(!start || !end) {
+                    alert("Please specify start and end dates for probation.");
+                    return;
+                }
+                entryDetails = `[Probation Period] From: ${start} To: ${end}\nDetails: ${text}`;
+            }
+
+            const newEntry = {
+                type: type,
+                details: entryDetails,
+                startDate: start || "",
+                endDate: end || "",
+                date: new Date().toISOString().split('T')[0]
+            };
+
             const agent = allAgents.find(a => a.id === id);
-            let logs = agent.logs ? [...agent.logs] : [];
-            logs.push({ date, g2gs, transfers: trans });
-            logs.sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort chronologically
+            let history = agent.history ? [...agent.history] : [];
+            history.unshift(newEntry);
+
+            let updatedFields = { history: history };
+            if (type === 'Probation') {
+                updatedFields.status = 'On probation';
+            }
 
             try {
-                await updateDoc(doc(db, "agents_data", id), { logs: logs });
-                document.getElementById('logG2gs').value = "";
-                document.getElementById('logTrans').value = "";
-                renderChart(logs);
+                await updateDoc(doc(db, "agents_data", id), updatedFields);
+                document.getElementById('noteText').value = "";
+                document.getElementById('probStart').value = "";
+                document.getElementById('probEnd').value = "";
+                renderHistoryList(history);
             } catch(e) {
                 console.error(e);
-                alert("Error saving log: " + e.message);
+                alert("Error saving note: " + e.message);
             }
         }
 
-        window.renderChart = function(logs) {
-            const ctx = document.getElementById('agentTrendChart').getContext('2d');
-            
-            const labels = logs && logs.length > 0 ? logs.map(l => l.date) : ["No Data"];
-            const g2gData = logs && logs.length > 0 ? logs.map(l => l.g2gs) : [0];
-            const transData = logs && logs.length > 0 ? logs.map(l => l.transfers) : [0];
+        window.deleteHistoryItem = async function(index) {
+            if(!confirm("Are you sure you want to delete this log entry?")) return;
+            const id = document.getElementById('notesAgentId').value;
+            const agent = allAgents.find(a => a.id === id);
+            if(!agent || !agent.history) return;
 
-            if (trendChartInstance) {
-                trendChartInstance.destroy();
+            let history = [...agent.history];
+            history.splice(index, 1);
+
+            try {
+                await updateDoc(doc(db, "agents_data", id), { history: history });
+                renderHistoryList(history);
+            } catch(e) {
+                console.error(e);
+                alert("Error deleting history record");
             }
+        }
 
-            trendChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'G2G Progress',
-                            data: g2gData,
-                            borderColor: '#00b4d8',
-                            backgroundColor: 'rgba(0, 180, 216, 0.1)',
-                            fill: true,
-                            tension: 0.2
-                        },
-                        {
-                            label: 'Transfers',
-                            data: transData,
-                            borderColor: '#38bdf8',
-                            backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                            fill: false,
-                            tension: 0.2
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#f8fafc' } }
-                    },
-                    scales: {
-                        x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e3e62' } },
-                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e3e62' } }
-                    }
-                }
+        window.renderHistoryList = function(history) {
+            const container = document.getElementById('historyList');
+            if(!history || history.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No history records yet.</div>`;
+                return;
+            }
+            let html = "";
+            history.forEach((item, index) => {
+                const badgeClass = item.type === 'Probation' ? 'badge-probation' : 'badge-note';
+                html += `<div class="history-item">
+                    <div class="history-header">
+                        <span>📅 ${item.date}</span>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="${badgeClass}">${item.type}</span>
+                            <span style="color: #ef4444; cursor: pointer; font-size: 12px;" onclick="deleteHistoryItem(${index})" title="Delete log">🗑️</span>
+                        </div>
+                    </div>
+                    <div class="history-text">${item.details}</div>
+                </div>`;
             });
+            container.innerHTML = html;
         }
 
         window.saveAgentData = async function() {
@@ -652,7 +772,6 @@
                 } else {
                     agentData.createdAt = serverTimestamp();
                     agentData.history = [];
-                    agentData.logs = [];
                     await addDoc(collection(db, "agents_data"), agentData);
                 }
                 closeModal();
@@ -754,7 +873,7 @@
                 }
 
                 html += `<tr>
-                    <td><span class="agent-name-link" onclick="openChartModal('${item.id}', '${safeName}')" title="Click to view performance trend">${item.name} 📈</span></td>
+                    <td><span class="agent-name-link" onclick="openNotesModal('${item.id}', '${safeName}')" title="Click to view notes and history">${item.name}</span></td>
                     <td><span style="background: #1e3e62; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${item.team}</span></td>
                     <td>${item.ppo}</td>
                     <td>${item.cgm}</td>
@@ -766,7 +885,7 @@
                     <td><span style="color: ${transRatioColor}; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${transRatioVal.toFixed(2)}</span></td>
                     <td>${statusBadge}</td>
                     <td style="display: flex; gap: 6px;">
-                        <button class="btn btn-notes" onclick="openChartModal('${item.id}', '${safeName}')">📈 Chart</button>
+                        <button class="btn btn-notes" onclick="openNotesModal('${item.id}', '${safeName}')">💬 Notes</button>
                         <button class="btn btn-edit" onclick="editAgent('${item.id}', '${safeName}', '${hiringDate}', '${item.team}', ${item.ppo}, ${item.cgm}, ${item.g2gs}, '${item.type}', ${item.attended}, ${item.transfers}, '${currentStatus}')">✏️ Edit</button>
                         <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
                     </td>
