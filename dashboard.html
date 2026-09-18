@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGO - Admin Dashboard</title>
+    
+    <!-- حماية الصفحة: التأكد من أن المستخدم Admin فقط -->
+    <script>
+        const role = localStorage.getItem('ggo_role');
+        if (role !== 'admin') {
+            alert("Access Denied! Admins only.");
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-dark: #070f1e;
+            --card-bg: #0b192c;
+            --card-border: #1e3e62;
+            --accent: #00b4d8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container { max-width: 1350px; margin: 0 auto; }
+        
+        /* Navbar */
+        .main-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 40px; width: auto; object-fit: contain; }
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+        }
+        .logout-btn {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid #ef4444;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .logout-btn:hover {
+            background-color: #ef4444;
+            color: #fff;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 20px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+        }
+        .welcome-text h2 { margin: 0; color: var(--accent); font-size: 22px; }
+        .welcome-text p { margin: 5px 0 0 0; color: var(--text-muted); font-size: 13px; }
+        .date-badge {
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .kpi-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-box::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent);
+        }
+        .kpi-box.success::after { background: #10b981; }
+        .kpi-box.danger::after { background: #ef4444; }
+        .kpi-box.warning::after { background: #f59e0b; }
+
+        .kpi-box-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .kpi-box-value { font-size: 28px; font-weight: bold; color: var(--text-main); margin-top: 8px; }
+        .kpi-box-sub { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+        /* Campaign Sections */
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 15px;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+        }
+        .campaigns-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .campaign-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .campaign-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+        .campaign-title { font-size: 16px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .campaign-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .stat-box {
+            background: var(--bg-dark);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+        .stat-box span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+        .stat-box b { font-size: 16px; color: var(--accent); margin-top: 3px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navbar -->
+        <div class="main-navbar">
+            <div class="logo-area">
+                <img src="GGO-White-Var2.png" alt="Logo" class="logo-img">
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link active">📊 Dashboard</a>
+                <a href="agents.html" class="nav-link">👥 Agents Production</a>
+                <a href="attendance.html" class="nav-link">📅 Attendance</a>
+                <a href="today-ranking.html" class="nav-link">🏆 Live Ranking</a>
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Header with Live Date -->
+        <div class="dashboard-header">
+            <div class="welcome-text">
+                <h2>GGO Operations Command Center</h2>
+                <p>Real-time performance overview & active campaign tracking</p>
+            </div>
+            <div class="date-badge" id="currentDateDisplay">📅 Loading date...</div>
+        </div>
+
+        <!-- General KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-box">
+                <div class="kpi-box-title">Total Active Agents 👥</div>
+                <div class="kpi-box-value" id="dashTotalAgents">0</div>
+                <div class="kpi-box-sub">Registered in current month</div>
+            </div>
+            <div class="kpi-box success">
+                <div class="kpi-box-title">Achieved Target (≥ 0.85) 🟢</div>
+                <div class="kpi-box-value" id="dashTargetAchieved" style="color: #4ade80;">0</div>
+                <div class="kpi-box-sub">Agents hitting target ratio</div>
+            </div>
+            <div class="kpi-box danger">
+                <div class="kpi-box-title">Below Target (< 0.85) 🔴</div>
+                <div class="kpi-box-value" id="dashTargetBelow" style="color: #f87171;">0</div>
+                <div class="kpi-box-sub">Agents needing improvement</div>
+            </div>
+            <div class="kpi-box warning">
+                <div class="kpi-box-title">Total G2G Production 📊</div>
+                <div class="kpi-box-value" id="dashTotalG2gs" style="color: #f59e0b;">0</div>
+                <div class="kpi-box-sub">Cumulative team production</div>
+            </div>
+        </div>
+
+        <!-- Active Campaigns Section -->
+        <div class="section-title">🔥 Active Campaigns Performance (CGM & MLA)</div>
+        <div class="campaigns-container">
+            <!-- CGM Campaign Card -->
+            <div class="campaign-card">
+                <div class="campaign-header">
+                    <div class="campaign-title">🚀 CGM Campaign</div>
+                    <span style="background: rgba(0,180,216,0.2); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold;">Active</span>
+                </div>
+                <div class="campaign-stats">
+                    <div class="stat-box">
+                        <span>Agents Count</span>
+                        <b id="cgmAgentsCount">0</b>
+                    </div>
+                    <div class="stat-box">
+                        <span>Total G2Gs</span>
+                        <b id="cgmTotalG2gs">0</b>
+                    </div>
+                    <div class="stat-box">
+                        <span>Avg Ratio</span>
+                        <b id="cgmAvgRatio" style="color: #4ade80;">0.00</b>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MLA Campaign Card -->
+            <div class="campaign-card">
+                <div class="campaign-header">
+                    <div class="campaign-title">⚡ MLA Campaign</div>
+                    <span style="background: rgba(16,185,129,0.2); color: #34d399; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold;">Active</span>
+                </div>
+                <div class="campaign-stats">
+                    <div class="stat-box">
+                        <span>Agents Count</span>
+                        <b id="mlaAgentsCount">0</b>
+                    </div>
+                    <div class="stat-box">
+                        <span>Total G2Gs</span>
+                        <b id="mlaTotalG2gs">0</b>
+                    </div>
+                    <div class="stat-box">
+                        <span>Avg Ratio</span>
+                        <b id="mlaAvgRatio" style="color: #4ade80;">0.00</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('ggo_role');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
+            authDomain: "ggo-production-per-agent.firebaseapp.com",
+            projectId: "ggo-production-per-agent",
+            storageBucket: "ggo-production-per-agent.firebasestorage.app",
+            messagingSenderId: "825359557967",
+            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDateDisplay').innerText = "📅 " + new Date().toLocaleDateString('en-US', options);
+
+        onSnapshot(collection(db, "agents_data"), (snapshot) => {
+            let allAgents = [];
+            snapshot.forEach(docSnap => allAgents.push({ id: docSnap.id, ...docSnap.data() }));
+
+            const currentMonth = "2026-09";
+            const monthData = allAgents.filter(item => (item.month || "2026-09") === currentMonth);
+
+            let totalAgents = monthData.length;
+            let targetAchieved = 0;
+            let targetBelow = 0;
+            let totalG2gs = 0;
+
+            let cgmAgents = 0, cgmG2gs = 0, cgmRatioSum = 0;
+            let mlaAgents = 0, mlaG2gs = 0, mlaRatioSum = 0;
+
+            monthData.forEach(item => {
+                const g2gs = Number(item.g2gs) || 0;
+                const attended = Number(item.attended) || 0;
+                const ratio = item.ratio !== undefined ? Number(item.ratio) : (attended > 0 ? (g2gs / attended) : 0);
+
+                totalG2gs += g2gs;
+
+                if (ratio >= 0.85) targetAchieved++;
+                else targetBelow++;
+
+                const teamName = String(item.team || "").trim().toUpperCase();
+
+                if (teamName.includes("MLA")) {
+                    mlaAgents++;
+                    mlaG2gs += g2gs;
+                    mlaRatioSum += ratio;
+                } else {
+                    cgmAgents++;
+                    cgmG2gs += g2gs;
+                    cgmRatioSum += ratio;
+                }
+            });
+
+            document.getElementById('dashTotalAgents').innerText = totalAgents;
+            document.getElementById('dashTargetAchieved').innerText = targetAchieved;
+            document.getElementById('dashTotalBelow').innerText = targetBelow;
+            document.getElementById('dashTotalG2gs').innerText = totalG2gs;
+
+            document.getElementById('cgmAgentsCount').innerText = cgmAgents;
+            document.getElementById('cgmTotalG2gs').innerText = cgmG2gs;
+            document.getElementById('cgmAvgRatio').innerText = cgmAgents > 0 ? (cgmRatioSum / cgmAgents).toFixed(2) : "0.00";
+
+            document.getElementById('mlaAgentsCount').innerText = mlaAgents;
+            document.getElementById('mlaTotalG2gs').innerText = mlaG2gs;
+            document.getElementById('mlaAvgRatio').innerText = mlaAgents > 0 ? (mlaRatioSum / mlaAgents).toFixed(2) : "0.00";
+        });
+    </script>
+</body>
+</html>
