@@ -158,7 +158,7 @@
             <div class="nav-links">
                 <a href="index.html" class="nav-link active">📊 Dashboard</a>
                 <a href="agents.html" class="nav-link">👥 Agents Production & Ranking</a>
-                <a href="#" class="nav-link" style="opacity: 0.5; cursor: not-allowed;">📅 Attendance (Soon)</a>
+                <a href="attendance.html" class="nav-link">📅 Attendance Tracker</a>
             </div>
         </div>
 
@@ -260,7 +260,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Display current date nicely
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('currentDateDisplay').innerText = "📅 " + new Date().toLocaleDateString('en-US', options);
 
@@ -268,7 +267,6 @@
             let allAgents = [];
             snapshot.forEach(docSnap => allAgents.push({ id: docSnap.id, ...docSnap.data() }));
 
-            // Filter for current active month default or general view (September 2026 or latest)
             const currentMonth = "2026-09";
             const monthData = allAgents.filter(item => (item.month || "2026-09") === currentMonth);
 
@@ -277,22 +275,22 @@
             let targetBelow = 0;
             let totalG2gs = 0;
 
-            // CGM & MLA stats tracking
             let cgmAgents = 0, cgmG2gs = 0, cgmRatioSum = 0;
             let mlaAgents = 0, mlaG2gs = 0, mlaRatioSum = 0;
 
             monthData.forEach(item => {
                 const g2gs = Number(item.g2gs) || 0;
                 const attended = Number(item.attended) || 0;
-                const ratio = item.ratio !== undefined ? item.ratio : (attended > 0 ? (g2gs / attended) : 0);
+                const ratio = item.ratio !== undefined ? Number(item.ratio) : (attended > 0 ? (g2gs / attended) : 0);
 
                 totalG2gs += g2gs;
 
                 if (ratio >= 0.85) targetAchieved++;
                 else targetBelow++;
 
-                // Check Campaign / Team name matching CGM or MLA
-                const teamName = (item.team || "").toUpperCase();
+                // Flexible checking for CGM or MLA in team name or campaign text
+                const teamName = String(item.team || "").trim().toUpperCase();
+                
                 if (teamName.includes("CGM")) {
                     cgmAgents++;
                     cgmG2gs += g2gs;
@@ -305,18 +303,15 @@
                 }
             });
 
-            // Update main dashboard metrics
             document.getElementById('dashTotalAgents').innerText = totalAgents;
             document.getElementById('dashTargetAchieved').innerText = targetAchieved;
             document.getElementById('dashTargetBelow').innerText = targetBelow;
             document.getElementById('dashTotalG2gs').innerText = totalG2gs;
 
-            // Update CGM Campaign card
             document.getElementById('cgmAgentsCount').innerText = cgmAgents;
             document.getElementById('cgmTotalG2gs').innerText = cgmG2gs;
             document.getElementById('cgmAvgRatio').innerText = cgmAgents > 0 ? (cgmRatioSum / cgmAgents).toFixed(2) : "0.00";
 
-            // Update MLA Campaign card
             document.getElementById('mlaAgentsCount').innerText = mlaAgents;
             document.getElementById('mlaTotalG2gs').innerText = mlaG2gs;
             document.getElementById('mlaAvgRatio').innerText = mlaAgents > 0 ? (mlaRatioSum / mlaAgents).toFixed(2) : "0.00";
