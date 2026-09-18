@@ -32,7 +32,6 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             text-align: center;
         }
-        .logo-img { height: 50px; margin-bottom: 20px; }
         h2 { margin-bottom: 25px; color: var(--accent); font-size: 22px; }
         .input-group { margin-bottom: 20px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-muted); }
@@ -65,7 +64,6 @@
 <body>
 
     <div class="login-card">
-        <img src="GGO-White-Var2.png" alt="Logo" class="logo-img">
         <h2>GGO System Login</h2>
         
         <div class="input-group">
@@ -82,9 +80,9 @@
             const pass = document.getElementById('passwordInput').value.trim();
             const errorMsg = document.getElementById('errorMsg');
 
-            // كلمات السر المحدثة:
-            const MANAGER_PASSWORD = "MANAGER00206"; // كلمة سر المدير الجديدة
-            const AGENT_PASSWORD = "agent123";         // كلمة سر الأージェنت
+            // الباسوردات بالظبط زي ما طلبتيها:
+            const MANAGER_PASSWORD = "MANAGER00206"; 
+            const AGENT_PASSWORD = "agent123";         
 
             if (pass === MANAGER_PASSWORD) {
                 localStorage.setItem('userRole', 'manager');
@@ -97,7 +95,6 @@
             }
         }
 
-        // التفعيل بزر الـ Enter
         document.getElementById('passwordInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 handleLogin();
