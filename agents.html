@@ -14,6 +14,7 @@
             --text-muted: #94a3b8;
             --success: #10b981;
             --warning: #f59e0b;
+            --info: #3b82f6;
             --danger: #ef4444;
         }
         body {
@@ -23,7 +24,7 @@
             margin: 0;
             padding: 20px;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1450px; margin: 0 auto; }
         
         /* Navbar */
         .main-navbar {
@@ -66,6 +67,54 @@
             border-left: 3px solid var(--accent);
             padding-left: 12px;
         }
+        .btn-add {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-add:hover { opacity: 0.9; }
+
+        /* Add Agent Modal / Box */
+        .modal-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: none;
+        }
+        .modal-card h3 { margin-top: 0; color: var(--accent); font-size: 16px; margin-bottom: 15px; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .btn-save {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
         /* Filters Bar */
         .filters-bar {
@@ -88,19 +137,20 @@
             outline: none;
             font-size: 13px;
         }
-        .filters-bar input { flex: 1; min-width: 200px; }
+        .filters-bar input { flex: 1; min-width: 180px; }
 
         /* Table Design */
         .table-container {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
-            overflow: hidden;
+            overflow-x: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: var(--card-bg);
+            white-space: nowrap;
         }
         th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
         th { background-color: #0f2537; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
@@ -108,26 +158,28 @@
 
         /* Status Badges */
         .badge {
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
             font-size: 11px;
             font-weight: bold;
             display: inline-block;
         }
         .badge-probation { background-color: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-passed { background-color: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-        
-        .btn-action {
-            background-color: var(--accent);
-            color: var(--bg-dark);
-            border: none;
-            padding: 6px 12px;
+        .badge-newcomer { background-color: rgba(59, 130, 246, 0.15); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-confirmed { background-color: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-ft { background-color: #1e3e62; color: var(--accent); }
+        .badge-pt { background-color: #332211; color: var(--warning); }
+
+        .btn-delete {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 5px 10px;
             border-radius: 6px;
-            font-weight: bold;
             cursor: pointer;
-            transition: opacity 0.2s;
+            font-weight: bold;
         }
-        .btn-action:hover { opacity: 0.85; }
+        .btn-delete:hover { background-color: var(--danger); color: white; }
     </style>
 </head>
 <body>
@@ -146,62 +198,213 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Agents Production & Employee Status Management</div>
+            <div class="nav-title">Agents Production & Performance Metrics</div>
+            <button class="btn-add" onclick="toggleAddForm()">➕ Add New Agent</button>
+        </div>
+
+        <!-- Add Agent Form (Hidden by default) -->
+        <div class="modal-card" id="addAgentModal">
+            <h3>Add New Agent Production Record</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Agent Name</label>
+                    <input type="text" id="newName" placeholder="Full name...">
+                </div>
+                <div class="form-group">
+                    <label>Team</label>
+                    <select id="newTeam">
+                        <option value="Wazowski#1">Wazowski#1</option>
+                        <option value="Midblue">Midblue</option>
+                        <option value="Prime">Prime</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Employment Type</label>
+                    <select id="newType">
+                        <option value="FT">Full-Time (FT)</option>
+                        <option value="PT">Part-Time (PT)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hiring Date</label>
+                    <input type="date" id="newHiringDate">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="newStatus">
+                        <option value="Newcomer">Newcomer</option>
+                        <option value="On Probation">On Probation</option>
+                        <option value="Confirmed">Confirmed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Attended Days</label>
+                    <input type="number" id="newAttended" placeholder="e.g., 22">
+                </div>
+                <div class="form-group">
+                    <label>Total Transfers</label>
+                    <input type="number" id="newTransfers" placeholder="e.g., 180">
+                </div>
+                <div class="form-group">
+                    <label>Total G2Gs</label>
+                    <input type="number" id="newG2G" placeholder="e.g., 45">
+                </div>
+            </div>
+            <button class="btn-save" onclick="saveAgent()">Save Agent</button>
         </div>
 
         <!-- Filters Bar -->
         <div class="filters-bar">
             <select id="monthFilter" style="font-weight: bold; color: var(--accent);">
                 <option value="2026-09" selected>📅 September 2026</option>
-                <option value="2026-10">📅 October 2026</option>
             </select>
-            <input type="text" id="searchInput" placeholder="Search agent by name...">
-            <select id="teamFilter">
+            <input type="text" id="searchInput" placeholder="Search agent by name..." onkeyup="filterTable()">
+            <select id="teamFilter" onchange="filterTable()">
                 <option value="">All Teams</option>
                 <option value="Wazowski#1">Wazowski#1</option>
                 <option value="Midblue">Midblue</option>
+                <option value="Prime">Prime</option>
             </select>
-            <select id="statusFilter">
+            <select id="statusFilter" onchange="filterTable()">
                 <option value="">All Statuses</option>
-                <option value="Probation">In Probation</option>
-                <option value="Passed">Passed Probation</option>
+                <option value="Newcomer">Newcomer</option>
+                <option value="On Probation">On Probation</option>
+                <option value="Confirmed">Confirmed</option>
             </select>
         </div>
 
-        <!-- Agents Production Table -->
+        <!-- Agents Table -->
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>Agent Name</th>
                         <th>Team</th>
+                        <th>Type</th>
                         <th>Hiring Date</th>
-                        <th>Probation Status</th>
-                        <th>Production Score</th>
+                        <th>Status</th>
+                        <th>Attended Days</th>
+                        <th>Transfers / Attended</th>
+                        <th>G2G / Attended</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="agentsTableBody">
-                    <tr>
-                        <td><b>أحمد محمد</b></td>
-                        <td>Wazowski#1</td>
-                        <td>2026-08-01</td>
-                        <td><span class="badge badge-passed">Passed</span></td>
-                        <td><b style="color: var(--accent);">1,450 pts</b></td>
-                        <td><button class="btn-action">Edit</button></td>
-                    </tr>
-                    <tr>
-                        <td><b>سارة علي</b></td>
-                        <td>Midblue</td>
-                        <td>2026-09-05</td>
-                        <td><span class="badge badge-probation">In Probation</span></td>
-                        <td><b style="color: var(--accent);">980 pts</b></td>
-                        <td><button class="btn-action">Edit</button></td>
-                    </tr>
+                    <!-- Dynamic Rows populated via JS -->
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        // دالة إظهار وإخفاء نموذج الإضافة
+        function toggleAddForm() {
+            const modal = document.getElementById('addAgentModal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // جلب البيانات المخزنة أو البدء ببيانات افتراضية
+        let agentsData = JSON.parse(localStorage.getItem('ggo_agents')) || [
+            { name: "أحمد محمد", team: "Wazowski#1", type: "FT", hiring: "2026-08-01", status: "Confirmed", attended: 22, transfers: 198, g2g: 44 },
+            { name: "سارة علي", team: "Midblue", type: "PT", hiring: "2026-09-02", status: "On Probation", attended: 18, transfers: 126, g2g: 27 },
+            { name: "محمود حسن", team: "Prime", type: "FT", hiring: "2026-09-10", status: "Newcomer", attended: 10, transfers: 65, g2g: 12 }
+        ];
+
+        function renderTable(dataToRender = agentsData) {
+            const tbody = document.getElementById('agentsTableBody');
+            tbody.innerHTML = '';
+
+            if (dataToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No agents found.</td></tr>`;
+                return;
+            }
+
+            dataToRender.forEach((agent, index) => {
+                // حساب الريشوهات مع تجنب القسمة على صفر
+                const transfersRatio = agent.attended > 0 ? (agent.transfers / agent.attended).toFixed(2) : '0.00';
+                const g2gRatio = agent.attended > 0 ? (agent.g2g / agent.attended).toFixed(2) : '0.00';
+
+                // تصميم شارة الحالة
+                let statusBadgeClass = 'badge-confirmed';
+                if (agent.status === 'On Probation') statusBadgeClass = 'badge-probation';
+                if (agent.status === 'Newcomer') statusBadgeClass = 'badge-newcomer';
+
+                // تصميم شارة النوع (FT / PT)
+                let typeBadgeClass = agent.type === 'FT' ? 'badge-ft' : 'badge-pt';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${agent.name}</b></td>
+                        <td>${agent.team}</td>
+                        <td><span class="badge ${typeBadgeClass}">${agent.type}</span></td>
+                        <td>${agent.hiring}</td>
+                        <td><span class="badge ${statusBadgeClass}">${agent.status}</span></td>
+                        <td><b style="color: var(--accent);">${agent.attended}</b> days</td>
+                        <td>${agent.transfers} <span style="font-size:11px; color:var(--text-muted);">(${transfersRatio}/day)</span></td>
+                        <td>${agent.g2g} <span style="font-size:11px; color:var(--text-muted);">(${g2gRatio}/day)</span></td>
+                        <td><button class="btn-delete" onclick="deleteAgent(${index})">Delete</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function saveAgent() {
+            const name = document.getElementById('newName').value.trim();
+            const team = document.getElementById('newTeam').value;
+            const type = document.getElementById('newType').value;
+            const hiring = document.getElementById('newHiringDate').value;
+            const status = document.getElementById('newStatus').value;
+            const attended = parseInt(document.getElementById('newAttended').value) || 0;
+            const transfers = parseInt(document.getElementById('newTransfers').value) || 0;
+            const g2g = parseInt(document.getElementById('newG2G').value) || 0;
+
+            if (!name || !hiring) {
+                alert('Please enter agent name and hiring date.');
+                return;
+            }
+
+            agentsData.push({ name, team, type, hiring, status, attended, transfers, g2g });
+            localStorage.setItem('ggo_agents', JSON.stringify(agentsData));
+
+            // إعادة تعيين الحقول وإخفاء النموذج
+            document.getElementById('newName').value = '';
+            document.getElementById('newHiringDate').value = '';
+            document.getElementById('newAttended').value = '';
+            document.getElementById('newTransfers').value = '';
+            document.getElementById('newG2G').value = '';
+            toggleAddForm();
+
+            renderTable();
+        }
+
+        function deleteAgent(index) {
+            if (confirm('Are you sure you want to delete this agent?')) {
+                agentsData.splice(index, 1);
+                localStorage.setItem('ggo_agents', JSON.stringify(agentsData));
+                renderTable();
+            }
+        }
+
+        function filterTable() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const teamVal = document.getElementById('teamFilter').value;
+            const statusVal = document.getElementById('statusFilter').value;
+
+            const filtered = agentsData.filter(agent => {
+                const matchesSearch = agent.name.toLowerCase().includes(searchVal);
+                const matchesTeam = teamVal === "" || agent.team === teamVal;
+                const matchesStatus = statusVal === "" || agent.status === statusVal;
+                return matchesSearch && matchesTeam && matchesStatus;
+            });
+
+            renderTable(filtered);
+        }
+
+        // تشغيل الجدول فور تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+        });
+    </script>
 
 </body>
 </html>
