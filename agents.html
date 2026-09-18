@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GGO - Agents Production & Performance</title>
+    <!-- Firebase App (Core SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -205,10 +209,6 @@
         .btn-delete { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .btn-delete:hover { background-color: var(--danger); color: white; }
     </style>
-
-    <!-- Firebase SDKs (Compat Version للعمل مباشرة في المتصفح) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -226,7 +226,7 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Agents Production & Performance Metrics (Live Cloud)</div>
+            <div class="nav-title">Agents Production & Performance Metrics (Cloud Live)</div>
             <button class="btn-add" onclick="openAddModal()">➕ Add New Agent</button>
         </div>
 
@@ -364,34 +364,22 @@
     </div>
 
     <script>
-        // إعدادات Firebase الخاصة بك
+        // Firebase Database URL Config
         const firebaseConfig = {
-            apiKey: "AIzaSyDbZsSRhz91XO8NY9xd5vGUuouIF7pdLtI",
-            authDomain: "ggo-crm.firebaseapp.com",
-            databaseURL: "https://ggo-crm-default-rtdb.firebaseio.com",
-            projectId: "ggo-crm",
-            storageBucket: "ggo-crm.firebasestorage.app",
-            messagingSenderId: "342280403463",
-            appId: "1:342280403463:web:10ba0dc70bd830a2cec8a2",
-            measurementId: "G-S1CLHZM6X8"
+            databaseURL: "https://ggo-crm-default-rtdb.firebaseio.com/"
         };
 
-        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const agentsRef = db.ref('agents');
 
-        let globalAgentsList = []; // مصفوفة لتخزين البيانات الحية
+        let agentsDataMap = {};
 
-        // الاستماع للتغييرات بشكل لحظي (Real-time sync)
-        db.ref('agents').on('value', (snapshot) => {
+        // Listen for live changes from Firebase
+        agentsRef.on('value', (snapshot) => {
             const data = snapshot.val();
-            globalAgentsList = [];
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    globalAgentsList.push({ id: key, ...data[key] });
-                });
-            }
-            renderTable(globalAgentsList);
+            agentsDataMap = data || {};
+            renderTable();
         });
 
         function openAddModal() {
@@ -409,11 +397,11 @@
             document.getElementById('agentModalCard').style.display = 'none';
         }
 
-        function editAgent(id) {
-            const agent = globalAgentsList.find(a => a.id === id);
+        function editAgent(firebaseKey) {
+            const agent = agentsDataMap[firebaseKey];
             if (!agent) return;
             document.getElementById('modalTitle').innerText = "Edit Agent Production Record";
-            document.getElementById('editFirebaseKey').value = agent.id;
+            document.getElementById('editFirebaseKey').value = firebaseKey;
             document.getElementById('agentName').value = agent.name;
             document.getElementById('agentTeam').value = agent.team;
             document.getElementById('agentType').value = agent.type;
@@ -445,27 +433,25 @@
             const agentObj = { name, team, campaign, type, hiring, status, attended, transfers, g2g };
 
             if (firebaseKey === "") {
-                // إضافة جديد
-                db.ref('agents').push(agentObj);
+                agentsRef.push(agentObj);
             } else {
-                // تحديث بيانات موجودة
-                db.ref('agents/' + firebaseKey).set(agentObj);
+                agentsRef.child(firebaseKey).set(agentObj);
             }
 
             closeModal();
         }
 
-        function deleteAgent(id) {
-            if (confirm('Are you sure you want to delete this agent?')) {
-                db.ref('agents/' + id).remove();
+        function deleteAgent(firebaseKey) {
+            if (confirm('Are you sure you want to delete this agent from the cloud?')) {
+                agentsRef.child(firebaseKey).remove();
             }
         }
 
-        function updateKPIs(data) {
+        function updateKPIs(dataList) {
             let g2gAchieved = 0, g2gNeeds = 0;
             let transAchieved = 0, transNeeds = 0;
 
-            data.forEach(agent => {
+            dataList.forEach(agent => {
                 const attended = agent.attended > 0 ? agent.attended : 1;
                 const g2gRatio = agent.g2g / attended;
                 const transRatio = agent.transfers / attended;
@@ -480,19 +466,43 @@
             document.getElementById('kpiTransNeeds').innerText = transNeeds;
         }
 
-        function renderTable(dataToRender) {
+        function renderTable() {
             const tbody = document.getElementById('agentsTableBody');
             tbody.innerHTML = '';
 
-            if (dataToRender.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No agents found in cloud database.</td></tr>`;
+            const keys = Object.keys(agentsDataMap);
+            if (keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No agents found in cloud database. Click "Add New Agent" to start.</td></tr>`;
                 updateKPIs([]);
                 return;
             }
 
-            updateKPIs(dataToRender);
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const teamVal = document.getElementById('teamFilter').value;
+            const statusVal = document.getElementById('statusFilter').value;
 
-            dataToRender.forEach((agent) => {
+            let listToRender = [];
+            keys.forEach(key => {
+                const agent = agentsDataMap[key];
+                agent.key = key;
+                
+                const matchesSearch = agent.name.toLowerCase().includes(searchVal);
+                const matchesTeam = teamVal === "" || agent.team === teamVal;
+                const matchesStatus = statusVal === "" || agent.status === statusVal;
+
+                if (matchesSearch && matchesTeam && matchesStatus) {
+                    listToRender.push(agent);
+                }
+            });
+
+            updateKPIs(listToRender);
+
+            if (listToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No matching agents found.</td></tr>`;
+                return;
+            }
+
+            listToRender.forEach((agent) => {
                 const campaign = agent.team === "Mla" ? "MLA" : "CGM";
                 const attended = agent.attended > 0 ? agent.attended : 1;
                 
@@ -505,7 +515,7 @@
 
                 const transBadge = transfersRatio >= 2.0 
                     ? `<span class="badge-achieved">Achieved (${transfersRatio})</span>` 
-                    : `<span class="badge-needs">Needs Imp. (${transfersRatio})</span>`;
+                    : `<span class="badge-needs">Needs Imp. (${transRatio})</span>`;
 
                 let statusBadgeClass = 'badge-confirmed';
                 if (agent.status === 'On Probation') statusBadgeClass = 'badge-probation';
@@ -527,8 +537,8 @@
                         <td><b>${agent.g2g}</b></td>
                         <td>${g2gBadge}</td>
                         <td>
-                            <button class="btn-action" onclick="editAgent('${agent.id}')">Edit</button>
-                            <button class="btn-delete" onclick="deleteAgent('${agent.id}')">Delete</button>
+                            <button class="btn-action" onclick="editAgent('${agent.key}')">Edit</button>
+                            <button class="btn-delete" onclick="deleteAgent('${agent.key}')">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -536,18 +546,7 @@
         }
 
         function filterTable() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const teamVal = document.getElementById('teamFilter').value;
-            const statusVal = document.getElementById('statusFilter').value;
-
-            const filtered = globalAgentsList.filter(agent => {
-                const matchesSearch = agent.name.toLowerCase().includes(searchVal);
-                const matchesTeam = teamVal === "" || agent.team === teamVal;
-                const matchesStatus = statusVal === "" || agent.status === statusVal;
-                return matchesSearch && matchesTeam && matchesStatus;
-            });
-
-            renderTable(filtered);
+            renderTable();
         }
     </script>
 
