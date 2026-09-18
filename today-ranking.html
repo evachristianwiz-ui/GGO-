@@ -20,8 +20,53 @@
             margin: 0;
             padding: 20px;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; display: none; } /* مخفية لحد ما يتم تسجيل الدخول */
         
+        /* Password Overlay Screen */
+        #authOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .auth-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 30px;
+            border-radius: 16px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .auth-card h3 { color: var(--accent); margin-bottom: 10px; }
+        .auth-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+        .auth-input {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .auth-error { color: #f87171; font-size: 12px; margin-top: 10px; display: none; }
+
         /* Header */
         .page-header {
             background-color: var(--card-bg);
@@ -103,7 +148,18 @@
 </head>
 <body>
 
-    <div class="container">
+    <!-- شاشة إدخال الباسورد للـ Agents -->
+    <div id="authOverlay">
+        <div class="auth-card">
+            <h3>🔒 Enter Agent Access Password</h3>
+            <p>Please enter the team password to view live rankings</p>
+            <input type="password" id="agentPassInput" class="auth-input" placeholder="Enter password...">
+            <button class="auth-btn" onclick="verifyPassword()">Login</button>
+            <div id="authError" class="auth-error">Incorrect password, please try again.</div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
         <!-- Header -->
         <div class="page-header">
             <div class="page-title">
@@ -118,6 +174,30 @@
             <div class="empty-msg">Loading daily rankings data...</div>
         </div>
     </div>
+
+    <script>
+        // كلمة السر الموحدة للـ Agents (تقدري تغييريها هنا للكلمة اللي تحبيها)
+        const AGENT_PASSWORD = "ggo2026"; 
+
+        // التحقق لو المعمل عامل تسجيل دخول قبل كده من متصفحه
+        window.onload = function() {
+            if (localStorage.getItem('agent_authorized') === 'true') {
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'block';
+            }
+        };
+
+        function verifyPassword() {
+            const enteredPass = document.getElementById('agentPassInput').value;
+            if (enteredPass === AGENT_PASSWORD) {
+                localStorage.setItem('agent_authorized', 'true');
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'block';
+            } else {
+                document.getElementById('authError').style.display = 'block';
+            }
+        }
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -135,7 +215,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Date Display
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('currentDateDisplay').innerText = "📅 " + new Date().toLocaleDateString('en-US', options);
 
@@ -143,11 +222,9 @@
             let allAgents = [];
             snapshot.forEach(docSnap => allAgents.push({ id: docSnap.id, ...docSnap.data() }));
 
-            // تصنيف البيانات حسب الشهر الحالي (مثال: 2026-09) أو جلب البيانات اليومية المتاحة
             const currentMonth = "2026-09";
             const monthData = allAgents.filter(item => (item.month || "2026-09") === currentMonth);
 
-            // تجميع الموظفين حسب التيم (Team)
             let teamsMap = {};
             monthData.forEach(item => {
                 let teamName = String(item.team || "General Team").trim();
@@ -165,9 +242,7 @@
                 return;
             }
 
-            // رسم جدول لكل تيم على حدة
             for (const [teamName, agents] of Object.entries(teamsMap)) {
-                // ترتيب الموظفين داخل التيم تنازلياً حسب الـ G2G أو الـ Transfers بتاعت اليوم
                 agents.sort((a, b) => (Number(b.g2gs) || 0) - (Number(a.g2gs) || 0));
 
                 let teamDiv = document.createElement('div');
@@ -189,7 +264,7 @@
                     <div class="team-header">
                         <span>🚀 Team: ${teamName}</span>
                         <span style="font-size: 13px; color: var(--text-muted);">
-                            Total Transfers: <b style="color: var(--accent);">${totalTeamTransfers}</b> | 
+                            Total Transfers: <b style="color: var(...accent);">${totalTeamTransfers}</b> | 
                             Total G2Gs: <b style="color: #34d399;">${totalTeamG2gs}</b>
                         </span>
                     </div>
