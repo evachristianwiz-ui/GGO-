@@ -154,7 +154,7 @@
         }
         .filters-bar input {
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
         }
         table {
             width: 100%;
@@ -311,6 +311,15 @@
             justify-content: space-between;
             align-items: center;
         }
+        .rank-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 11px;
+            margin-right: 6px;
+        }
     </style>
 </head>
 <body>
@@ -352,16 +361,25 @@
             </div>
         </div>
 
-        <!-- Filters Bar including Month Selector -->
+        <!-- Filters & Ranking Bar -->
         <div class="filters-bar">
             <select id="monthFilter" onchange="filterTable()" style="background-color: #0f2537; font-weight: bold; color: var(--accent);">
-                <option value="2026-09" selected>📅 September 2026 (Month 9)</option>
-                <option value="2026-10">📅 October 2026 (Month 10)</option>
-                <option value="2026-11">📅 November 2026 (Month 11)</option>
-                <option value="2026-12">📅 December 2026 (Month 12)</option>
-                <option value="2027-01">📅 January 2027 (Month 1)</option>
+                <option value="2026-09" selected>📅 September 2026</option>
+                <option value="2026-10">📅 October 2026</option>
+                <option value="2026-11">📅 November 2026</option>
+                <option value="2026-12">📅 December 2026</option>
+                <option value="2027-01">📅 January 2027</option>
             </select>
+
+            <select id="rankingFilter" onchange="filterTable()" style="background-color: #0f2537; font-weight: bold; color: #f59e0b; border-color: #f59e0b;">
+                <option value="default">📊 View: Default List</option>
+                <option value="rank_g2gs">🏆 Top Achievers: Total G2Gs (High to Low)</option>
+                <option value="rank_ratio">🎯 Top Achievers: G2G Ratio (High to Low)</option>
+                <option value="rank_transfers">📞 Top Achievers: Transfers (High to Low)</option>
+            </select>
+
             <input type="text" id="searchInput" placeholder="Search agent by name..." onkeyup="filterTable()">
+            
             <select id="teamFilter" onchange="filterTable()">
                 <option value="">All Teams</option>
                 <option value="Wazowski#1">Wazowski#1</option>
@@ -377,6 +395,7 @@
                 <option value="Epic">Epic</option>
                 <option value="Peak">Peak</option>
             </select>
+
             <select id="statusFilter" onchange="filterTable()">
                 <option value="">All Status</option>
                 <option value="Active">Active</option>
@@ -385,7 +404,8 @@
                 <option value="New Comer">New Comer</option>
                 <option value="Terminated">Terminated</option>
             </select>
-            <button class="btn" style="background:#334155; padding: 10px 14px; font-size: 13px;" onclick="resetAllFilters()">🔄 Reset Filters</button>
+            
+            <button class="btn" style="background:#334155; padding: 10px 14px; font-size: 13px;" onclick="resetAllFilters()">🔄 Reset</button>
         </div>
 
         <!-- Table -->
@@ -840,6 +860,7 @@
             document.getElementById('searchInput').value = "";
             document.getElementById('teamFilter').value = "";
             document.getElementById('statusFilter').value = "";
+            document.getElementById('rankingFilter').value = "default";
             activeKpiFilter = 'all';
             filterTable();
         }
@@ -850,7 +871,9 @@
                 return;
             }
             let html = "";
-            data.forEach(item => {
+            const currentRankingMode = document.getElementById('rankingFilter').value;
+
+            data.forEach((item, index) => {
                 const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
                 const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
 
@@ -872,8 +895,19 @@
                     statusBadge = `<span class="status-terminated">❌ Terminated</span>`;
                 }
 
+                // Display rank number if ranking mode is active
+                let namePrefix = "";
+                if (currentRankingMode !== 'default') {
+                    const rankNum = index + 1;
+                    let rankEmoji = "🏅";
+                    if (rankNum === 1) rankEmoji = "🥇";
+                    else if (rankNum === 2) rankEmoji = "🥈";
+                    else if (rankNum === 3) rankEmoji = "🥉";
+                    namePrefix = `<span class="rank-badge">${rankEmoji} #${rankNum}</span>`;
+                }
+
                 html += `<tr>
-                    <td><span class="agent-name-link" onclick="openNotesModal('${item.id}', '${safeName}')" title="Click to view notes and history">${item.name}</span></td>
+                    <td>${namePrefix}<span class="agent-name-link" onclick="openNotesModal('${item.id}', '${safeName}')" title="Click to view notes and history">${item.name}</span></td>
                     <td><span style="background: #1e3e62; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${item.team}</span></td>
                     <td>${item.ppo}</td>
                     <td>${item.cgm}</td>
@@ -899,11 +933,12 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             const team = document.getElementById('teamFilter').value;
             const status = document.getElementById('statusFilter').value;
+            const rankingMode = document.getElementById('rankingFilter').value;
 
             const monthFiltered = allAgents.filter(item => item.month === selectedMonth);
             updateKPIs(monthFiltered);
 
-            const filtered = monthFiltered.filter(item => {
+            let filtered = monthFiltered.filter(item => {
                 const matchName = item.name.toLowerCase().includes(search);
                 const matchTeam = team === "" || item.team === team;
                 const matchStatus = status === "" || (item.status || "Active") === status;
@@ -919,6 +954,20 @@
 
                 return matchName && matchTeam && matchStatus && matchKpi;
             });
+
+            // Apply Sorting/Ranking if selected
+            if (rankingMode === 'rank_g2gs') {
+                filtered.sort((a, b) => (b.g2gs || 0) - (a.g2gs || 0));
+            } else if (rankingMode === 'rank_ratio') {
+                filtered.sort((a, b) => {
+                    const ratioA = a.ratio !== undefined ? a.ratio : (a.attended > 0 ? (a.g2gs / a.attended) : 0);
+                    const ratioB = b.ratio !== undefined ? b.ratio : (b.attended > 0 ? (b.g2gs / b.attended) : 0);
+                    return ratioB - ratioA;
+                });
+            } else if (rankingMode === 'rank_transfers') {
+                filtered.sort((a, b) => (b.transfers || 0) - (a.transfers || 0));
+            }
+
             renderTable(filtered);
         }
 
