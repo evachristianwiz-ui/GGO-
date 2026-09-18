@@ -95,41 +95,15 @@
         th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
         th { background-color: #0f2537; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
         td { font-size: 13px; vertical-align: middle; }
-
-        .btn {
-            background-color: var(--card-border);
-            color: var(--text-main);
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-        }
-        .btn-save { background-color: #10b981; color: white; }
-        .btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
-
-    <!-- كود الحماية: منع أي مستخدم مش manager من دخول الصفحة -->
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const userRole = localStorage.getItem('userRole'); // بيتأكد من الصلاحية المخزنة
-            
-            // لو اليوزر مش مانيدجر، هيطلع رسالة ويرجع للـ Dashboard فوراً
-            if (userRole !== 'manager') {
-                alert('⚠️ عذراً، هذه الصفحة مخصصة للمديرين فقط (Managers Only).');
-                window.location.href = 'index.html'; // غيّريها لاسم صفحة الـ Dashboard عندك لو مختلفة
-            }
-        });
-    </script>
 
     <div class="container">
         <!-- Main Navbar -->
         <div class="main-navbar">
             <div class="logo-area">
-                <img src="GGO-White-Var2.png" alt="Logo" class="logo-img">
+                <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             </div>
             <div class="nav-links">
                 <a href="index.html" class="nav-link">📊 Dashboard</a>
@@ -147,27 +121,12 @@
             <select id="monthFilter" style="font-weight: bold; color: var(--accent);">
                 <option value="2026-09" selected>📅 September 2026</option>
                 <option value="2026-10">📅 October 2026</option>
-                <option value="2026-11">📅 November 2026</option>
-                <option value="2026-12">📅 December 2026</option>
-                <option value="2027-01">📅 January 2027</option>
             </select>
-
             <input type="text" id="searchInput" placeholder="Search agent by name...">
-            
             <select id="teamFilter">
                 <option value="">All Teams</option>
                 <option value="Wazowski#1">Wazowski#1</option>
-                <option value="Wazowski#2">Wazowski#2</option>
-                <option value="Wazowski#3">Wazowski#3</option>
                 <option value="Midblue">Midblue</option>
-                <option value="Prime">Prime</option>
-                <option value="Sunny">Sunny</option>
-                <option value="Unity">Unity</option>
-                <option value="PGX">PGX</option>
-                <option value="MLA">MLA</option>
-                <option value="Bloom">Bloom</option>
-                <option value="Epic">Epic</option>
-                <option value="Peak">Peak</option>
             </select>
         </div>
 
@@ -183,7 +142,13 @@
                 </tr>
             </thead>
             <tbody id="agentsTableBody">
-                <tr><td colspan="5" style="text-align: center;">Loading agents production data...</td></tr>
+                <tr>
+                    <td>1</td>
+                    <td>أحمد محمد</td>
+                    <td>Wazowski#1</td>
+                    <td>1,450 pts</td>
+                    <td><button style="background:var(--accent); border:none; padding:5px 10px; border-radius:5px; color:#070f1e; font-weight:bold; cursor:pointer;">Edit</button></td>
+                </tr>
             </tbody>
         </table>
     </div>
