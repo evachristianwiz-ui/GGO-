@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGO - Agents Production & Performance</title>
+    <style>
+        :root {
+            --bg-dark: #070f1e;
+            --card-bg: #0b192c;
+            --card-border: #1e3e62;
+            --accent: #00b4d8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Navbar */
+        .main-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 40px; width: auto; object-fit: contain; }
+        .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+        }
+
+        .top-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .nav-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+        }
+
+        /* Filters Bar */
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filters-bar input, .filters-bar select {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+        }
+        .filters-bar input { flex: 1; min-width: 200px; }
+
+        /* Table Design */
+        .table-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+        }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
+        th { background-color: #0f2537; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+        td { font-size: 13px; vertical-align: middle; }
+
+        /* Status Badges */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-probation { background-color: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-passed { background-color: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+        
+        .btn-action {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-action:hover { opacity: 0.85; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Main Navbar -->
+        <div class="main-navbar">
+            <div class="logo-area">
+                <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">📊 Dashboard & Ranking</a>
+                <a href="agents.html" class="nav-link active">👥 Agents Production</a>
+                <a href="attendance.html" class="nav-link">📅 Attendance</a>
+            </div>
+        </div>
+
+        <div class="top-action-bar">
+            <div class="nav-title">Agents Production & Employee Status Management</div>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+            <select id="monthFilter" style="font-weight: bold; color: var(--accent);">
+                <option value="2026-09" selected>📅 September 2026</option>
+                <option value="2026-10">📅 October 2026</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="Search agent by name...">
+            <select id="teamFilter">
+                <option value="">All Teams</option>
+                <option value="Wazowski#1">Wazowski#1</option>
+                <option value="Midblue">Midblue</option>
+            </select>
+            <select id="statusFilter">
+                <option value="">All Statuses</option>
+                <option value="Probation">In Probation</option>
+                <option value="Passed">Passed Probation</option>
+            </select>
+        </div>
+
+        <!-- Agents Production Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Agent Name</th>
+                        <th>Team</th>
+                        <th>Hiring Date</th>
+                        <th>Probation Status</th>
+                        <th>Production Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="agentsTableBody">
+                    <tr>
+                        <td><b>أحمد محمد</b></td>
+                        <td>Wazowski#1</td>
+                        <td>2026-08-01</td>
+                        <td><span class="badge badge-passed">Passed</span></td>
+                        <td><b style="color: var(--accent);">1,450 pts</b></td>
+                        <td><button class="btn-action">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td><b>سارة علي</b></td>
+                        <td>Midblue</td>
+                        <td>2026-09-05</td>
+                        <td><span class="badge badge-probation">In Probation</span></td>
+                        <td><b style="color: var(--accent);">980 pts</b></td>
+                        <td><button class="btn-action">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
