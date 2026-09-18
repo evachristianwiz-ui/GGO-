@@ -102,7 +102,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .kpi-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .kpi-card:hover { border-color: var(--accent); transform: translateY(-2px); background-color: #0f2537; }
         .kpi-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
         .kpi-value { font-size: 24px; font-weight: bold; color: var(--text-main); }
 
@@ -198,8 +198,12 @@
                 <span class="kpi-value" id="kpiG2gBelow" style="color: #f87171;">0</span>
             </div>
             <div class="kpi-card" onclick="filterByKpi('trans_high')">
-                <span class="kpi-title">Transfers (≥ 2) 🔵</span>
+                <span class="kpi-title">Transfers (≥ 2 Ratio) 🔵</span>
                 <span class="kpi-value" id="kpiTransHigh" style="color: #38bdf8;">0</span>
+            </div>
+            <div class="kpi-card" onclick="filterByKpi('trans_low')">
+                <span class="kpi-title">Transfers (< 2 Ratio) 🟡</span>
+                <span class="kpi-value" id="kpiTransLow" style="color: #fbbf24;">0</span>
             </div>
         </div>
 
@@ -208,6 +212,9 @@
             <select id="monthFilter" onchange="filterTable()" style="font-weight: bold; color: var(--accent);">
                 <option value="2026-09" selected>📅 September 2026</option>
                 <option value="2026-10">📅 October 2026</option>
+                <option value="2026-11">📅 November 2026</option>
+                <option value="2026-12">📅 December 2026</option>
+                <option value="2027-01">📅 January 2027</option>
             </select>
 
             <select id="rankingFilter" onchange="filterTable()" style="font-weight: bold; color: #f59e0b; border-color: #f59e0b;">
@@ -223,15 +230,28 @@
                 <option value="">All Teams</option>
                 <option value="Wazowski#1">Wazowski#1</option>
                 <option value="Wazowski#2">Wazowski#2</option>
+                <option value="Wazowski#3">Wazowski#3</option>
                 <option value="Midblue">Midblue</option>
                 <option value="Prime">Prime</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Unity">Unity</option>
+                <option value="PGX">PGX</option>
+                <option value="MLA">MLA</option>
+                <option value="Bloom">Bloom</option>
+                <option value="Epic">Epic</option>
+                <option value="Peak">Peak</option>
             </select>
 
             <select id="statusFilter" onchange="filterTable()">
                 <option value="">All Status</option>
                 <option value="Active">Active</option>
                 <option value="On probation">On probation</option>
+                <option value="Resigned">Resigned</option>
+                <option value="New Comer">New Comer</option>
+                <option value="Terminated">Terminated</option>
             </select>
+
+            <button class="btn" style="background:#334155; padding: 10px 14px; font-size: 13px;" onclick="resetAllFilters()">🔄 Reset</button>
         </div>
 
         <!-- Table -->
@@ -247,12 +267,13 @@
                     <th>Attended</th>
                     <th>Transfers</th>
                     <th>G2G Ratio</th>
+                    <th>Trans. Ratio</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="crmTableBody">
-                <tr><td colspan="11" style="text-align: center;">Loading data...</td></tr>
+                <tr><td colspan="12" style="text-align: center;">Loading data...</td></tr>
             </tbody>
         </table>
     </div>
@@ -268,18 +289,43 @@
             <select id="addTeam">
                 <option value="Wazowski#1">Wazowski#1</option>
                 <option value="Wazowski#2">Wazowski#2</option>
+                <option value="Wazowski#3">Wazowski#3</option>
                 <option value="Midblue">Midblue</option>
                 <option value="Prime">Prime</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Unity">Unity</option>
+                <option value="PGX">PGX</option>
+                <option value="MLA">MLA</option>
+                <option value="Bloom">Bloom</option>
+                <option value="Epic">Epic</option>
+                <option value="Peak">Peak</option>
             </select>
+            <label>PPO</label>
+            <input type="number" id="addPpo" step="any">
+            <label>CGM</label>
+            <input type="number" id="addCgm" step="any">
             <label>Total G2G's</label>
-            <input type="number" id="addG2gs">
+            <input type="number" id="addG2gs" step="any">
+            <label>FT / PT</label>
+            <select id="addType">
+                <option value="FT">FT</option>
+                <option value="PT">PT</option>
+            </select>
             <label>Attended Days</label>
             <input type="number" id="addAttended" step="0.1">
             <label>Transfers</label>
             <input type="number" id="addTransfers">
+            <label>Status</label>
+            <select id="addStatus">
+                <option value="Active">Active</option>
+                <option value="On probation">On probation</option>
+                <option value="Resigned">Resigned</option>
+                <option value="New Comer">New Comer</option>
+                <option value="Terminated">Terminated</option>
+            </select>
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="btn btn-accent" style="flex:1;" onclick="saveAgentData()">Save</button>
-                <button class="btn" style="flex:1;" onclick="closeModal()">Cancel</button>
+                <button class="btn" style="flex:1; background:#334155;" onclick="closeModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -303,22 +349,45 @@
         let allAgents = [];
         let activeKpiFilter = 'all';
 
-        window.openModal = () => { document.getElementById('agentModal').style.display = 'flex'; }
+        window.openModal = () => {
+            document.getElementById('modalTitle').innerText = "Add New Agent";
+            document.getElementById('editAgentId').value = "";
+            document.getElementById('addName').value = "";
+            document.getElementById('addPpo').value = "";
+            document.getElementById('addCgm').value = "";
+            document.getElementById('addG2gs').value = "";
+            document.getElementById('addAttended').value = "";
+            document.getElementById('addTransfers').value = "";
+            document.getElementById('addStatus').value = "Active";
+            document.getElementById('agentModal').style.display = 'flex';
+        }
         window.closeModal = () => { document.getElementById('agentModal').style.display = 'none'; }
 
         window.saveAgentData = async function() {
             const id = document.getElementById('editAgentId').value;
             const name = document.getElementById('addName').value;
-            if(!name) { alert("Enter name"); return; }
+            if(!name) { alert("Please enter agent name"); return; }
+
+            const g2gs = Number(document.getElementById('addG2gs').value) || 0;
+            const attended = Number(document.getElementById('addAttended').value) || 0;
+            const transfers = Number(document.getElementById('addTransfers').value) || 0;
+
+            const ratio = attended > 0 ? (g2gs / attended) : 0;
+            const transRatio = attended > 0 ? (transfers / attended) : 0;
 
             const agentData = {
                 name: name,
                 month: document.getElementById('monthFilter').value,
                 team: document.getElementById('addTeam').value,
-                g2gs: Number(document.getElementById('addG2gs').value) || 0,
-                attended: Number(document.getElementById('addAttended').value) || 0,
-                transfers: Number(document.getElementById('addTransfers').value) || 0,
-                status: "Active"
+                ppo: Number(document.getElementById('addPpo').value) || 0,
+                cgm: Number(document.getElementById('addCgm').value) || 0,
+                g2gs: g2gs,
+                type: document.getElementById('addType').value,
+                attended: attended,
+                transfers: transfers,
+                ratio: Number(ratio.toFixed(2)),
+                transRatio: Number(transRatio.toFixed(2)),
+                status: document.getElementById('addStatus').value
             };
 
             if(id) await updateDoc(doc(db, "agents_data", id), agentData);
@@ -332,34 +401,139 @@
             filterTable();
         });
 
+        window.updateKPIs = function(data) {
+            const total = data.length;
+            let g2gAchieved = 0;
+            let g2gBelow = 0;
+            let transHigh = 0;
+            let transLow = 0;
+
+            data.forEach(item => {
+                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
+                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
+
+                if (ratioVal >= 0.85) g2gAchieved++;
+                else g2gBelow++;
+
+                if (transRatioVal >= 2) transHigh++;
+                else transLow++;
+            });
+
+            document.getElementById('kpiTotal').innerText = total;
+            document.getElementById('kpiG2gAchieved').innerText = g2gAchieved;
+            document.getElementById('kpiG2gBelow').innerText = g2gBelow;
+            document.getElementById('kpiTransHigh').innerText = transHigh;
+            document.getElementById('kpiTransLow').innerText = transLow;
+        }
+
+        window.filterByKpi = function(kpiType) {
+            activeKpiFilter = kpiType;
+            filterTable();
+        }
+
+        window.resetAllFilters = function() {
+            document.getElementById('searchInput').value = "";
+            document.getElementById('teamFilter').value = "";
+            document.getElementById('statusFilter').value = "";
+            document.getElementById('rankingFilter').value = "default";
+            activeKpiFilter = 'all';
+            filterTable();
+        }
+
         window.filterTable = function() {
             const selectedMonth = document.getElementById('monthFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const team = document.getElementById('teamFilter').value;
+            const status = document.getElementById('statusFilter').value;
             const rankingMode = document.getElementById('rankingFilter').value;
             
-            let filtered = allAgents.filter(item => (item.month || "2026-09") === selectedMonth);
+            const monthFiltered = allAgents.filter(item => (item.month || "2026-09") === selectedMonth);
+            updateKPIs(monthFiltered);
+
+            let filtered = monthFiltered.filter(item => {
+                const matchName = item.name.toLowerCase().includes(search);
+                const matchTeam = team === "" || item.team === team;
+                const matchStatus = status === "" || (item.status || "Active") === status;
+
+                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
+                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
+
+                let matchKpi = true;
+                if (activeKpiFilter === 'g2g_achieved') matchKpi = ratioVal >= 0.85;
+                else if (activeKpiFilter === 'g2g_below') matchKpi = ratioVal < 0.85;
+                else if (activeKpiFilter === 'trans_high') matchKpi = transRatioVal >= 2;
+                else if (activeKpiFilter === 'trans_low') matchKpi = transRatioVal < 2;
+
+                return matchName && matchTeam && matchStatus && matchKpi;
+            });
 
             if (rankingMode === 'rank_g2gs') {
                 filtered.sort((a, b) => (b.g2gs || 0) - (a.g2gs || 0));
+            } else if (rankingMode === 'rank_ratio') {
+                filtered.sort((a, b) => {
+                    const ratioA = a.ratio !== undefined ? a.ratio : (a.attended > 0 ? (a.g2gs / a.attended) : 0);
+                    const ratioB = b.ratio !== undefined ? b.ratio : (b.attended > 0 ? (b.g2gs / b.attended) : 0);
+                    return ratioB - ratioA;
+                });
+            } else if (rankingMode === 'rank_transfers') {
+                filtered.sort((a, b) => (b.transfers || 0) - (a.transfers || 0));
             }
 
             let html = "";
             filtered.forEach((item, index) => {
-                let rankPrefix = rankingMode !== 'default' ? `<span class="rank-badge">#${index + 1}</span>` : "";
+                const ratioVal = item.ratio !== undefined ? item.ratio : (item.attended > 0 ? (item.g2gs / item.attended) : 0);
+                const transRatioVal = item.transRatio !== undefined ? item.transRatio : (item.attended > 0 ? ((item.transfers || 0) / item.attended) : 0);
+
+                let rankPrefix = "";
+                if (rankingMode !== 'default') {
+                    const rankNum = index + 1;
+                    let rankEmoji = "🏅";
+                    if (rankNum === 1) rankEmoji = "🥇";
+                    else if (rankNum === 2) rankEmoji = "🥈";
+                    else if (rankNum === 3) rankEmoji = "🥉";
+                    rankPrefix = `<span class="rank-badge">${rankEmoji} #${rankNum}</span>`;
+                }
+
                 html += `<tr>
                     <td>${rankPrefix}${item.name}</td>
                     <td>${item.team}</td>
                     <td>${item.ppo || 0}</td>
                     <td>${item.cgm || 0}</td>
-                    <td><b>${item.g2gs || 0}</b></td>
+                    <td><b style="color: var(--accent);">${item.g2gs || 0}</b></td>
                     <td>${item.type || 'FT'}</td>
                     <td>${item.attended || 0}</td>
                     <td>${item.transfers || 0}</td>
-                    <td>${item.attended > 0 ? (item.g2gs / item.attended).toFixed(2) : 0}</td>
+                    <td><span style="color: ${ratioVal < 0.85 ? '#f87171' : '#4ade80'}; font-weight: bold;">${ratioVal.toFixed(2)}</span></td>
+                    <td><span style="color: ${transRatioVal < 2 ? '#fbbf24' : '#38bdf8'}; font-weight: bold;">${transRatioVal.toFixed(2)}</span></td>
                     <td><span class="status-active">${item.status || 'Active'}</span></td>
-                    <td><button class="btn btn-danger" onclick="deleteDoc(doc(db, 'agents_data', '${item.id}'))">Delete</button></td>
+                    <td style="display: flex; gap: 6px;">
+                        <button class="btn btn-edit" onclick="editAgent('${item.id}', '${item.name}', '${item.team}', ${item.ppo || 0}, ${item.cgm || 0}, ${item.g2gs || 0}, '${item.type || 'FT'}', ${item.attended || 0}, ${item.transfers || 0}, '${item.status || 'Active'}')">✏️ Edit</button>
+                        <button class="btn btn-danger" onclick="deleteAgent('${item.id}')">🗑️ Delete</button>
+                    </td>
                 </tr>`;
             });
-            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="11">No data</td></tr>`;
+            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="12" style="text-align: center; color: var(--text-muted);">No records found.</td></tr>`;
+        }
+
+        window.editAgent = function(id, name, team, ppo, cgm, g2gs, type, attended, transfers, status) {
+            document.getElementById('modalTitle').innerText = "Edit Agent Production";
+            document.getElementById('editAgentId').value = id;
+            document.getElementById('addName').value = name;
+            document.getElementById('addTeam').value = team;
+            document.getElementById('addPpo').value = ppo;
+            document.getElementById('addCgm').value = cgm;
+            document.getElementById('addG2gs').value = g2gs;
+            document.getElementById('addType').value = type;
+            document.getElementById('addAttended').value = attended;
+            document.getElementById('addTransfers').value = transfers;
+            document.getElementById('addStatus').value = status;
+            document.getElementById('agentModal').style.display = 'flex';
+        }
+
+        window.deleteAgent = async function(id) {
+            if(confirm("Are you sure you want to delete this agent?")) {
+                await deleteDoc(doc(db, "agents_data", id));
+            }
         }
     </script>
 </body>
