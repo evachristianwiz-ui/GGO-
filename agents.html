@@ -138,6 +138,7 @@
         /* Status Badges */
         .status-active { background-color: rgba(16, 185, 129, 0.15); color: #34d399; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .status-newcomer { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .status-twoweeks { background-color: rgba(217, 70, 239, 0.2); color: #e879f9; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(217, 70, 239, 0.4); }
         .status-resigned { background-color: rgba(234, 179, 8, 0.2); color: #facc15; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .status-terminated { background-color: rgba(100, 116, 139, 0.2); color: #94a3b8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
 
@@ -220,6 +221,7 @@
                 <option value="Active">Active</option>
                 <option value="On Probation">On Probation</option>
                 <option value="New Comer">New Comer</option>
+                <option value="Two Weeks Notice">Two Weeks Notice</option>
                 <option value="Resigned">Resigned</option>
                 <option value="Terminated">Terminated</option>
             </select>
@@ -271,6 +273,7 @@
                 <option value="Active">Active</option>
                 <option value="On Probation">On Probation</option>
                 <option value="New Comer">New Comer</option>
+                <option value="Two Weeks Notice">Two Weeks Notice</option>
                 <option value="Resigned">Resigned</option>
                 <option value="Terminated">Terminated</option>
             </select>
@@ -430,6 +433,8 @@
                     statusBadgeHTML = `<span style="background-color: rgba(239, 68, 68, 0.25); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid #ef4444;">⚠️ On Probation</span>`;
                 } else if (item.status === 'New Comer') {
                     statusBadgeHTML = `<span class="status-newcomer">New Comer</span>`;
+                } else if (item.status === 'Two Weeks Notice') {
+                    statusBadgeHTML = `<span class="status-twoweeks">⏳ Two Weeks Notice</span>`;
                 } else if (item.status === 'Resigned') {
                     statusBadgeHTML = `<span class="status-resigned">Resigned</span>`;
                 } else if (item.status === 'Terminated') {
@@ -447,7 +452,7 @@
                     <td><b style="color: ${g2gRatio >= 0.85 ? '#34d399' : '#f87171'};">${g2gRatio}</b></td>
                     <td>${statusBadgeHTML}</td>
                     <td>
-                        <button class="btn-status" onclick="editAgent('${item.id}')" style="background-color: #3b82f6; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; border: none;">Edit</button>
+                        <button class="btn-edit" onclick="editAgent('${item.id}')">Edit</button>
                         <button class="btn-danger" onclick="deleteAgent('${item.id}')">Delete</button>
                     </td>
                 </tr>`;
