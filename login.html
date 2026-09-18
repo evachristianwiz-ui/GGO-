@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGO - Login Portal</title>
+    <title>GGO - Login</title>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -18,7 +18,6 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -29,52 +28,82 @@
             border: 1px solid var(--card-border);
             padding: 40px;
             border-radius: 16px;
-            width: 380px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 350px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             text-align: center;
         }
-        .logo-img { height: 50px; margin-bottom: 20px; object-fit: contain; }
-        h2 { color: var(--accent); margin-bottom: 10px; font-size: 22px; }
-        p { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; }
-        .btn {
+        .logo-img { height: 50px; margin-bottom: 20px; }
+        h2 { margin-bottom: 25px; color: var(--accent); font-size: 22px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-muted); }
+        input {
             width: 100%;
             padding: 12px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
             border-radius: 8px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        input:focus { border-color: var(--accent); }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: var(--bg-dark);
             border: none;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 15px;
             cursor: pointer;
-            margin-bottom: 12px;
             transition: opacity 0.2s;
         }
-        .btn-admin { background-color: var(--accent); color: var(--bg-dark); }
-        .btn-agent { background-color: #10b981; color: white; }
-        .btn:hover { opacity: 0.9; }
+        .btn-login:hover { opacity: 0.9; }
+        .error-msg { color: #f87171; font-size: 13px; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
 
     <div class="login-card">
         <img src="GGO-White-Var2.png" alt="Logo" class="logo-img">
-        <h2>Welcome to GGO Portal</h2>
-        <p>Please select your access role to continue</p>
+        <h2>GGO System Login</h2>
+        
+        <div class="input-group">
+            <label for="passwordInput">Enter Access Password:</label>
+            <input type="password" id="passwordInput" placeholder="Password...">
+        </div>
 
-        <button class="btn btn-admin" onclick="loginAs('admin')">🔐 Login as Admin (Manager)</button>
-        <button class="btn btn-agent" onclick="loginAs('agent')">👤 Login as Agent (View Only)</button>
+        <button class="btn-login" onclick="handleLogin()">Login</button>
+        <div id="errorMsg" class="error-msg">Incorrect password. Please try again.</div>
     </div>
 
     <script>
-        function loginAs(role) {
-            if (role === 'admin') {
-                // حفظ الصلاحية في المتصفح وتوجيهه للداشبورد الكاملة
-                localStorage.setItem('ggo_role', 'admin');
-                window.location.href = 'dashboard.html';
+        function handleLogin() {
+            const pass = document.getElementById('passwordInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            // كلمات السر المحدثة:
+            const MANAGER_PASSWORD = "MANAGER00206"; // كلمة سر المدير الجديدة
+            const AGENT_PASSWORD = "agent123";         // كلمة سر الأージェنت
+
+            if (pass === MANAGER_PASSWORD) {
+                localStorage.setItem('userRole', 'manager');
+                window.location.href = 'index.html'; 
+            } else if (pass === AGENT_PASSWORD) {
+                localStorage.setItem('userRole', 'agent');
+                window.location.href = 'index.html'; 
             } else {
-                // حفظ الصلاحية وتوجيهه لصفحة الرانكينج أو الداشبورد المخصصة للموظفين
-                localStorage.setItem('ggo_role', 'agent');
-                window.location.href = 'today-ranking.html';
+                errorMsg.style.display = 'block';
             }
         }
+
+        // التفعيل بزر الـ Enter
+        document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
     </script>
+
 </body>
 </html>
