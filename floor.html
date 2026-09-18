@@ -49,7 +49,8 @@
         .total-box h3 { margin: 0 0 5px 0; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
         .total-box .num { font-size: 28px; font-weight: bold; color: var(--accent); }
 
-        .btn-add-lead { background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; margin: 10px; display: inline-block; }
+        .btn-add-lead { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .btn-add-lead:hover { opacity: 0.9; }
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: var(--card-bg); padding: 25px; border-radius: 12px; width: 400px; border: 1px solid var(--card-border); }
@@ -60,6 +61,7 @@
 <body>
 
     <div class="container">
+        <!-- Main Navbar -->
         <div class="main-navbar">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -76,13 +78,11 @@
                 <span>Select Date:</span>
                 <input type="date" id="floorDate" onchange="loadFloorData()">
             </div>
-            <button class="btn-add-lead" onclick="openLeadModal()">+ Add Floor Entry (Lead)</button>
+            <button class="btn-add-lead" onclick="openLeadModal()">+ Add Floor Entry</button>
         </div>
 
         <!-- Floor Grid per Team -->
-        <div class="floor-grid" id="floorGridContainer">
-            <!-- Dynamic Teams Grid -->
-        </div>
+        <div class="floor-grid" id="floorGridContainer"></div>
 
         <!-- Total Production Summary -->
         <div class="total-section">
@@ -120,7 +120,7 @@
                 <option value="CGM">CGM</option>
                 <option value="MLA">MLA</option>
             </select>
-            <label>Value / Count (e.g., 1, 2...)</label>
+            <label>Value / Count</label>
             <input type="number" id="leadValue" value="1">
             <label>Status</label>
             <select id="leadStatus">
@@ -137,7 +137,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -151,7 +151,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Set default date to today
         document.getElementById('floorDate').valueAsDate = new Date();
 
         window.openLeadModal = () => { document.getElementById('leadModal').style.display = 'flex'; }
@@ -187,7 +186,6 @@
                         entries.push({ id: docSnap.id, ...data });
                     }
                 });
-
                 renderFloor(entries);
             });
         }
@@ -239,14 +237,12 @@
                         `;
                     });
                 }
-
                 gridHtml += `</div>`;
             });
 
             document.getElementById('floorGridContainer').innerHTML = gridHtml;
         }
 
-        // Initial load
         loadFloorData();
     </script>
 </body>
