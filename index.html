@@ -288,18 +288,17 @@
                 if (ratio >= 0.85) targetAchieved++;
                 else targetBelow++;
 
-                // Flexible checking for CGM or MLA in team name or campaign text
                 const teamName = String(item.team || "").trim().toUpperCase();
-                
-                if (teamName.includes("CGM")) {
-                    cgmAgents++;
-                    cgmG2gs += g2gs;
-                    cgmRatioSum += ratio;
-                }
+
+                // لو التيم MLA يبقى تبع الـ MLA، غير كده يبقى تبع الـ CGM (لأن باقي التيمات CGM)
                 if (teamName.includes("MLA")) {
                     mlaAgents++;
                     mlaG2gs += g2gs;
                     mlaRatioSum += ratio;
+                } else {
+                    cgmAgents++;
+                    cgmG2gs += g2gs;
+                    cgmRatioSum += ratio;
                 }
             });
 
