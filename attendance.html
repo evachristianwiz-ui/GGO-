@@ -154,18 +154,19 @@
 
         <!-- Filters -->
         <div class="filters-bar">
-            <select id="monthFilter" onchange="filterTable()" style="font-weight: bold; color: var(--accent);">
+            <select id="monthFilter" style="font-weight: bold; color: var(--accent);">
                 <option value="2026-09" selected>📅 September 2026</option>
                 <option value="2026-10">📅 October 2026</option>
                 <option value="2026-11">📅 November 2026</option>
                 <option value="2026-12">📅 December 2026</option>
+                <option value="2027-01">📅 January 2027</option>
             </select>
 
-            <input type="date" id="attendanceDate" onchange="filterTable()" style="color: var(--accent); font-weight: bold;">
+            <input type="date" id="attendanceDate" style="color: var(--accent); font-weight: bold;">
 
-            <input type="text" id="searchInput" placeholder="Search agent for attendance..." onkeyup="filterTable()">
+            <input type="text" id="searchInput" placeholder="Search agent for attendance...">
             
-            <select id="teamFilter" onchange="filterTable()">
+            <select id="teamFilter">
                 <option value="">All Teams</option>
                 <option value="Wazowski#1">Wazowski#1</option>
                 <option value="Wazowski#2">Wazowski#2</option>
@@ -188,155 +189,15 @@
                 <tr>
                     <th>Agent Name</th>
                     <th>Team</th>
-                    <th>Campaign Type</th>
                     <th>Attendance Status</th>
-                    <th>Notes / Reason</th>
-                    <th>Action</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="attendanceTableBody">
-                <tr><td colspan="6" style="text-align: center;">Loading attendance records...</td></tr>
+                <tr><td colspan="4" style="text-align: center;">Select filters to load attendance data...</td></tr>
             </tbody>
         </table>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
-            authDomain: "ggo-production-per-agent.firebaseapp.com",
-            projectId: "ggo-production-per-agent",
-            storageBucket: "ggo-production-per-agent.firebasestorage.app",
-            messagingSenderId: "825359557967",
-            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Set default date to today
-        const todayStr = new Date().toISOString().split('T')[0];
-        document.getElementById('attendanceDate').value = todayStr;
-
-        let allAgents = [];
-        let attendanceRecords = {};
-
-        onSnapshot(collection(db, "agents_data"), (snapshot) => {
-            allAgents = [];
-            snapshot.forEach(docSnap => allAgents.push({ id: docSnap.id, ...docSnap.data() }));
-            renderAttendanceTable();
-        });
-
-        onSnapshot(collection(db, "attendance_logs"), (snapshot) => {
-            attendanceRecords = {};
-            snapshot.forEach(docSnap => {
-                attendanceRecords[docSnap.id] = docSnap.data();
-            });
-            renderAttendanceTable();
-        });
-
-        window.filterTable = function() {
-            renderAttendanceTable();
-        }
-
-        window.renderAttendanceTable = function() {
-            const selectedMonth = document.getElementById('monthFilter').value;
-            const selectedDate = document.getElementById('attendanceDate').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const team = document.getElementById('teamFilter').value;
-
-            const monthFiltered = allAgents.filter(item => (item.month || "2026-09") === selectedMonth);
-
-            let filtered = monthFiltered.filter(item => {
-                const matchName = item.name.toLowerCase().includes(search);
-                const matchTeam = team === "" || item.team === team;
-                return matchName && matchTeam;
-            });
-
-            let html = "";
-            filtered.forEach(agent => {
-                const recordKey = `${agent.id}_${selectedDate}`;
-                const currentRecord = attendanceRecords[recordKey] || { status: 'Present', notes: '', extraTime: '' };
-                const isExtraTime = currentRecord.status === 'Extra time';
-
-                html += `<tr>
-                    <td><b>${agent.name}</b></td>
-                    <td>${agent.team}</td>
-                    <td>${agent.type || 'FT'}</td>
-                    <td>
-                        <select id="status_${agent.id}" class="select-status" onchange="handleStatusChange('${agent.id}')">
-                            <option value="Present" ${currentRecord.status === 'Present' ? 'selected' : ''}>🟢 Present</option>
-                            <option value="L1" ${currentRecord.status === 'L1' ? 'selected' : ''}>🟡 L1</option>
-                            <option value="L2" ${currentRecord.status === 'L2' ? 'selected' : ''}>🟠 L2</option>
-                            <option value="Quarter day" ${currentRecord.status === 'Quarter day' ? 'selected' : ''}>⏱️ Quarter day</option>
-                            <option value="Half Day" ${currentRecord.status === 'Half Day' ? 'selected' : ''}>⏳ Half Day</option>
-                            <option value="Absent" ${currentRecord.status === 'Absent' ? 'selected' : ''}>🔴 Absent</option>
-                            <option value="Off" ${currentRecord.status === 'Off' ? 'selected' : ''}>⚪ Off</option>
-                            <option value="Double paid" ${currentRecord.status === 'Double paid' ? 'selected' : ''}>💵 Double paid</option>
-                            <option value="Extra time" ${currentRecord.status === 'Extra time' ? 'selected' : ''}>⌛ Extra time</option>
-                        </select>
-                        <div id="extraTimeContainer_${agent.id}" class="extra-time-container" style="display: ${isExtraTime ? 'flex' : 'none'};">
-                            <span style="font-size:11px; color:#38bdf8;">Mins (≥10):</span>
-                            <input type="number" id="extraMins_${agent.id}" value="${currentRecord.extraTime || 10}" min="10" placeholder="Mins">
-                        </div>
-                    </td>
-                    <td>
-                        <input type="text" id="notes_${agent.id}" value="${currentRecord.notes || ''}" placeholder="Add reason / notes..." style="background:var(--bg-dark); border:1px solid var(--card-border); color:white; padding:5px; border-radius:4px; width:100%;">
-                    </td>
-                    <td>
-                        <button class="btn btn-save" onclick="saveAttendance('${agent.id}', '${selectedDate}')">💾 Save</button>
-                    </td>
-                </tr>`;
-            });
-
-            document.getElementById('attendanceTableBody').innerHTML = html || `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No agents found.</td></tr>`;
-        }
-
-        window.handleStatusChange = function(agentId) {
-            const status = document.getElementById(`status_${agentId}`).value;
-            const container = document.getElementById(`extraTimeContainer_${agentId}`);
-            if (status === 'Extra time') {
-                container.style.display = 'flex';
-            } else {
-                container.style.display = 'none';
-            }
-        }
-
-        window.saveAttendance = async function(agentId, dateStr) {
-            const status = document.getElementById(`status_${agentId}`).value;
-            const notes = document.getElementById(`notes_${agentId}`).value;
-            let extraTimeVal = "";
-
-            if (status === 'Extra time') {
-                const minsInput = document.getElementById(`extraMins_${agentId}`);
-                const mins = Number(minsInput.value) || 0;
-                if (mins < 10) {
-                    alert("⚠️ Extra time cannot be less than 10 minutes!");
-                    minsInput.value = 10;
-                    return;
-                }
-                extraTimeVal = mins;
-            }
-
-            const recordKey = `${agentId}_${dateStr}`;
-
-            try {
-                await setDoc(doc(db, "attendance_logs", recordKey), {
-                    agentId: agentId,
-                    date: dateStr,
-                    status: status,
-                    notes: notes,
-                    extraTime: extraTimeVal,
-                    updatedAt: new Date().toISOString()
-                });
-                alert("Attendance status saved successfully!");
-            } catch (error) {
-                console.error("Error saving attendance: ", error);
-                alert("Failed to save attendance.");
-            }
-        }
-    </script>
 </body>
 </html>
