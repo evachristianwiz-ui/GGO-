@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGO - Day-to-Day Floor Live (Google Sheet Sync)</title>
+    <title>GGO - Day-to-Day Floor Live</title>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -71,7 +71,7 @@
             padding-left: 12px;
         }
 
-        /* Header KPIs Counters */
+        /* Prominent Header KPIs Counters for Daily Totals */
         .header-kpis {
             display: flex;
             gap: 15px;
@@ -79,17 +79,22 @@
             flex-wrap: wrap;
         }
         .kpi-badge {
-            background-color: var(--bg-dark);
-            border: 1px solid var(--card-border);
-            padding: 8px 16px;
-            border-radius: 8px;
+            background-color: #0f2537;
+            border: 2px solid var(--accent);
+            padding: 10px 20px;
+            border-radius: 10px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.2);
         }
+        .kpi-badge.g2g-badge { border-color: var(--success); }
         .kpi-badge span {
-            color: var(--accent);
-            font-size: 15px;
-            margin-left: 5px;
+            color: var(--text-main);
+            font-size: 20px;
+            margin-top: 3px;
         }
         .kpi-badge.g2g-badge span { color: var(--success); }
 
@@ -141,7 +146,6 @@
             overflow-y: auto;
             padding-right: 5px;
         }
-        /* Custom nice scrollbar for cards */
         .agents-list::-webkit-scrollbar { width: 5px; }
         .agents-list::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
 
@@ -168,14 +172,15 @@
         select.att-select {
             background: #0f2537;
             border: 1px solid var(--card-border);
-            color: var(--success);
             font-weight: bold;
-            padding: 4px 6px;
+            padding: 4px 8px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 12px;
-            width: 45px;
+            width: 50px;
         }
+        .att-present { color: var(--success) !important; }
+        .att-absent { color: var(--danger) !important; }
 
         .controls-group {
             display: flex;
@@ -210,7 +215,6 @@
             cursor: pointer;
         }
 
-        /* Fixed popup positioning so it won't get cut off */
         .breakdown-popup {
             display: none;
             position: absolute;
@@ -273,10 +277,16 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Unified Floor Dashboard (Active Teams)</div>
+            <div class="nav-title">Day-to-Day Floor Live Tracking</div>
             <div class="header-kpis">
-                <div class="kpi-badge">Total Floor: <span id="top-floor-count">0</span></div>
-                <div class="kpi-badge g2g-badge">Total G2G: <span id="top-g2g-count">0</span></div>
+                <div class="kpi-badge">
+                    TODAY TOTAL TRANSFERS
+                    <span id="top-floor-count">0</span>
+                </div>
+                <div class="kpi-badge g2g-badge">
+                    TODAY TOTAL G2G
+                    <span id="top-g2g-count">0</span>
+                </div>
                 <button class="btn btn-whatsapp" onclick="copyWhatsAppUpdate()">💬 Copy for WhatsApp</button>
                 <button class="btn btn-accent" onclick="saveFloorData()">💾 Sync & Save</button>
             </div>
@@ -302,9 +312,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Updated teams data (Wazowski 1 updated without Charlotte and last agent)
         const teamsData = [
-            { team: "Wazowski 1", leader: "Mavis Miller", agents: ["Adam", "Rafy", "Victor", "Mia", "Jessy"] },
+            { team: "Wazowski 1", leader: "Mavis Miller", agents: ["Adam", "Rafy", "Victor", "Mia", "Jessy", "Amy"] },
             { team: "Bloom", leader: "Donna Bell", agents: ["Anna", "Heaven", "Katherine", "Maddy", "Celine", "Jules", "Kim", "Jennifer", "Austin", "Grace", "Paris", "Eric"] },
             { team: "Unity", leader: "William White", agents: ["Ray", "Coby", "Scarlett", "Cloe", "Ian", "Jacob"] },
             { team: "PGX", leader: "Jordan Kelly", agents: ["Stewart", "Micheal", "Jeremy", "Daisy", "Diana", "Hannah", "Camila", "Catilyn", "Emma", "Owen"] },
@@ -331,7 +340,7 @@
                     html += `
                         <div class="agent-row-box" data-agent="${agentName}">
                             <div class="agent-info">
-                                <select class="att-select" onchange="window.calculateTotals()">
+                                <select class="att-select att-present" onchange="window.updateAttColor(this); window.calculateTotals();">
                                     <option value="P" style="color:var(--success);">P</option>
                                     <option value="A" style="color:var(--danger);">A</option>
                                 </select>
@@ -373,6 +382,14 @@
 
             container.innerHTML = html;
             loadSavedFloorData();
+        }
+
+        window.updateAttColor = function(selectEl) {
+            if (selectEl.value === 'P') {
+                selectEl.className = "att-select att-present";
+            } else {
+                selectEl.className = "att-select att-absent";
+            }
         }
 
         window.updateBreakdown = function(inputEl) {
@@ -424,21 +441,46 @@
             document.getElementById('top-g2g-count').innerText = floorG2G;
         }
 
+        // Exact formatted WhatsApp structure matching user requirement
         window.copyWhatsAppUpdate = function() {
-            let text = `📊 *GGO Floor Daily Update*\n`;
-            text += `• *Total Floor Count:* ${document.getElementById('top-floor-count').innerText}\n`;
-            text += `• *Total G2G Count:* ${document.getElementById('top-g2g-count').innerText}\n\n`;
-            
+            let totalFloorTransfers = document.getElementById('top-floor-count').innerText;
+            let totalFloorG2G = document.getElementById('top-g2g-count').innerText;
+
+            let text = `CGM AT ${totalFloorTransfers}\n\n`;
+
             const teamCards = document.querySelectorAll('.team-card');
             teamCards.forEach(card => {
-                const teamName = card.querySelector('.team-name').innerText;
-                const g2gCount = card.querySelector('.team-g2g-lbl').innerText;
+                const teamName = card.querySelector('.team-name').innerText.toUpperCase();
                 const totalCount = card.querySelector('.team-count-val').innerText;
-                text += `🔹 *${teamName}* ➔ Total: ${totalCount} | G2G: ${g2gCount}\n`;
+                
+                // Only include team if they have transfers or to show structure
+                text += `${teamName} AT ${totalCount}\n`;
+
+                card.querySelectorAll('.agent-row-box').forEach(row => {
+                    const agentName = row.querySelector('.agent-name').innerText.toUpperCase();
+                    const agentTotal = Number(row.querySelector('.agent-total-val').value) || 0;
+                    
+                    if (agentTotal > 0) {
+                        const g2g = Number(row.querySelector('.sub-g2g').value) || 0;
+                        const bad = Number(row.querySelector('.sub-bad').value) || 0;
+                        const post = Number(row.querySelector('.sub-post').value) || 0;
+
+                        let details = [];
+                        if (g2g > 0) details.push(`${g2g} G2G`);
+                        if (bad > 0) details.push(`${bad} BAD`);
+                        if (post > 0) details.push(`${post} POSTPONED`);
+
+                        let detailsStr = details.length > 0 ? ` ( ${details.join(' , ')} )` : "";
+                        text += `${agentName} AT ${agentTotal}${detailsStr}\n`;
+                    }
+                });
+                text += `\n`;
             });
 
-            navigator.clipboard.writeText(text);
-            alert("✅ Update copied to clipboard! Paste directly on WhatsApp.");
+            text += `TOTAL G2G ${totalFloorG2G}`;
+
+            navigator.clipboard.writeText(text.trim());
+            alert("✅ Formatted WhatsApp update copied to clipboard!");
         }
 
         window.saveFloorData = async function() {
@@ -479,7 +521,10 @@
                             const agentName = row.getAttribute('data-agent');
                             const key = `${teamName}_${agentName}`;
                             if(saved[key]) {
-                                row.querySelector('.att-select').value = saved[key].att || 'P';
+                                const selectEl = row.querySelector('.att-select');
+                                selectEl.value = saved[key].att || 'P';
+                                window.updateAttColor(selectEl);
+
                                 row.querySelector('.agent-total-val').value = saved[key].total || 0;
                                 row.querySelector('.sub-g2g').value = saved[key].g2g || 0;
                                 row.querySelector('.sub-bad').value = saved[key].bad || 0;
