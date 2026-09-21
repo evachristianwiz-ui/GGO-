@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGO - Day-to-Day Floor Dashboard</title>
+    <title>GGO - Day-to-Day Floor Live (Google Sheet Sync)</title>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -60,6 +60,8 @@
             padding: 15px 25px;
             border-radius: 12px;
             border: 1px solid var(--card-border);
+            flex-wrap: wrap;
+            gap: 15px;
         }
         .nav-title {
             font-size: 18px;
@@ -74,6 +76,7 @@
             display: flex;
             gap: 15px;
             align-items: center;
+            flex-wrap: wrap;
         }
         .kpi-badge {
             background-color: var(--bg-dark);
@@ -158,7 +161,6 @@
         }
         .agent-name { font-size: 13px; font-weight: 600; width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        /* P / A select */
         select.att-select {
             background: #0f2537;
             border: 1px solid var(--card-border);
@@ -171,7 +173,6 @@
             width: 45px;
         }
 
-        /* Inputs & Controls */
         .controls-group {
             display: flex;
             align-items: center;
@@ -191,7 +192,6 @@
         }
         input.count-input:focus { border-color: var(--accent); outline: none; }
 
-        /* Breakdown container tooltip / drawer on hover or click */
         .breakdown-container {
             position: relative;
         }
@@ -206,7 +206,6 @@
             cursor: pointer;
         }
 
-        /* Popup breakdown modal when hovering/clicking count */
         .breakdown-popup {
             display: none;
             position: absolute;
@@ -230,7 +229,7 @@
             margin-bottom: 5px;
             font-size: 11px;
         }
-        .breakdown-row select {
+        .breakdown-row input {
             background: var(--bg-dark);
             color: var(--text-main);
             border: 1px solid var(--card-border);
@@ -268,33 +267,48 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Unified Floor Dashboard (Side-by-Side View)</div>
+            <div class="nav-title">Unified Floor Dashboard (Google Sheet Linked Sync)</div>
             <div class="header-kpis">
                 <div class="kpi-badge">Total Floor: <span id="top-floor-count">0</span></div>
                 <div class="kpi-badge g2g-badge">Total G2G: <span id="top-g2g-count">0</span></div>
                 <button class="btn btn-whatsapp" onclick="copyWhatsAppUpdate()">💬 Copy for WhatsApp</button>
-                <button class="btn btn-accent" onclick="saveFloorData()">💾 Save</button>
+                <button class="btn btn-accent" onclick="saveFloorData()">💾 Sync & Save</button>
             </div>
         </div>
 
         <!-- Teams Grid Container -->
         <div class="teams-grid" id="teamsGridContainer">
-            <!-- Teams will be dynamically injected here via script or hardcoded cleanly -->
+            <!-- Dynamically populated -->
         </div>
     </div>
 
-    <script>
-        // Data structure for teams and agents
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
+            authDomain: "ggo-production-per-agent.firebaseapp.com",
+            projectId: "ggo-production-per-agent",
+            storageBucket: "ggo-production-per-agent.firebasestorage.app",
+            messagingSenderId: "825359557967",
+            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // All configured teams matching your exact list
         const teamsData = [
             { team: "Wazowski 1", leader: "Mavis Miller", agents: ["Adam", "Rafy", "Victor", "Mia", "Charlotte", "Jessy", "Amy"] },
-            { team: "Wazowski 2", leader: "Leader 2", agents: ["Agent 1", "Agent 2", "Agent 3", "Agent 4"] },
-            { team: "Wazowski 3", leader: "Leader 3", agents: ["Agent 1", "Agent 2", "Agent 3"] },
-            { team: "Midblue", leader: "Leader M", agents: ["Agent 1", "Agent 2", "Agent 3", "Agent 4"] },
-            { team: "Prime", leader: "Leader P", agents: ["Agent 1", "Agent 2", "Agent 3"] },
-            { team: "Sunny", leader: "Leader S", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Wazowski 2", leader: "Leader 2", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Wazowski 3", leader: "Leader 3", agents: ["Agent 1", "Agent 2"] },
+            { team: "Midblue", leader: "Leader M", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Prime", leader: "Leader P", agents: ["Agent 1", "Agent 2"] },
+            { team: "Sunny", leader: "Leader S", agents: ["Agent 1", "Agent 2"] },
             { team: "Bloom", leader: "Donna Bell", agents: ["Anna", "Heaven", "Katherine", "Maddy", "Celine", "Jules", "Kim", "Jennifer", "Austin", "Grace", "Paris", "Eric"] },
-            { team: "Epic", leader: "Leader E", agents: ["Agent 1", "Agent 2", "Agent 3"] },
-            { team: "Peak", leader: "Leader PK", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Epic", leader: "Leader E", agents: ["Agent 1", "Agent 2"] },
+            { team: "Peak", leader: "Leader PK", agents: ["Agent 1", "Agent 2"] },
             { team: "Unity", leader: "William White", agents: ["Ray", "Coby", "Scarlett", "Cloe", "Ian", "Jacob"] },
             { team: "PGX", leader: "Jordan Kelly", agents: ["Stewart", "Micheal", "Jeremy", "Daisy", "Diana", "Hannah", "Camila", "Catilyn", "Emma", "Owen"] },
             { team: "MLA", leader: "Ashley & Williams", agents: ["Roben", "Ryan", "Haley", "Nina", "Kai", "Elle", "Monica", "Jennie", "Tia", "Riley"] }
@@ -306,7 +320,7 @@
 
             teamsData.forEach((t, teamIdx) => {
                 html += `
-                <div class="team-card" data-team-name="${t.team}">
+                <div class="team-card" data-team="${t.team}">
                     <div class="team-header">
                         <div>
                             <div class="team-name">${t.team}</div>
@@ -318,33 +332,32 @@
 
                 t.agents.forEach((agentName, agentIdx) => {
                     html += `
-                        <div class="agent-row-box" id="agent-${teamIdx}-${agentIdx}">
+                        <div class="agent-row-box" data-agent="${agentName}">
                             <div class="agent-info">
-                                <select class="att-select" onchange="calculateTotals()">
+                                <select class="att-select" onchange="window.calculateTotals()">
                                     <option value="P" style="color:var(--success);">P</option>
                                     <option value="A" style="color:var(--danger);">A</option>
                                 </select>
                                 <span class="agent-name" title="${agentName}">${agentName}</span>
                             </div>
                             <div class="controls-group">
-                                <input type="number" class="count-input agent-total-val" value="0" min="0" oninput="updateAgentBreakdown(this); calculateTotals();" placeholder="0">
+                                <input type="number" class="count-input agent-total-val" value="0" min="0" oninput="window.updateBreakdown(this); window.calculateTotals();" placeholder="0">
                                 
-                                <!-- Breakdown Hover / Click feature for multi-counts (e.g. if count is 2 or 3) -->
                                 <div class="breakdown-container">
-                                    <button class="breakdown-btn" title="Specify Status">⚙️</button>
+                                    <button class="breakdown-btn" title="Status Breakdown">⚙️</button>
                                     <div class="breakdown-popup">
                                         <div style="font-weight: bold; margin-bottom: 5px; color: var(--accent); font-size: 11px;">Status Breakdown</div>
                                         <div class="breakdown-row">
                                             <span>G2G:</span>
-                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 40px;" oninput="calculateTotals()">
+                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 40px;" oninput="window.calculateTotals()">
                                         </div>
                                         <div class="breakdown-row">
                                             <span>Bad:</span>
-                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 40px;" oninput="calculateTotals()">
+                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 40px;" oninput="window.calculateTotals()">
                                         </div>
                                         <div class="breakdown-row">
                                             <span>Postponed:</span>
-                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 40px;" oninput="calculateTotals()">
+                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 40px;" oninput="window.calculateTotals()">
                                         </div>
                                     </div>
                                 </div>
@@ -362,17 +375,16 @@
             });
 
             container.innerHTML = html;
+            loadSavedFloorData();
         }
 
-        // Auto-sync main count input with G2G sub-status if user hasn't filled breakdown manually
-        function updateAgentBreakdown(inputEl) {
+        window.updateBreakdown = function(inputEl) {
             const val = Number(inputEl.value) || 0;
             const popup = inputEl.parentElement.querySelector('.breakdown-popup');
             const g2gInput = popup.querySelector('.sub-g2g');
             const badInput = popup.querySelector('.sub-bad');
             const postInput = popup.querySelector('.sub-post');
 
-            // Default simple logic: if user enters 2, set G2G to 2 by default unless customized
             const currentSubSum = Number(g2gInput.value) + Number(badInput.value) + Number(postInput.value);
             if(currentSubSum === 0 || currentSubSum === Number(g2gInput.value)) {
                 g2gInput.value = val;
@@ -381,7 +393,7 @@
             }
         }
 
-        function calculateTotals() {
+        window.calculateTotals = function() {
             let floorCount = 0;
             let floorG2G = 0;
 
@@ -399,7 +411,6 @@
                     const mainVal = Number(row.querySelector('.agent-total-val').value) || 0;
                     teamTotalVal += mainVal;
 
-                    // Read breakdown values
                     const g2gVal = Number(row.querySelector('.sub-g2g').value) || 0;
                     teamG2GVal += g2gVal;
                 });
@@ -416,7 +427,7 @@
             document.getElementById('top-g2g-count').innerText = floorG2G;
         }
 
-        function copyWhatsAppUpdate() {
+        window.copyWhatsAppUpdate = function() {
             let text = `📊 *GGO Floor Daily Update*\n`;
             text += `• *Total Floor Count:* ${document.getElementById('top-floor-count').innerText}\n`;
             text += `• *Total G2G Count:* ${document.getElementById('top-g2g-count').innerText}\n\n`;
@@ -430,17 +441,65 @@
             });
 
             navigator.clipboard.writeText(text);
-            alert("✅ Update copied to clipboard! You can paste it directly on WhatsApp.");
+            alert("✅ Update copied to clipboard! Paste directly on WhatsApp.");
         }
 
-        function saveFloorData() {
-            alert("✅ Floor data saved successfully!");
+        // Save to Firebase (acts as live cloud sheet sync)
+        window.saveFloorData = async function() {
+            const todayKey = new Date().toISOString().split('T')[0];
+            let payload = {};
+
+            document.querySelectorAll('.team-card').forEach(card => {
+                const teamName = card.getAttribute('data-team');
+                card.querySelectorAll('.agent-row-box').forEach(row => {
+                    const agentName = row.getAttribute('data-agent');
+                    payload[`${teamName}_${agentName}`] = {
+                        att: row.querySelector('.att-select').value,
+                        total: row.querySelector('.agent-total-val').value,
+                        g2g: row.querySelector('.sub-g2g').value,
+                        bad: row.querySelector('.sub-bad').value,
+                        post: row.querySelector('.sub-post').value
+                    };
+                });
+            });
+
+            try {
+                await setDoc(doc(db, "floor_daily", todayKey), { data: payload, updatedAt: new Date() });
+                alert("✅ Floor data successfully synced and saved in the cloud!");
+            } catch(e) {
+                alert("Error saving: " + e.message);
+            }
         }
 
-        // Initialize grid on load
+        async function loadSavedFloorData() {
+            const todayKey = new Date().toISOString().split('T')[0];
+            try {
+                const docSnap = await getDoc(doc(db, "floor_daily", todayKey));
+                if (docSnap.exists()) {
+                    const saved = docSnap.data().data || {};
+                    document.querySelectorAll('.team-card').forEach(card => {
+                        const teamName = card.getAttribute('data-team');
+                        card.querySelectorAll('.agent-row-box').forEach(row => {
+                            const agentName = row.getAttribute('data-agent');
+                            const key = `${teamName}_${agentName}`;
+                            if(saved[key]) {
+                                row.querySelector('.att-select').value = saved[key].att || 'P';
+                                row.querySelector('.agent-total-val').value = saved[key].total || 0;
+                                row.querySelector('.sub-g2g').value = saved[key].g2g || 0;
+                                row.querySelector('.sub-bad').value = saved[key].bad || 0;
+                                row.querySelector('.sub-post').value = saved[key].post || 0;
+                            }
+                        });
+                    });
+                    window.calculateTotals();
+                }
+            } catch(e) {
+                console.log("No saved sheet found for today yet.");
+            }
+        }
+
         window.onload = function() {
             renderFloorCards();
-            calculateTotals();
         };
     </script>
 </body>
