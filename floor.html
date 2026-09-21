@@ -267,7 +267,7 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Unified Floor Dashboard (Google Sheet Linked Sync)</div>
+            <div class="nav-title">Unified Floor Dashboard (Active Teams Only)</div>
             <div class="header-kpis">
                 <div class="kpi-badge">Total Floor: <span id="top-floor-count">0</span></div>
                 <div class="kpi-badge g2g-badge">Total G2G: <span id="top-g2g-count">0</span></div>
@@ -277,9 +277,7 @@
         </div>
 
         <!-- Teams Grid Container -->
-        <div class="teams-grid" id="teamsGridContainer">
-            <!-- Dynamically populated -->
-        </div>
+        <div class="teams-grid" id="teamsGridContainer"></div>
     </div>
 
     <script type="module">
@@ -298,17 +296,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // All configured teams matching your exact list
+        // Active teams containing actual agents only
         const teamsData = [
             { team: "Wazowski 1", leader: "Mavis Miller", agents: ["Adam", "Rafy", "Victor", "Mia", "Charlotte", "Jessy", "Amy"] },
-            { team: "Wazowski 2", leader: "Leader 2", agents: ["Agent 1", "Agent 2", "Agent 3"] },
-            { team: "Wazowski 3", leader: "Leader 3", agents: ["Agent 1", "Agent 2"] },
-            { team: "Midblue", leader: "Leader M", agents: ["Agent 1", "Agent 2", "Agent 3"] },
-            { team: "Prime", leader: "Leader P", agents: ["Agent 1", "Agent 2"] },
-            { team: "Sunny", leader: "Leader S", agents: ["Agent 1", "Agent 2"] },
             { team: "Bloom", leader: "Donna Bell", agents: ["Anna", "Heaven", "Katherine", "Maddy", "Celine", "Jules", "Kim", "Jennifer", "Austin", "Grace", "Paris", "Eric"] },
-            { team: "Epic", leader: "Leader E", agents: ["Agent 1", "Agent 2"] },
-            { team: "Peak", leader: "Leader PK", agents: ["Agent 1", "Agent 2"] },
             { team: "Unity", leader: "William White", agents: ["Ray", "Coby", "Scarlett", "Cloe", "Ian", "Jacob"] },
             { team: "PGX", leader: "Jordan Kelly", agents: ["Stewart", "Micheal", "Jeremy", "Daisy", "Diana", "Hannah", "Camila", "Catilyn", "Emma", "Owen"] },
             { team: "MLA", leader: "Ashley & Williams", agents: ["Roben", "Ryan", "Haley", "Nina", "Kai", "Elle", "Monica", "Jennie", "Tia", "Riley"] }
@@ -318,7 +309,7 @@
             const container = document.getElementById('teamsGridContainer');
             let html = "";
 
-            teamsData.forEach((t, teamIdx) => {
+            teamsData.forEach((t) => {
                 html += `
                 <div class="team-card" data-team="${t.team}">
                     <div class="team-header">
@@ -330,7 +321,7 @@
                     </div>
                     <div class="agents-list">`;
 
-                t.agents.forEach((agentName, agentIdx) => {
+                t.agents.forEach((agentName) => {
                     html += `
                         <div class="agent-row-box" data-agent="${agentName}">
                             <div class="agent-info">
@@ -444,7 +435,6 @@
             alert("✅ Update copied to clipboard! Paste directly on WhatsApp.");
         }
 
-        // Save to Firebase (acts as live cloud sheet sync)
         window.saveFloorData = async function() {
             const todayKey = new Date().toISOString().split('T')[0];
             let payload = {};
