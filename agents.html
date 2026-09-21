@@ -83,7 +83,7 @@
         .btn-danger { background-color: #ef4444; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; border: none; }
         .btn:hover { opacity: 0.9; }
 
-        /* KPI Cards */
+        /* KPI Cards (Clickable) */
         .kpi-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -98,6 +98,17 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .kpi-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .kpi-card.active-kpi {
+            border-color: var(--accent);
+            background-color: rgba(0, 180, 216, 0.08);
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
         }
         .kpi-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
         .kpi-value { font-size: 24px; font-weight: bold; color: var(--text-main); }
@@ -182,18 +193,18 @@
             </div>
         </div>
 
-        <!-- KPI Insights Cards -->
+        <!-- KPI Insights Cards (Active Only) -->
         <div class="kpi-container">
-            <div class="kpi-card">
-                <span class="kpi-title">Total Agents 📊</span>
+            <div class="kpi-card" id="cardTotal" onclick="setKpiFilter('all')">
+                <span class="kpi-title">Active Agents 📊 (Click to Reset)</span>
                 <span class="kpi-value" id="kpiTotal">0</span>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">G2G Achieved (≥ 0.85) 🟢</span>
+            <div class="kpi-card" id="cardAchieved" onclick="setKpiFilter('achieved')">
+                <span class="kpi-title">Active G2G Achieved (≥ 0.85) 🟢</span>
                 <span class="kpi-value" id="kpiG2gAchieved" style="color: #4ade80;">0</span>
             </div>
-            <div class="kpi-card">
-                <span class="kpi-title">G2G Below (< 0.85) 🔴</span>
+            <div class="kpi-card" id="cardBelow" onclick="setKpiFilter('below')">
+                <span class="kpi-title">Active G2G Below (< 0.85) 🔴</span>
                 <span class="kpi-value" id="kpiG2gBelow" style="color: #f87171;">0</span>
             </div>
         </div>
@@ -339,6 +350,18 @@
         const db = getFirestore(app);
 
         let allAgents = [];
+        let currentKpiFilter = 'all'; // 'all', 'achieved', 'below'
+
+        window.setKpiFilter = function(filterType) {
+            currentKpiFilter = filterType;
+            
+            document.querySelectorAll('.kpi-card').forEach(card => card.classList.remove('active-kpi'));
+            if(filterType === 'achieved') document.getElementById('cardAchieved').classList.add('active-kpi');
+            else if(filterType === 'below') document.getElementById('cardBelow').classList.add('active-kpi');
+            else document.getElementById('cardTotal').classList.add('active-kpi');
+
+            filterTable();
+        }
 
         window.openModal = () => {
             document.getElementById('modalTitle').innerText = "Add Agent";
@@ -427,12 +450,49 @@
             const teamVal = document.getElementById('teamFilter').value;
             const statusVal = document.getElementById('statusFilter').value;
             
-            let filtered = allAgents.filter(item => {
+            // Base filter matching month, search, team, and status dropdowns
+            let baseFiltered = allAgents.filter(item => {
                 const matchesMonth = (item.month || "2026-09") === selectedMonth;
                 const matchesSearch = (item.name || '').toLowerCase().includes(searchVal);
                 const matchesTeam = teamVal === "" || item.team === teamVal;
                 const matchesStatus = statusVal === "" || item.status === statusVal;
                 return matchesMonth && matchesSearch && matchesTeam && matchesStatus;
+            });
+
+            // Helper to check if agent is active (Active, New Comer, On Probation)
+            function isAgentActive(st) {
+                return !st || st === 'Active' || st === 'New Comer' || st === 'On Probation' || st === 'Two Weeks Notice';
+            }
+
+            // Calculate KPIs exclusively for Active/NewComer/OnProbation (excluding Resigned & Terminated)
+            let activeAgentsList = baseFiltered.filter(item => isAgentActive(item.status));
+            
+            let totalActiveCount = activeAgentsList.length;
+            let g2gAchievedCount = 0;
+            let g2gBelowCount = 0;
+
+            activeAgentsList.forEach(item => {
+                const attended = item.attended > 0 ? item.attended : 1;
+                const ratio = item.g2gs / attended;
+                if (ratio >= 0.85) g2gAchievedCount++;
+                else g2gBelowCount++;
+            });
+
+            document.getElementById('kpiTotal').innerText = totalActiveCount;
+            document.getElementById('kpiG2gAchieved').innerText = g2gAchievedCount;
+            document.getElementById('kpiG2gBelow').innerText = g2gBelowCount;
+
+            // Apply KPI Card specific filter if clicked
+            let filtered = baseFiltered.filter(item => {
+                // If user selected KPI filters, enforce active status condition + target condition
+                if (currentKpiFilter !== 'all' && !isAgentActive(item.status)) return false;
+
+                const attended = item.attended > 0 ? item.attended : 1;
+                const ratio = item.g2gs / attended;
+
+                if (currentKpiFilter === 'achieved') return ratio >= 0.85;
+                if (currentKpiFilter === 'below') return ratio < 0.85;
+                return true;
             });
 
             if (rankingMode === 'rank_g2gs') {
@@ -444,21 +504,6 @@
                     return ratioB - ratioA;
                 });
             }
-
-            let totalAgents = filtered.length;
-            let g2gAchievedCount = 0;
-            let g2gBelowCount = 0;
-
-            filtered.forEach(item => {
-                const attended = item.attended > 0 ? item.attended : 1;
-                const ratio = item.g2gs / attended;
-                if (ratio >= 0.85) g2gAchievedCount++;
-                else g2gBelowCount++;
-            });
-
-            document.getElementById('kpiTotal').innerText = totalAgents;
-            document.getElementById('kpiG2gAchieved').innerText = g2gAchievedCount;
-            document.getElementById('kpiG2gBelow').innerText = g2gBelowCount;
 
             let html = "";
             filtered.forEach((item, index) => {
@@ -502,6 +547,8 @@
             });
             document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="13" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
         }
+
+        document.getElementById('cardTotal').classList.add('active-kpi');
     </script>
 </body>
 </html>
