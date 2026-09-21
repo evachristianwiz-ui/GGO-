@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGO - Live Dashboard & Summary</title>
+    <title>GGO - Executive Live Dashboard</title>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -65,6 +65,61 @@
             padding-left: 12px;
         }
 
+        /* Announcements Section Box */
+        .announcement-section {
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(11, 25, 44, 0.8));
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.15);
+        }
+        .announcement-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .announcement-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .announcement-input-row input {
+            flex: 1;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+        }
+        .announcement-input-row input:focus { border-color: var(--accent); }
+        
+        .announcements-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .announcement-item {
+            background-color: rgba(7, 15, 30, 0.7);
+            border-left: 4px solid var(--warning);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .announcement-item span { color: var(--text-main); }
+        .announcement-time { font-size: 11px; color: var(--text-muted); }
+
         /* KPI Cards */
         .kpi-container {
             display: grid;
@@ -97,12 +152,11 @@
         .filters-bar select {
             background-color: var(--bg-dark);
             border: 1px solid var(--card-border);
-            color: var(--text-main);
+            color: var(--accent);
             padding: 10px;
             border-radius: 8px;
             outline: none;
             font-weight: bold;
-            color: var(--accent);
         }
 
         /* Table Container */
@@ -151,6 +205,21 @@
             <button class="btn btn-accent" onclick="copyDashboardWhatsApp()">💬 Copy Summary for WhatsApp</button>
         </div>
 
+        <!-- Announcements Box -->
+        <div class="announcement-section">
+            <div class="announcement-title">📢 Floor Announcements & Challenges Board</div>
+            <div class="announcement-input-row">
+                <input type="text" id="announcementInput" placeholder="e.g. Get 4 G2G and take 25 mins break! or Great job Adam 🚀">
+                <button class="btn btn-accent" onclick="postAnnouncement()">Publish Announcement</button>
+            </div>
+            <div class="announcements-feed" id="announcementsFeed">
+                <div class="announcement-item">
+                    <span>🎉 Welcome to GGO Live Floor Tracking! Check targets and achieve your goals.</span>
+                    <span class="announcement-time">Today</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Month Filter -->
         <div class="filters-bar">
             <select id="dashMonthFilter" onchange="processDashboardData()">
@@ -181,7 +250,7 @@
 
         <!-- Teams Summary Table -->
         <div class="table-card">
-            <h3 style="margin-top: 0; color: var(--accent); font-size: 15px; margin-bottom: 15px;">Teams Breakdown Summary</h3>
+            <h3 style="margin-top: 0; color: var(--accent); font-size: 15px; margin-bottom: 15px;">Teams Breakdown Summary (Active Teams)</h3>
             <table>
                 <thead>
                     <tr>
@@ -203,7 +272,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -219,21 +288,55 @@
 
         let globalAgents = [];
         const teamNamesList = [
-            "Wazowski 1", "Wazowski 2", "Wazowski 3", 
-            "Midblue", "Prime", "Sunny", "Bloom", 
-            "Epic", "Peak", "Unity", "PGX", "MLA"
+            "Wazowski 1", "Bloom", "Unity", "PGX", "MLA"
         ];
 
+        // Fetch agents data
         onSnapshot(collection(db, "agents_data"), (snapshot) => {
             globalAgents = [];
             snapshot.forEach(docSnap => globalAgents.push({ id: docSnap.id, ...docSnap.data() }));
             processDashboardData();
         });
 
+        // Fetch announcements live
+        onSnapshot(collection(db, "announcements"), (snapshot) => {
+            let feedHtml = "";
+            let items = [];
+            snapshot.forEach(docSnap => items.push(docSnap.data()));
+            
+            // Sort by newest if needed or just display
+            if(items.length === 0) {
+                feedHtml = `<div class="announcement-item"><span>🎉 Welcome to GGO Live Floor Tracking!</span><span class="announcement-time">Today</span></div>`;
+            } else {
+                items.forEach(item => {
+                    feedHtml += `<div class="announcement-item">
+                        <span>⭐ ${item.text}</span>
+                        <span class="announcement-time">Announcement</span>
+                    </div>`;
+                });
+            }
+            document.getElementById('announcementsFeed').innerHTML = feedHtml;
+        });
+
+        window.postAnnouncement = async function() {
+            const input = document.getElementById('announcementInput');
+            const text = input.value.trim();
+            if(!text) { alert("Please type an announcement!"); return; }
+
+            try {
+                await addDoc(collection(db, "announcements"), {
+                    text: text,
+                    createdAt: serverTimestamp()
+                });
+                input.value = '';
+            } catch(e) {
+                alert("Error posting announcement: " + e.message);
+            }
+        }
+
         window.processDashboardData = function() {
             const selectedMonth = document.getElementById('dashMonthFilter').value;
             
-            // Filter by selected month & active status (excluding Resigned / Terminated)
             const filtered = globalAgents.filter(item => {
                 const matchesMonth = (item.month || "2026-09") === selectedMonth;
                 const st = item.status;
@@ -257,7 +360,6 @@
             document.getElementById('dashTotalMlaG2gs').innerText = sumMlaG2gs;
             document.getElementById('dashTotalTransfers').innerText = sumTransfers;
 
-            // Build teams summary table
             let tableHtml = "";
             teamNamesList.forEach(tName => {
                 const teamAgents = filtered.filter(a => a.team === tName);
