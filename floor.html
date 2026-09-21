@@ -143,15 +143,14 @@
             max-height: 420px;
             overflow-y: auto;
             padding-right: 5px;
+            overflow: visible !important; 
         }
-        .agents-list::-webkit-scrollbar { width: 5px; }
-        .agents-list::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
 
         .agent-row-box {
             background-color: var(--bg-dark);
             border: 1px solid var(--card-border);
             border-radius: 8px;
-            padding: 8px 10px;
+            padding: 9px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -162,40 +161,54 @@
         .agent-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex: 1;
         }
-        .agent-name { font-size: 13px; font-weight: 600; width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        select.att-select {
-            background: #0f2537;
-            border: 1px solid var(--card-border);
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            width: 50px;
+        /* Clearer and larger agent name font */
+        .agent-name { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: #f1f5f9; 
+            width: 100px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            letter-spacing: 0.3px;
         }
-        .att-present { color: var(--success) !important; }
-        .att-absent { color: var(--danger) !important; }
+        
+        /* Clearer, prominent P/A dropdown */
+        select.att-select {
+            background: #0b192c;
+            border: 2px solid var(--card-border);
+            font-weight: bold;
+            padding: 5px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            width: 55px;
+            text-align: center;
+            outline: none;
+        }
+        .att-present { color: #34d399 !important; border-color: #10b981 !important; background: rgba(16, 185, 129, 0.12) !important; }
+        .att-absent { color: #f87171 !important; border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.12) !important; }
 
         .controls-group {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         input.count-input {
             background: #0f2537;
             border: 1px solid var(--card-border);
             color: var(--text-main);
-            width: 45px;
-            padding: 4px;
+            width: 50px;
+            padding: 5px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 6px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 14px;
         }
         input.count-input:focus { border-color: var(--accent); outline: none; }
 
@@ -207,26 +220,25 @@
             background: var(--card-border);
             color: var(--text-main);
             border: none;
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-size: 11px;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 12px;
             cursor: pointer;
         }
         .breakdown-btn:hover { background: var(--accent); color: var(--bg-dark); }
 
-        /* Clickable permanent breakdown popup window */
         .breakdown-popup {
             display: none;
             position: absolute;
             right: 0;
-            bottom: 35px;
-            background: #0f2537;
-            border: 1px solid var(--accent);
-            padding: 12px;
-            border-radius: 8px;
-            z-index: 999;
-            width: 200px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+            top: 42px;
+            background: #0b192c;
+            border: 2px solid var(--accent);
+            padding: 14px;
+            border-radius: 10px;
+            z-index: 99999;
+            width: 210px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
         }
         .breakdown-popup.show {
             display: block;
@@ -235,17 +247,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
-            font-size: 11px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: bold;
         }
         .breakdown-row input {
             background: var(--bg-dark);
             color: var(--text-main);
             border: 1px solid var(--card-border);
-            border-radius: 4px;
-            padding: 4px;
-            font-size: 11px;
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 12px;
             text-align: center;
+            width: 55px;
         }
 
         .team-footer-totals {
@@ -288,7 +302,7 @@
                     <span id="top-g2g-count">0</span>
                 </div>
                 <button class="btn btn-whatsapp" onclick="copyWhatsAppUpdate()">💬 Copy for WhatsApp</button>
-                <button class="btn btn-accent" onclick="saveFloorData()">💾 Save Now</button>
+                <button class="btn btn-accent" onclick="saveFloorDataManual()">💾 Save Now</button>
             </div>
         </div>
 
@@ -341,8 +355,8 @@
                         <div class="agent-row-box" data-agent="${agentName}">
                             <div class="agent-info">
                                 <select class="att-select att-present" onchange="window.updateAttColor(this); window.calculateTotals(); window.autoSave();">
-                                    <option value="P" style="color:var(--success);">P</option>
-                                    <option value="A" style="color:var(--danger);">A</option>
+                                    <option value="P" class="att-present" style="color:#10b981; font-weight:bold;">P</option>
+                                    <option value="A" class="att-absent" style="color:#ef4444; font-weight:bold;">A</option>
                                 </select>
                                 <span class="agent-name" title="${agentName}">${agentName}</span>
                             </div>
@@ -354,19 +368,19 @@
                                     <div class="breakdown-popup">
                                         <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent); font-size: 12px; display:flex; justify-content:space-between; align-items:center;">
                                             <span>Status Breakdown</span>
-                                            <span style="cursor:pointer; color:#fff;" onclick="window.closeBreakdown(this)">✖</span>
+                                            <span style="cursor:pointer; color:#fff; font-size:14px;" onclick="window.closeBreakdown(this)">✖</span>
                                         </div>
                                         <div class="breakdown-row">
                                             <span>G2G:</span>
-                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 50px;" oninput="window.calculateTotals(); window.autoSave();">
+                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 55px;" oninput="window.calculateTotals(); window.autoSave();">
                                         </div>
                                         <div class="breakdown-row">
                                             <span>Bad:</span>
-                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 50px;" oninput="window.calculateTotals(); window.autoSave();">
+                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 55px;" oninput="window.calculateTotals(); window.autoSave();">
                                         </div>
                                         <div class="breakdown-row">
                                             <span>Postponed:</span>
-                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 50px;" oninput="window.calculateTotals(); window.autoSave();">
+                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 55px;" oninput="window.calculateTotals(); window.autoSave();">
                                         </div>
                                     </div>
                                 </div>
@@ -387,22 +401,20 @@
             loadSavedFloorData();
         }
 
-        // Toggle popup on click instead of hover
         window.toggleBreakdown = function(event) {
             event.stopPropagation();
-            // Close any other open popups first
-            document.querySelectorAll('.breakdown-popup').forEach(p => {
-                if(p !== event.currentTarget.nextElementSibling) p.classList.remove('show');
-            });
             const popup = event.currentTarget.nextElementSibling;
-            popup.classList.toggle('show');
+            const isOpen = popup.classList.contains('show');
+            document.querySelectorAll('.breakdown-popup').forEach(p => p.classList.remove('show'));
+            if (!isOpen) {
+                popup.classList.add('show');
+            }
         }
 
         window.closeBreakdown = function(spanEl) {
             spanEl.closest('.breakdown-popup').classList.remove('show');
         }
 
-        // Close popup when clicking anywhere outside
         window.addEventListener('click', function() {
             document.querySelectorAll('.breakdown-popup').forEach(p => p.classList.remove('show'));
         });
@@ -464,16 +476,20 @@
             document.getElementById('top-g2g-count').innerText = floorG2G;
         }
 
-        // Auto Save debounce timer to save instantly in background
         let saveTimer = null;
         window.autoSave = function() {
             clearTimeout(saveTimer);
             saveTimer = setTimeout(() => {
-                saveFloorDataQuietly();
-            }, 600); // Saves 0.6s after typing stops
+                saveDataToFirebase(true);
+            }, 500);
         }
 
-        async function saveFloorDataQuietly() {
+        window.saveFloorDataManual = async function() {
+            await saveDataToFirebase(false);
+            alert("✅ Floor data successfully saved to cloud!");
+        }
+
+        async function saveDataToFirebase(isQuiet) {
             const todayKey = new Date().toISOString().split('T')[0];
             let payload = {};
 
@@ -494,13 +510,39 @@
             try {
                 await setDoc(doc(db, "floor_daily", todayKey), { data: payload, updatedAt: new Date() });
             } catch(e) {
-                console.error("Auto-save error: " + e.message);
+                if(!isQuiet) alert("Error saving: " + e.message);
+                console.error("Save error: ", e);
             }
         }
 
-        window.saveFloorData = async function() {
-            await saveFloorDataQuietly();
-            alert("✅ Floor data successfully saved!");
+        async function loadSavedFloorData() {
+            const todayKey = new Date().toISOString().split('T')[0];
+            try {
+                const docSnap = await getDoc(doc(db, "floor_daily", todayKey));
+                if (docSnap.exists()) {
+                    const saved = docSnap.data().data || {};
+                    document.querySelectorAll('.team-card').forEach(card => {
+                        const teamName = card.getAttribute('data-team');
+                        card.querySelectorAll('.agent-row-box').forEach(row => {
+                            const agentName = row.getAttribute('data-agent');
+                            const key = `${teamName}_${agentName}`;
+                            if(saved[key]) {
+                                const selectEl = row.querySelector('.att-select');
+                                selectEl.value = saved[key].att || 'P';
+                                window.updateAttColor(selectEl);
+
+                                row.querySelector('.agent-total-val').value = saved[key].total || 0;
+                                row.querySelector('.sub-g2g').value = saved[key].g2g || 0;
+                                row.querySelector('.sub-bad').value = saved[key].bad || 0;
+                                row.querySelector('.sub-post').value = saved[key].post || 0;
+                            }
+                        });
+                    });
+                    window.calculateTotals();
+                }
+            } catch(e) {
+                console.log("No saved sheet found for today yet.");
+            }
         }
 
         window.copyWhatsAppUpdate = function() {
@@ -541,36 +583,6 @@
 
             navigator.clipboard.writeText(text.trim());
             alert("✅ Formatted WhatsApp update copied to clipboard!");
-        }
-
-        async function loadSavedFloorData() {
-            const todayKey = new Date().toISOString().split('T')[0];
-            try {
-                const docSnap = await getDoc(doc(db, "floor_daily", todayKey));
-                if (docSnap.exists()) {
-                    const saved = docSnap.data().data || {};
-                    document.querySelectorAll('.team-card').forEach(card => {
-                        const teamName = card.getAttribute('data-team');
-                        card.querySelectorAll('.agent-row-box').forEach(row => {
-                            const agentName = row.getAttribute('data-agent');
-                            const key = `${teamName}_${agentName}`;
-                            if(saved[key]) {
-                                const selectEl = row.querySelector('.att-select');
-                                selectEl.value = saved[key].att || 'P';
-                                window.updateAttColor(selectEl);
-
-                                row.querySelector('.agent-total-val').value = saved[key].total || 0;
-                                row.querySelector('.sub-g2g').value = saved[key].g2g || 0;
-                                row.querySelector('.sub-bad').value = saved[key].bad || 0;
-                                row.querySelector('.sub-post').value = saved[key].post || 0;
-                            }
-                        });
-                    });
-                    window.calculateTotals();
-                }
-            } catch(e) {
-                console.log("No saved sheet found for today yet.");
-            }
         }
 
         window.onload = function() {
