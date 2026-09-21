@@ -215,10 +215,18 @@
             
             <select id="teamFilter" onchange="filterTable()">
                 <option value="">All Teams</option>
-                <option value="Wazowski#1">Wazowski#1</option>
-                <option value="Wazowski#2">Wazowski#2</option>
+                <option value="Wazowski 1">Wazowski 1</option>
+                <option value="Wazowski 2">Wazowski 2</option>
+                <option value="Wazowski 3">Wazowski 3</option>
                 <option value="Midblue">Midblue</option>
                 <option value="Prime">Prime</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Bloom">Bloom</option>
+                <option value="Epic">Epic</option>
+                <option value="Peak">Peak</option>
+                <option value="Unity">Unity</option>
+                <option value="PGX">PGX</option>
+                <option value="MLA">MLA</option>
             </select>
 
             <select id="statusFilter" onchange="filterTable()">
@@ -270,10 +278,18 @@
             <input type="date" id="addHiring">
             <label>Team</label>
             <select id="addTeam">
-                <option value="Wazowski#1">Wazowski#1</option>
-                <option value="Wazowski#2">Wazowski#2</option>
+                <option value="Wazowski 1">Wazowski 1</option>
+                <option value="Wazowski 2">Wazowski 2</option>
+                <option value="Wazowski 3">Wazowski 3</option>
                 <option value="Midblue">Midblue</option>
                 <option value="Prime">Prime</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Bloom">Bloom</option>
+                <option value="Epic">Epic</option>
+                <option value="Peak">Peak</option>
+                <option value="Unity">Unity</option>
+                <option value="PGX">PGX</option>
+                <option value="MLA">MLA</option>
             </select>
             <label>Employment Type</label>
             <select id="addType">
@@ -346,7 +362,7 @@
             document.getElementById('editAgentId').value = agent.id;
             document.getElementById('addName').value = agent.name || '';
             document.getElementById('addHiring').value = agent.hiring || '';
-            document.getElementById('addTeam').value = agent.team || 'Wazowski#1';
+            document.getElementById('addTeam').value = agent.team || 'Wazowski 1';
             document.getElementById('addType').value = agent.type || 'FT';
             document.getElementById('addStatus').value = agent.status || 'Active';
             document.getElementById('addG2gs').value = agent.g2gs || 0;
