@@ -71,7 +71,6 @@
             padding-left: 12px;
         }
 
-        /* Prominent Header KPIs Counters for Daily Totals */
         .header-kpis {
             display: flex;
             gap: 15px;
@@ -111,7 +110,6 @@
         .btn-whatsapp { background-color: #25d366; color: white; display: flex; align-items: center; gap: 6px; }
         .btn:hover { opacity: 0.9; }
 
-        /* Teams Grid (Side-by-Side Cards) */
         .teams-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -214,7 +212,9 @@
             font-size: 11px;
             cursor: pointer;
         }
+        .breakdown-btn:hover { background: var(--accent); color: var(--bg-dark); }
 
+        /* Clickable permanent breakdown popup window */
         .breakdown-popup {
             display: none;
             position: absolute;
@@ -225,10 +225,10 @@
             padding: 12px;
             border-radius: 8px;
             z-index: 999;
-            width: 190px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            width: 200px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.8);
         }
-        .breakdown-container:hover .breakdown-popup {
+        .breakdown-popup.show {
             display: block;
         }
         .breakdown-row {
@@ -243,7 +243,7 @@
             color: var(--text-main);
             border: 1px solid var(--card-border);
             border-radius: 4px;
-            padding: 3px;
+            padding: 4px;
             font-size: 11px;
             text-align: center;
         }
@@ -288,7 +288,7 @@
                     <span id="top-g2g-count">0</span>
                 </div>
                 <button class="btn btn-whatsapp" onclick="copyWhatsAppUpdate()">💬 Copy for WhatsApp</button>
-                <button class="btn btn-accent" onclick="saveFloorData()">💾 Sync & Save</button>
+                <button class="btn btn-accent" onclick="saveFloorData()">💾 Save Now</button>
             </div>
         </div>
 
@@ -340,30 +340,33 @@
                     html += `
                         <div class="agent-row-box" data-agent="${agentName}">
                             <div class="agent-info">
-                                <select class="att-select att-present" onchange="window.updateAttColor(this); window.calculateTotals();">
+                                <select class="att-select att-present" onchange="window.updateAttColor(this); window.calculateTotals(); window.autoSave();">
                                     <option value="P" style="color:var(--success);">P</option>
                                     <option value="A" style="color:var(--danger);">A</option>
                                 </select>
                                 <span class="agent-name" title="${agentName}">${agentName}</span>
                             </div>
                             <div class="controls-group">
-                                <input type="number" class="count-input agent-total-val" value="0" min="0" oninput="window.updateBreakdown(this); window.calculateTotals();" placeholder="0">
+                                <input type="number" class="count-input agent-total-val" value="0" min="0" oninput="window.updateBreakdown(this); window.calculateTotals(); window.autoSave();" placeholder="0">
                                 
                                 <div class="breakdown-container">
-                                    <button class="breakdown-btn" title="Status Breakdown">⚙️</button>
+                                    <button class="breakdown-btn" onclick="window.toggleBreakdown(event)" title="Edit Breakdown">⚙️</button>
                                     <div class="breakdown-popup">
-                                        <div style="font-weight: bold; margin-bottom: 5px; color: var(--accent); font-size: 11px;">Status Breakdown</div>
+                                        <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent); font-size: 12px; display:flex; justify-content:space-between; align-items:center;">
+                                            <span>Status Breakdown</span>
+                                            <span style="cursor:pointer; color:#fff;" onclick="window.closeBreakdown(this)">✖</span>
+                                        </div>
                                         <div class="breakdown-row">
                                             <span>G2G:</span>
-                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 45px;" oninput="window.calculateTotals()">
+                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 50px;" oninput="window.calculateTotals(); window.autoSave();">
                                         </div>
                                         <div class="breakdown-row">
                                             <span>Bad:</span>
-                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 45px;" oninput="window.calculateTotals()">
+                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 50px;" oninput="window.calculateTotals(); window.autoSave();">
                                         </div>
                                         <div class="breakdown-row">
                                             <span>Postponed:</span>
-                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 45px;" oninput="window.calculateTotals()">
+                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 50px;" oninput="window.calculateTotals(); window.autoSave();">
                                         </div>
                                     </div>
                                 </div>
@@ -383,6 +386,26 @@
             container.innerHTML = html;
             loadSavedFloorData();
         }
+
+        // Toggle popup on click instead of hover
+        window.toggleBreakdown = function(event) {
+            event.stopPropagation();
+            // Close any other open popups first
+            document.querySelectorAll('.breakdown-popup').forEach(p => {
+                if(p !== event.currentTarget.nextElementSibling) p.classList.remove('show');
+            });
+            const popup = event.currentTarget.nextElementSibling;
+            popup.classList.toggle('show');
+        }
+
+        window.closeBreakdown = function(spanEl) {
+            spanEl.closest('.breakdown-popup').classList.remove('show');
+        }
+
+        // Close popup when clicking anywhere outside
+        window.addEventListener('click', function() {
+            document.querySelectorAll('.breakdown-popup').forEach(p => p.classList.remove('show'));
+        });
 
         window.updateAttColor = function(selectEl) {
             if (selectEl.value === 'P') {
@@ -441,7 +464,45 @@
             document.getElementById('top-g2g-count').innerText = floorG2G;
         }
 
-        // Exact formatted WhatsApp structure matching user requirement
+        // Auto Save debounce timer to save instantly in background
+        let saveTimer = null;
+        window.autoSave = function() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                saveFloorDataQuietly();
+            }, 600); // Saves 0.6s after typing stops
+        }
+
+        async function saveFloorDataQuietly() {
+            const todayKey = new Date().toISOString().split('T')[0];
+            let payload = {};
+
+            document.querySelectorAll('.team-card').forEach(card => {
+                const teamName = card.getAttribute('data-team');
+                card.querySelectorAll('.agent-row-box').forEach(row => {
+                    const agentName = row.getAttribute('data-agent');
+                    payload[`${teamName}_${agentName}`] = {
+                        att: row.querySelector('.att-select').value,
+                        total: row.querySelector('.agent-total-val').value,
+                        g2g: row.querySelector('.sub-g2g').value,
+                        bad: row.querySelector('.sub-bad').value,
+                        post: row.querySelector('.sub-post').value
+                    };
+                });
+            });
+
+            try {
+                await setDoc(doc(db, "floor_daily", todayKey), { data: payload, updatedAt: new Date() });
+            } catch(e) {
+                console.error("Auto-save error: " + e.message);
+            }
+        }
+
+        window.saveFloorData = async function() {
+            await saveFloorDataQuietly();
+            alert("✅ Floor data successfully saved!");
+        }
+
         window.copyWhatsAppUpdate = function() {
             let totalFloorTransfers = document.getElementById('top-floor-count').innerText;
             let totalFloorG2G = document.getElementById('top-g2g-count').innerText;
@@ -453,7 +514,6 @@
                 const teamName = card.querySelector('.team-name').innerText.toUpperCase();
                 const totalCount = card.querySelector('.team-count-val').innerText;
                 
-                // Only include team if they have transfers or to show structure
                 text += `${teamName} AT ${totalCount}\n`;
 
                 card.querySelectorAll('.agent-row-box').forEach(row => {
@@ -481,32 +541,6 @@
 
             navigator.clipboard.writeText(text.trim());
             alert("✅ Formatted WhatsApp update copied to clipboard!");
-        }
-
-        window.saveFloorData = async function() {
-            const todayKey = new Date().toISOString().split('T')[0];
-            let payload = {};
-
-            document.querySelectorAll('.team-card').forEach(card => {
-                const teamName = card.getAttribute('data-team');
-                card.querySelectorAll('.agent-row-box').forEach(row => {
-                    const agentName = row.getAttribute('data-agent');
-                    payload[`${teamName}_${agentName}`] = {
-                        att: row.querySelector('.att-select').value,
-                        total: row.querySelector('.agent-total-val').value,
-                        g2g: row.querySelector('.sub-g2g').value,
-                        bad: row.querySelector('.sub-bad').value,
-                        post: row.querySelector('.sub-post').value
-                    };
-                });
-            });
-
-            try {
-                await setDoc(doc(db, "floor_daily", todayKey), { data: payload, updatedAt: new Date() });
-                alert("✅ Floor data successfully synced and saved in the cloud!");
-            } catch(e) {
-                alert("Error saving: " + e.message);
-            }
         }
 
         async function loadSavedFloorData() {
