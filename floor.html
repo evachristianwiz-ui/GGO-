@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGO - Day-to-Day Floor Unified</title>
+    <title>GGO - Day-to-Day Floor Dashboard</title>
     <style>
         :root {
             --bg-dark: #070f1e;
@@ -23,7 +23,7 @@
             margin: 0;
             padding: 20px;
         }
-        .container { max-width: 1600px; margin: 0 auto; }
+        .container { max-width: 1800px; margin: 0 auto; }
         
         /* Navbar */
         .main-navbar {
@@ -36,7 +36,6 @@
             border: 1px solid var(--card-border);
             margin-bottom: 25px;
         }
-        .logo-area { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 40px; width: auto; object-fit: contain; }
         .nav-links { display: flex; gap: 15px; }
         .nav-link {
@@ -57,6 +56,10 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            background-color: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
         }
         .nav-title {
             font-size: 18px;
@@ -73,7 +76,7 @@
             align-items: center;
         }
         .kpi-badge {
-            background-color: var(--card-bg);
+            background-color: var(--bg-dark);
             border: 1px solid var(--card-border);
             padding: 8px 16px;
             border-radius: 8px;
@@ -85,9 +88,7 @@
             font-size: 15px;
             margin-left: 5px;
         }
-        .kpi-badge.g2g-badge span {
-            color: var(--success);
-        }
+        .kpi-badge.g2g-badge span { color: var(--success); }
 
         .btn {
             background-color: var(--card-border);
@@ -99,62 +100,162 @@
             font-weight: 600;
         }
         .btn-accent { background-color: var(--accent); color: var(--bg-dark); }
+        .btn-whatsapp { background-color: #25d366; color: white; display: flex; align-items: center; gap: 6px; }
         .btn:hover { opacity: 0.9; }
 
-        /* Unified Table Section */
-        .table-card {
+        /* Teams Grid (Side-by-Side Cards) */
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .team-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
-            padding: 20px;
-            overflow-x: auto;
-        }
-        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--card-border); }
-        th { background-color: #0f2537; color: var(--text-muted); font-size: 11px; text-transform: uppercase; position: sticky; top: 0; z-index: 10; }
-        td { font-size: 13px; }
-
-        /* Row types */
-        .team-divider-row {
-            background-color: #13273e;
-            font-weight: bold;
-            color: var(--accent);
-        }
-        .team-total-row {
-            background-color: rgba(0, 180, 216, 0.08);
-            font-weight: bold;
-            color: var(--success);
-        }
-        .floor-total-row {
-            background-color: rgba(16, 185, 129, 0.15);
-            font-weight: bold;
-            font-size: 14px;
-            color: var(--text-main);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        select.floor-input, input.floor-input, select.status-select {
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--card-border);
+            padding-bottom: 8px;
+        }
+        .team-name { font-size: 16px; font-weight: bold; color: var(--accent); }
+        .team-summary-tag { font-size: 12px; color: var(--success); background: rgba(16, 185, 129, 0.1); padding: 3px 8px; border-radius: 6px; font-weight: bold; }
+
+        .agents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .agent-row-box {
             background-color: var(--bg-dark);
             border: 1px solid var(--card-border);
-            color: var(--text-main);
-            padding: 6px 10px;
-            border-radius: 6px;
-            outline: none;
+            border-radius: 8px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
         }
-        input.floor-input { width: 70px; }
-        select.floor-input { width: 65px; cursor: pointer; font-weight: bold; }
-        select.status-select { cursor: pointer; }
-        
-        select.floor-input:focus, input.floor-input:focus, select.status-select:focus { border-color: var(--accent); }
 
-        .status-g2g { color: var(--success); font-weight: bold; }
-        .status-bad { color: var(--danger); font-weight: bold; }
-        .status-postponed { color: var(--warning); font-weight: bold; }
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .agent-name { font-size: 13px; font-weight: 600; width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* P / A select */
+        select.att-select {
+            background: #0f2537;
+            border: 1px solid var(--card-border);
+            color: var(--success);
+            font-weight: bold;
+            padding: 4px 6px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            width: 45px;
+        }
+
+        /* Inputs & Controls */
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input.count-input {
+            background: #0f2537;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            width: 45px;
+            padding: 4px;
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        input.count-input:focus { border-color: var(--accent); outline: none; }
+
+        /* Breakdown container tooltip / drawer on hover or click */
+        .breakdown-container {
+            position: relative;
+        }
+        
+        .breakdown-btn {
+            background: var(--card-border);
+            color: var(--text-main);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* Popup breakdown modal when hovering/clicking count */
+        .breakdown-popup {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 30px;
+            background: #112238;
+            border: 1px solid var(--accent);
+            padding: 10px;
+            border-radius: 8px;
+            z-index: 100;
+            width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .breakdown-container:hover .breakdown-popup {
+            display: block;
+        }
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 11px;
+        }
+        .breakdown-row select {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            padding: 2px;
+            font-size: 11px;
+        }
+
+        .team-footer-totals {
+            background: rgba(0, 180, 216, 0.05);
+            border-top: 1px solid var(--card-border);
+            padding-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+        .team-footer-totals span { color: var(--accent); }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Main Navbar -->
+        <!-- Navbar -->
         <div class="main-navbar">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -167,295 +268,180 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Unified Day-to-Day Floor Tracking</div>
-            
-            <!-- Header KPIs (Top Right) -->
+            <div class="nav-title">Unified Floor Dashboard (Side-by-Side View)</div>
             <div class="header-kpis">
-                <div class="kpi-badge">Total Floor Count: <span id="top-floor-count">0</span></div>
-                <div class="kpi-badge g2g-badge">Total G2G Count: <span id="top-g2g-count">0</span></div>
-                <button class="btn btn-accent" onclick="saveFloorData()">💾 Save Daily Sheet</button>
+                <div class="kpi-badge">Total Floor: <span id="top-floor-count">0</span></div>
+                <div class="kpi-badge g2g-badge">Total G2G: <span id="top-g2g-count">0</span></div>
+                <button class="btn btn-whatsapp" onclick="copyWhatsAppUpdate()">💬 Copy for WhatsApp</button>
+                <button class="btn btn-accent" onclick="saveFloorData()">💾 Save</button>
             </div>
         </div>
 
-        <!-- Unified Table -->
-        <div class="table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Team / Agent Name</th>
-                        <th>Attendance (P/A)</th>
-                        <th>Count / Value</th>
-                        <th>Status Type</th>
-                        <th>Transfers</th>
-                        <th>MLA Transfers</th>
-                        <th>Status / Notes</th>
-                    </tr>
-                </thead>
-                <tbody id="floorTableBody">
-                    
-                    <!-- Team: Wazowski -->
-                    <tr class="team-divider-row" data-team="Wazowski">
-                        <td colspan="7">Team: Wazowski — <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Team Leader: Mavis Miller</span></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Wazowski">
-                        <td style="padding-left: 25px;">↳ Adam</td>
-                        <td>
-                            <select class="floor-input attendance-select" onchange="calculateTotals()">
-                                <option value="P" style="color:var(--success);">P</option>
-                                <option value="A" style="color:var(--danger);">A</option>
-                            </select>
-                        </td>
-                        <td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td>
-                        <td>
-                            <select class="status-select" onchange="calculateTotals()">
-                                <option value="G2G" class="status-g2g">G2G</option>
-                                <option value="Bad" class="status-bad">Bad</option>
-                                <option value="Postponed" class="status-postponed">Postponed</option>
-                            </select>
-                        </td>
-                        <td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Wazowski">
-                        <td style="padding-left: 25px;">↳ Rafy</td>
-                        <td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td>
-                        <td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td>
-                        <td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td>
-                        <td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Wazowski">
-                        <td style="padding-left: 25px;">↳ Victor</td>
-                        <td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td>
-                        <td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td>
-                        <td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td>
-                        <td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Wazowski">
-                        <td style="padding-left: 25px;">↳ Mia</td>
-                        <td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td>
-                        <td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td>
-                        <td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td>
-                        <td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Wazowski">
-                        <td style="padding-left: 25px;">↳ Charlotte</td>
-                        <td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td>
-                        <td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td>
-                        <td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td>
-                        <td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Wazowski">
-                        <td style="padding-left: 25px;">↳ Jessy</td>
-                        <td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td>
-                        <td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td>
-                        <td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td>
-                        <td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Wazowski">
-                        <td style="padding-left: 25px;">↳ Amy</td>
-                        <td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td>
-                        <td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td>
-                        <td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td>
-                        <td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td>
-                        <td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td>
-                    </tr>
-                    <tr class="team-total-row">
-                        <td>Total Wazowski</td>
-                        <td class="team-tot-present">0 Present</td>
-                        <td class="team-tot-count">0</td>
-                        <td colspan="4">- (Trans: <span class="team-tot-trans">0</span> | MLA Trans: <span class="team-tot-mlatrans">0</span>)</td>
-                    </tr>
-
-                    <!-- Team: Unity -->
-                    <tr class="team-divider-row" data-team="Unity">
-                        <td colspan="7">Team: Unity — <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Team Leader: William White</span></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Unity"><td style="padding-left: 25px;">↳ Ray</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Unity"><td style="padding-left: 25px;">↳ Coby</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Unity"><td style="padding-left: 25px;">↳ Scarlett</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Unity"><td style="padding-left: 25px;">↳ Cloe</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Unity"><td style="padding-left: 25px;">↳ Ian</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Unity"><td style="padding-left: 25px;">↳ Jacob</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="team-total-row">
-                        <td>Total Unity</td>
-                        <td class="team-tot-present">0 Present</td>
-                        <td class="team-tot-count">0</td>
-                        <td colspan="4">- (Trans: <span class="team-tot-trans">0</span> | MLA Trans: <span class="team-tot-mlatrans">0</span>)</td>
-                    </tr>
-
-                    <!-- Team: Bloom -->
-                    <tr class="team-divider-row" data-team="Bloom">
-                        <td colspan="7">Team: Bloom — <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Team Leader: Donna Bell</span></td>
-                    </tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Anna</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Heaven</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Katherine</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Maddy</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Celine</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Jules</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Kim</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Jennifer</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Austin</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Grace</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Paris</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Bloom"><td style="padding-left: 25px;">↳ Eric</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="team-total-row">
-                        <td>Total Bloom</td>
-                        <td class="team-tot-present">0 Present</td>
-                        <td class="team-tot-count">0</td>
-                        <td colspan="4">- (Trans: <span class="team-tot-trans">0</span> | MLA Trans: <span class="team-tot-mlatrans">0</span>)</td>
-                    </tr>
-
-                    <!-- Team: PGX -->
-                    <tr class="team-divider-row" data-team="PGX">
-                        <td colspan="7">Team: PGX — <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Team Leader: Jordan Kelly</span></td>
-                    </tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Stewart</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Micheal</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Jeremy</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Daisy</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Diana</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Hannah</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Camila</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Catilyn</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Emma</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="PGX"><td style="padding-left: 25px;">↳ Owen</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="team-total-row">
-                        <td>Total PGX</td>
-                        <td class="team-tot-present">0 Present</td>
-                        <td class="team-tot-count">0</td>
-                        <td colspan="4">- (Trans: <span class="team-tot-trans">0</span> | MLA Trans: <span class="team-tot-mlatrans">0</span>)</td>
-                    </tr>
-
-                    <!-- Team: Saint Fatima -->
-                    <tr class="team-divider-row" data-team="Saint Fatima">
-                        <td colspan="7">Team: Saint Fatima</td>
-                    </tr>
-                    <tr class="agent-row" data-team="Saint Fatima"><td style="padding-left: 25px;">↳ Lexi</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Saint Fatima"><td style="padding-left: 25px;">↳ Katie</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Saint Fatima"><td style="padding-left: 25px;">↳ Elena</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="Saint Fatima"><td style="padding-left: 25px;">↳ Daisy</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="team-total-row">
-                        <td>Total Saint Fatima</td>
-                        <td class="team-tot-present">0 Present</td>
-                        <td class="team-tot-count">0</td>
-                        <td colspan="4">- (Trans: <span class="team-tot-trans">0</span> | MLA Trans: <span class="team-tot-mlatrans">0</span>)</td>
-                    </tr>
-
-                    <!-- Team: MLA Team -->
-                    <tr class="team-divider-row" data-team="MLA Team">
-                        <td colspan="7">Team: MLA Team — <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Team Leader: Ashley & Williams</span></td>
-                    </tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Roben</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Ryan</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Haley</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Nina</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Kai</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Elle</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Monica</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Jennie</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Tia</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="agent-row" data-team="MLA Team"><td style="padding-left: 25px;">↳ Riley</td><td><select class="floor-input attendance-select" onchange="calculateTotals()"><option value="P">P</option><option value="A">A</option></select></td><td><input type="number" class="floor-input count-val" value="0" min="0" oninput="calculateTotals()"></td><td><select class="status-select" onchange="calculateTotals()"><option value="G2G">G2G</option><option value="Bad">Bad</option><option value="Postponed">Postponed</option></select></td><td><input type="number" class="floor-input trans" value="0" oninput="calculateTotals()"></td><td><input type="number" class="floor-input mla-trans" value="0" oninput="calculateTotals()"></td><td><input type="text" class="floor-input" style="width:150px;" placeholder="Notes..."></td></tr>
-                    <tr class="team-total-row">
-                        <td>Total MLA Team</td>
-                        <td class="team-tot-present">0 Present</td>
-                        <td class="team-tot-count">0</td>
-                        <td colspan="4">- (Trans: <span class="team-tot-trans">0</span> | MLA Trans: <span class="team-tot-mlatrans">0</span>)</td>
-                    </tr>
-
-                    <!-- Grand Total Floor -->
-                    <tr class="floor-total-row">
-                        <td>TOTAL FLOOR</td>
-                        <td id="floor-tot-present">0 Present</td>
-                        <td id="floor-tot-count">0</td>
-                        <td colspan="5">Overall Floor Count</td>
-                    </tr>
-
-                </tbody>
-            </table>
+        <!-- Teams Grid Container -->
+        <div class="teams-grid" id="teamsGridContainer">
+            <!-- Teams will be dynamically injected here via script or hardcoded cleanly -->
         </div>
-
     </div>
 
     <script>
-        function calculateTotals() {
-            const teamDividers = document.querySelectorAll('.team-divider-row');
-            
-            let grandPresent = 0;
-            let grandCount = 0;
-            let grandG2GCount = 0;
+        // Data structure for teams and agents
+        const teamsData = [
+            { team: "Wazowski 1", leader: "Mavis Miller", agents: ["Adam", "Rafy", "Victor", "Mia", "Charlotte", "Jessy", "Amy"] },
+            { team: "Wazowski 2", leader: "Leader 2", agents: ["Agent 1", "Agent 2", "Agent 3", "Agent 4"] },
+            { team: "Wazowski 3", leader: "Leader 3", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Midblue", leader: "Leader M", agents: ["Agent 1", "Agent 2", "Agent 3", "Agent 4"] },
+            { team: "Prime", leader: "Leader P", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Sunny", leader: "Leader S", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Bloom", leader: "Donna Bell", agents: ["Anna", "Heaven", "Katherine", "Maddy", "Celine", "Jules", "Kim", "Jennifer", "Austin", "Grace", "Paris", "Eric"] },
+            { team: "Epic", leader: "Leader E", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Peak", leader: "Leader PK", agents: ["Agent 1", "Agent 2", "Agent 3"] },
+            { team: "Unity", leader: "William White", agents: ["Ray", "Coby", "Scarlett", "Cloe", "Ian", "Jacob"] },
+            { team: "PGX", leader: "Jordan Kelly", agents: ["Stewart", "Micheal", "Jeremy", "Daisy", "Diana", "Hannah", "Camila", "Catilyn", "Emma", "Owen"] },
+            { team: "MLA", leader: "Ashley & Williams", agents: ["Roben", "Ryan", "Haley", "Nina", "Kai", "Elle", "Monica", "Jennie", "Tia", "Riley"] }
+        ];
 
-            teamDividers.forEach(divider => {
-                const teamName = divider.getAttribute('data-team');
-                const agentRows = document.querySelectorAll(`.agent-row[data-team="${teamName}"]`);
-                
-                let tPresent = 0;
-                let tCount = 0;
-                let tTrans = 0;
-                let tMlaTrans = 0;
+        function renderFloorCards() {
+            const container = document.getElementById('teamsGridContainer');
+            let html = "";
 
-                agentRows.forEach(row => {
-                    const attVal = row.querySelector('.attendance-select').value;
-                    const countVal = Number(row.querySelector('.count-val').value) || 0;
-                    const statusVal = row.querySelector('.status-select').value;
+            teamsData.forEach((t, teamIdx) => {
+                html += `
+                <div class="team-card" data-team-name="${t.team}">
+                    <div class="team-header">
+                        <div>
+                            <div class="team-name">${t.team}</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">TL: ${t.leader}</div>
+                        </div>
+                        <div class="team-summary-tag"><span class="team-g2g-lbl">0</span> G2G</div>
+                    </div>
+                    <div class="agents-list">`;
 
-                    if (attVal === 'P') {
-                        tPresent++;
-                    }
-
-                    tCount += countVal;
-                    tTrans += Number(row.querySelector('.trans').value) || 0;
-                    tMlaTrans += Number(row.querySelector('.mla-trans').value) || 0;
-
-                    // If status is G2G, accumulate to grand G2G count
-                    if(statusVal === 'G2G') {
-                        grandG2GCount += countVal;
-                    }
+                t.agents.forEach((agentName, agentIdx) => {
+                    html += `
+                        <div class="agent-row-box" id="agent-${teamIdx}-${agentIdx}">
+                            <div class="agent-info">
+                                <select class="att-select" onchange="calculateTotals()">
+                                    <option value="P" style="color:var(--success);">P</option>
+                                    <option value="A" style="color:var(--danger);">A</option>
+                                </select>
+                                <span class="agent-name" title="${agentName}">${agentName}</span>
+                            </div>
+                            <div class="controls-group">
+                                <input type="number" class="count-input agent-total-val" value="0" min="0" oninput="updateAgentBreakdown(this); calculateTotals();" placeholder="0">
+                                
+                                <!-- Breakdown Hover / Click feature for multi-counts (e.g. if count is 2 or 3) -->
+                                <div class="breakdown-container">
+                                    <button class="breakdown-btn" title="Specify Status">⚙️</button>
+                                    <div class="breakdown-popup">
+                                        <div style="font-weight: bold; margin-bottom: 5px; color: var(--accent); font-size: 11px;">Status Breakdown</div>
+                                        <div class="breakdown-row">
+                                            <span>G2G:</span>
+                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 40px;" oninput="calculateTotals()">
+                                        </div>
+                                        <div class="breakdown-row">
+                                            <span>Bad:</span>
+                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 40px;" oninput="calculateTotals()">
+                                        </div>
+                                        <div class="breakdown-row">
+                                            <span>Postponed:</span>
+                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 40px;" oninput="calculateTotals()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
                 });
 
-                // Find the corresponding total row for this team
-                let nextRow = divider.nextElementSibling;
-                while(nextRow && !nextRow.classList.contains('team-total-row')) {
-                    nextRow = nextRow.nextElementSibling;
-                }
-
-                if(nextRow) {
-                    nextRow.querySelector('.team-tot-present').innerText = tPresent + " Present";
-                    nextRow.querySelector('.team-tot-count').innerText = tCount;
-                    nextRow.querySelector('.team-tot-trans').innerText = tTrans;
-                    nextRow.querySelector('.team-tot-mlatrans').innerText = tMlaTrans;
-                }
-
-                grandPresent += tPresent;
-                grandCount += tCount;
+                html += `
+                    </div>
+                    <div class="team-footer-totals">
+                        <div>Attended: <span class="team-att-count">0</span></div>
+                        <div>Count: <span class="team-count-val">0</span></div>
+                    </div>
+                </div>`;
             });
 
-            // Update Table Bottom Row
-            document.getElementById('floor-tot-present').innerText = grandPresent + " Present";
-            document.getElementById('floor-tot-count').innerText = grandCount;
+            container.innerHTML = html;
+        }
 
-            // Update Top Header KPIs Bar
-            document.getElementById('top-floor-count').innerText = grandCount;
-            document.getElementById('top-g2g-count').innerText = grandG2GCount;
+        // Auto-sync main count input with G2G sub-status if user hasn't filled breakdown manually
+        function updateAgentBreakdown(inputEl) {
+            const val = Number(inputEl.value) || 0;
+            const popup = inputEl.parentElement.querySelector('.breakdown-popup');
+            const g2gInput = popup.querySelector('.sub-g2g');
+            const badInput = popup.querySelector('.sub-bad');
+            const postInput = popup.querySelector('.sub-post');
+
+            // Default simple logic: if user enters 2, set G2G to 2 by default unless customized
+            const currentSubSum = Number(g2gInput.value) + Number(badInput.value) + Number(postInput.value);
+            if(currentSubSum === 0 || currentSubSum === Number(g2gInput.value)) {
+                g2gInput.value = val;
+                badInput.value = 0;
+                postInput.value = 0;
+            }
+        }
+
+        function calculateTotals() {
+            let floorCount = 0;
+            let floorG2G = 0;
+
+            const teamCards = document.querySelectorAll('.team-card');
+            teamCards.forEach(card => {
+                let teamAttCount = 0;
+                let teamTotalVal = 0;
+                let teamG2GVal = 0;
+
+                const agentRows = card.querySelectorAll('.agent-row-box');
+                agentRows.forEach(row => {
+                    const att = row.querySelector('.att-select').value;
+                    if(att === 'P') teamAttCount++;
+
+                    const mainVal = Number(row.querySelector('.agent-total-val').value) || 0;
+                    teamTotalVal += mainVal;
+
+                    // Read breakdown values
+                    const g2gVal = Number(row.querySelector('.sub-g2g').value) || 0;
+                    teamG2GVal += g2gVal;
+                });
+
+                card.querySelector('.team-att-count').innerText = teamAttCount;
+                card.querySelector('.team-count-val').innerText = teamTotalVal;
+                card.querySelector('.team-g2g-lbl').innerText = teamG2GVal;
+
+                floorCount += teamTotalVal;
+                floorG2G += teamG2GVal;
+            });
+
+            document.getElementById('top-floor-count').innerText = floorCount;
+            document.getElementById('top-g2g-count').innerText = floorG2G;
+        }
+
+        function copyWhatsAppUpdate() {
+            let text = `📊 *GGO Floor Daily Update*\n`;
+            text += `• *Total Floor Count:* ${document.getElementById('top-floor-count').innerText}\n`;
+            text += `• *Total G2G Count:* ${document.getElementById('top-g2g-count').innerText}\n\n`;
+            
+            const teamCards = document.querySelectorAll('.team-card');
+            teamCards.forEach(card => {
+                const teamName = card.querySelector('.team-name').innerText;
+                const g2gCount = card.querySelector('.team-g2g-lbl').innerText;
+                const totalCount = card.querySelector('.team-count-val').innerText;
+                text += `🔹 *${teamName}* ➔ Total: ${totalCount} | G2G: ${g2gCount}\n`;
+            });
+
+            navigator.clipboard.writeText(text);
+            alert("✅ Update copied to clipboard! You can paste it directly on WhatsApp.");
         }
 
         function saveFloorData() {
-            alert("Unified Floor Sheet saved successfully!");
+            alert("✅ Floor data saved successfully!");
         }
 
-        window.onload = calculateTotals;
+        // Initialize grid on load
+        window.onload = function() {
+            renderFloorCards();
+            calculateTotals();
+        };
     </script>
 </body>
 </html>
