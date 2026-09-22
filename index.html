@@ -169,7 +169,7 @@
         const db = getFirestore(app);
 
         // Allowed CGM Teams (All except MLA)
-        const cgmTeams = ["Wazowski 1", "Wazowski 2", "Wazowski 3", "Mid Blue", "Sunny", "Prime", "PGX"];
+        const cgmTeams = ["Wazowski 1", "Wazowski 2", "Wazowski 3", "Mid Blue", "Sunny", "Prime", "PGX", "Bloom", "Unity", "Wazowski"];
 
         function getLocalDateKey() {
             const d = new Date();
@@ -191,11 +191,8 @@
                     let totalAttended = 0;
 
                     Object.keys(saved).forEach(key => {
-                        // Key format: "TeamName_AgentName"
-                        // Find which team this belongs to
-                        const matchedTeam = cgmTeams.find(t => key.startsWith(t + "_"));
-                        
-                        if (matchedTeam) {
+                        // Check if the record belongs to MLA (we want to exclude MLA)
+                        if (!key.toLowerCase().includes("mla")) {
                             const agentData = saved[key];
                             const att = agentData.att || 'P';
                             const transfers = Number(agentData.total) || 0;
@@ -219,6 +216,8 @@
                     document.getElementById('cgm-attended-count').innerText = totalAttended;
                     document.getElementById('transfers-per-att').innerText = transfersRatio;
                     document.getElementById('g2g-per-att').innerText = g2gRatio;
+                } else {
+                    console.log("No data found for today yet.");
                 }
             } catch(e) {
                 console.error("Error loading dashboard data:", e);
