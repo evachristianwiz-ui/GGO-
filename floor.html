@@ -51,6 +51,35 @@
             color: var(--bg-dark);
         }
 
+        /* Top Header Title: GGO RANKING + Date Bold */
+        .ranking-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            border: 1px solid var(--accent);
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.15);
+        }
+        .ranking-main-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+        .ranking-main-title span { color: var(--accent); }
+        .current-date-bold {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
         .top-action-bar {
             display: flex;
             justify-content: space-between;
@@ -64,11 +93,11 @@
             gap: 15px;
         }
         .nav-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: var(--accent);
             border-left: 3px solid var(--accent);
-            padding-left: 12px;
+            padding-left: 10px;
         }
 
         .header-kpis {
@@ -80,20 +109,19 @@
         .kpi-badge {
             background-color: #0f2537;
             border: 2px solid var(--accent);
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.2);
         }
         .kpi-badge.g2g-badge { border-color: var(--success); }
         .kpi-badge span {
             color: var(--text-main);
-            font-size: 20px;
-            margin-top: 3px;
+            font-size: 18px;
+            margin-top: 2px;
         }
         .kpi-badge.g2g-badge span { color: var(--success); }
 
@@ -123,7 +151,7 @@
             padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            justify-content: space-between;
         }
 
         .team-header {
@@ -132,25 +160,29 @@
             align-items: center;
             border-bottom: 2px solid var(--card-border);
             padding-bottom: 8px;
+            margin-bottom: 10px;
         }
         .team-name { font-size: 16px; font-weight: bold; color: var(--accent); }
         .team-summary-tag { font-size: 12px; color: var(--success); background: rgba(16, 185, 129, 0.1); padding: 3px 8px; border-radius: 6px; font-weight: bold; }
 
+        /* Strict scroll limitation so footer totals never get covered */
         .agents-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 420px;
+            max-height: 290px;
             overflow-y: auto;
-            padding-right: 5px;
-            overflow: visible !important; 
+            padding-right: 6px;
+            overflow-x: visible !important;
         }
+        .agents-list::-webkit-scrollbar { width: 6px; }
+        .agents-list::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
 
         .agent-row-box {
             background-color: var(--bg-dark);
             border: 1px solid var(--card-border);
             border-radius: 8px;
-            padding: 9px 12px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -165,7 +197,6 @@
             flex: 1;
         }
         
-        /* Clearer and larger agent name font */
         .agent-name { 
             font-size: 14px; 
             font-weight: 600; 
@@ -174,19 +205,17 @@
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis; 
-            letter-spacing: 0.3px;
         }
         
-        /* Clearer, prominent P/A dropdown */
         select.att-select {
             background: #0b192c;
             border: 2px solid var(--card-border);
             font-weight: bold;
-            padding: 5px 8px;
+            padding: 4px 6px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
-            width: 55px;
+            width: 50px;
             text-align: center;
             outline: none;
         }
@@ -203,8 +232,8 @@
             background: #0f2537;
             border: 1px solid var(--card-border);
             color: var(--text-main);
-            width: 50px;
-            padding: 5px;
+            width: 48px;
+            padding: 4px;
             text-align: center;
             border-radius: 6px;
             font-weight: bold;
@@ -220,7 +249,7 @@
             background: var(--card-border);
             color: var(--text-main);
             border: none;
-            padding: 5px 9px;
+            padding: 5px 8px;
             border-radius: 6px;
             font-size: 12px;
             cursor: pointer;
@@ -231,13 +260,13 @@
             display: none;
             position: absolute;
             right: 0;
-            top: 42px;
+            top: 40px;
             background: #0b192c;
             border: 2px solid var(--accent);
-            padding: 14px;
+            padding: 12px;
             border-radius: 10px;
             z-index: 99999;
-            width: 210px;
+            width: 200px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.9);
         }
         .breakdown-popup.show {
@@ -247,7 +276,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-size: 12px;
             font-weight: bold;
         }
@@ -256,16 +285,17 @@
             color: var(--text-main);
             border: 1px solid var(--card-border);
             border-radius: 5px;
-            padding: 5px;
+            padding: 4px;
             font-size: 12px;
             text-align: center;
-            width: 55px;
+            width: 50px;
         }
 
         .team-footer-totals {
             background: rgba(0, 180, 216, 0.05);
             border-top: 1px solid var(--card-border);
-            padding-top: 8px;
+            padding-top: 10px;
+            margin-top: 10px;
             display: flex;
             justify-content: space-between;
             font-size: 12px;
@@ -290,15 +320,21 @@
             </div>
         </div>
 
+        <!-- Prominent Bold Header: GGO RANKING + Date -->
+        <div class="ranking-header-bar">
+            <div class="ranking-main-title">🏆 <span>GGO RANKING</span></div>
+            <div class="current-date-bold" id="headerDateDisplay">📅 Loading date...</div>
+        </div>
+
         <div class="top-action-bar">
             <div class="nav-title">Day-to-Day Floor Live Tracking</div>
             <div class="header-kpis">
                 <div class="kpi-badge">
-                    TODAY TOTAL TRANSFERS
+                    TOTAL TRANSFERS
                     <span id="top-floor-count">0</span>
                 </div>
                 <div class="kpi-badge g2g-badge">
-                    TODAY TOTAL G2G
+                    TOTAL G2G
                     <span id="top-g2g-count">0</span>
                 </div>
                 <button class="btn btn-whatsapp" onclick="copyWhatsAppUpdate()">💬 Copy for WhatsApp</button>
@@ -312,7 +348,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -326,7 +362,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const teamsData = [
+        const defaultTeamsData = [
             { team: "Wazowski 1", leader: "Mavis Miller", agents: ["Adam", "Rafy", "Victor", "Mia", "Jessy", "Amy"] },
             { team: "Bloom", leader: "Donna Bell", agents: ["Anna", "Heaven", "Katherine", "Maddy", "Celine", "Jules", "Kim", "Jennifer", "Austin", "Grace", "Paris", "Eric"] },
             { team: "Unity", leader: "William White", agents: ["Ray", "Coby", "Scarlett", "Cloe", "Ian", "Jacob"] },
@@ -334,61 +370,100 @@
             { team: "MLA", leader: "Ashley & Williams", agents: ["Roben", "Ryan", "Haley", "Nina", "Kai", "Elle", "Monica", "Jennie", "Tia", "Riley"] }
         ];
 
+        let globalAgentsStatus = {};
+
+        function getLocalDateKey() {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateHeaderDate() {
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            const todayStr = new Date().toLocaleDateString('en-US', options);
+            document.getElementById('headerDateDisplay').innerText = `📅 ${todayStr}`;
+        }
+
+        // Fetch agents status from "agents_data" to filter out Resigned/Terminated automatically
+        onSnapshot(collection(db, "agents_data"), (snapshot) => {
+            globalAgentsStatus = {};
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (data.name && data.team) {
+                    const key = `${data.team}_${data.name.trim()}`;
+                    globalAgentsStatus[key] = data.status || 'Active';
+                }
+            });
+            renderFloorCards();
+        });
+
         function renderFloorCards() {
             const container = document.getElementById('teamsGridContainer');
             let html = "";
 
-            teamsData.forEach((t) => {
-                html += `
-                <div class="team-card" data-team="${t.team}">
-                    <div class="team-header">
-                        <div>
-                            <div class="team-name">${t.team}</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">TL: ${t.leader}</div>
-                        </div>
-                        <div class="team-summary-tag"><span class="team-g2g-lbl">0</span> G2G</div>
-                    </div>
-                    <div class="agents-list">`;
-
-                t.agents.forEach((agentName) => {
-                    html += `
-                        <div class="agent-row-box" data-agent="${agentName}">
-                            <div class="agent-info">
-                                <select class="att-select att-present" onchange="window.updateAttColor(this); window.calculateTotals(); window.autoSave();">
-                                    <option value="P" class="att-present" style="color:#10b981; font-weight:bold;">P</option>
-                                    <option value="A" class="att-absent" style="color:#ef4444; font-weight:bold;">A</option>
-                                </select>
-                                <span class="agent-name" title="${agentName}">${agentName}</span>
-                            </div>
-                            <div class="controls-group">
-                                <input type="number" class="count-input agent-total-val" value="0" min="0" oninput="window.updateBreakdown(this); window.calculateTotals(); window.autoSave();" placeholder="0">
-                                
-                                <div class="breakdown-container">
-                                    <button class="breakdown-btn" onclick="window.toggleBreakdown(event)" title="Edit Breakdown">⚙️</button>
-                                    <div class="breakdown-popup">
-                                        <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent); font-size: 12px; display:flex; justify-content:space-between; align-items:center;">
-                                            <span>Status Breakdown</span>
-                                            <span style="cursor:pointer; color:#fff; font-size:14px;" onclick="window.closeBreakdown(this)">✖</span>
-                                        </div>
-                                        <div class="breakdown-row">
-                                            <span>G2G:</span>
-                                            <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" style="width: 55px;" oninput="window.calculateTotals(); window.autoSave();">
-                                        </div>
-                                        <div class="breakdown-row">
-                                            <span>Bad:</span>
-                                            <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" style="width: 55px;" oninput="window.calculateTotals(); window.autoSave();">
-                                        </div>
-                                        <div class="breakdown-row">
-                                            <span>Postponed:</span>
-                                            <input type="number" class="sub-status-cnt sub-post" value="0" min="0" style="width: 55px;" oninput="window.calculateTotals(); window.autoSave();">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
+            defaultTeamsData.forEach((t) => {
+                // Filter out agents who are Resigned or Terminated
+                const activeAgents = t.agents.filter(agentName => {
+                    const key = `${t.team}_${agentName}`;
+                    const status = globalAgentsStatus[key];
+                    const isTerminatedOrResigned = status === 'Terminated' || status === 'Resigned';
+                    return !isTerminatedOrResigned;
                 });
 
                 html += `
+                <div class="team-card" data-team="${t.team}">
+                    <div>
+                        <div class="team-header">
+                            <div>
+                                <div class="team-name">${t.team}</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">TL: ${t.leader}</div>
+                            </div>
+                            <div class="team-summary-tag"><span class="team-g2g-lbl">0</span> G2G</div>
+                        </div>
+                        <div class="agents-list">`;
+
+                activeAgents.forEach((agentName) => {
+                    html += `
+                            <div class="agent-row-box" data-agent="${agentName}">
+                                <div class="agent-info">
+                                    <select class="att-select att-present" onchange="window.updateAttColor(this); window.calculateTotals(); window.autoSave();">
+                                        <option value="P" class="att-present" style="color:#10b981; font-weight:bold;">P</option>
+                                        <option value="A" class="att-absent" style="color:#ef4444; font-weight:bold;">A</option>
+                                    </select>
+                                    <span class="agent-name" title="${agentName}">${agentName}</span>
+                                </div>
+                                <div class="controls-group">
+                                    <input type="number" class="count-input agent-total-val" value="0" min="0" oninput="window.updateBreakdown(this); window.calculateTotals(); window.autoSave();" placeholder="0">
+                                    
+                                    <div class="breakdown-container">
+                                        <button class="breakdown-btn" onclick="window.toggleBreakdown(event)" title="Edit Breakdown">⚙️</button>
+                                        <div class="breakdown-popup" onclick="event.stopPropagation()">
+                                            <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent); font-size: 12px; display:flex; justify-content:space-between; align-items:center;">
+                                                <span>Status Breakdown</span>
+                                                <span style="cursor:pointer; color:#fff; font-size:14px;" onclick="window.closeBreakdown(this)">✖</span>
+                                            </div>
+                                            <div class="breakdown-row">
+                                                <span>G2G:</span>
+                                                <input type="number" class="sub-status-cnt sub-g2g" value="0" min="0" oninput="window.calculateTotals(); window.autoSave();">
+                                            </div>
+                                            <div class="breakdown-row">
+                                                <span>Bad:</span>
+                                                <input type="number" class="sub-status-cnt sub-bad" value="0" min="0" oninput="window.calculateTotals(); window.autoSave();">
+                                            </div>
+                                            <div class="breakdown-row">
+                                                <span>Postponed:</span>
+                                                <input type="number" class="sub-status-cnt sub-post" value="0" min="0" oninput="window.calculateTotals(); window.autoSave();">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                });
+
+                html += `
+                        </div>
                     </div>
                     <div class="team-footer-totals">
                         <div>Attended: <span class="team-att-count">0</span></div>
@@ -405,6 +480,7 @@
             event.stopPropagation();
             const popup = event.currentTarget.nextElementSibling;
             const isOpen = popup.classList.contains('show');
+            
             document.querySelectorAll('.breakdown-popup').forEach(p => p.classList.remove('show'));
             if (!isOpen) {
                 popup.classList.add('show');
@@ -415,8 +491,10 @@
             spanEl.closest('.breakdown-popup').classList.remove('show');
         }
 
-        window.addEventListener('click', function() {
-            document.querySelectorAll('.breakdown-popup').forEach(p => p.classList.remove('show'));
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.breakdown-container')) {
+                document.querySelectorAll('.breakdown-popup').forEach(p => p.classList.remove('show'));
+            }
         });
 
         window.updateAttColor = function(selectEl) {
@@ -481,7 +559,7 @@
             clearTimeout(saveTimer);
             saveTimer = setTimeout(() => {
                 saveDataToFirebase(true);
-            }, 500);
+            }, 300);
         }
 
         window.saveFloorDataManual = async function() {
@@ -490,7 +568,7 @@
         }
 
         async function saveDataToFirebase(isQuiet) {
-            const todayKey = new Date().toISOString().split('T')[0];
+            const todayKey = getLocalDateKey();
             let payload = {};
 
             document.querySelectorAll('.team-card').forEach(card => {
@@ -516,7 +594,7 @@
         }
 
         async function loadSavedFloorData() {
-            const todayKey = new Date().toISOString().split('T')[0];
+            const todayKey = getLocalDateKey();
             try {
                 const docSnap = await getDoc(doc(db, "floor_daily", todayKey));
                 if (docSnap.exists()) {
@@ -538,6 +616,8 @@
                             }
                         });
                     });
+                    window.calculateTotals();
+                } else {
                     window.calculateTotals();
                 }
             } catch(e) {
@@ -586,7 +666,7 @@
         }
 
         window.onload = function() {
-            renderFloorCards();
+            updateHeaderDate();
         };
     </script>
 </body>
