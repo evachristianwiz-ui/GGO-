@@ -51,13 +51,38 @@
             color: var(--bg-dark);
         }
 
+        .top-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
         .dashboard-header {
             font-size: 20px;
             font-weight: bold;
             color: var(--accent);
-            margin-bottom: 20px;
             border-left: 4px solid var(--accent);
             padding-left: 12px;
+        }
+
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            align-items: center;
+        }
+        .filters-bar select {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--accent);
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+            font-weight: bold;
         }
 
         /* KPI Cards Grid */
@@ -116,7 +141,13 @@
             </div>
         </div>
 
-        <div class="dashboard-header">CGM Floor Performance Ratios (Live Today)</div>
+        <div class="top-action-bar">
+            <div class="dashboard-header">CGM Floor Performance Ratios (Live from Agents Data)</div>
+            <select id="dashMonthFilter" onchange="processDashboardData()" style="background:var(--card-bg); border:1px solid var(--card-border); color:var(--accent); padding:8px 12px; border-radius:8px; font-weight:bold;">
+                <option value="2026-09" selected>📅 September 2026</option>
+                <option value="2026-10">📅 October 2026</option>
+            </select>
+        </div>
 
         <!-- KPI Cards Grid -->
         <div class="kpi-grid">
@@ -133,28 +164,28 @@
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-title">CGM Attended Agents</div>
+                <div class="kpi-title">CGM Attended Days</div>
                 <div class="kpi-value warning" id="cgm-attended-count">0</div>
-                <div class="kpi-sub">Total present agents (P) today</div>
+                <div class="kpi-sub">Total attended days for CGM agents</div>
             </div>
 
             <div class="kpi-card">
                 <div class="kpi-title">Transfers / Attended Ratio</div>
                 <div class="kpi-value" id="transfers-per-att">0.00</div>
-                <div class="kpi-sub">Average transfers per attended agent</div>
+                <div class="kpi-sub">Average transfers per attended day</div>
             </div>
 
             <div class="kpi-card">
                 <div class="kpi-title">G2G / Attended Ratio</div>
                 <div class="kpi-value green" id="g2g-per-att">0.00</div>
-                <div class="kpi-sub">Average G2G per attended agent</div>
+                <div class="kpi-sub">Average G2G per attended day</div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -168,65 +199,48 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Allowed CGM Teams (All except MLA)
-        const cgmTeams = ["Wazowski 1", "Wazowski 2", "Wazowski 3", "Mid Blue", "Sunny", "Prime", "PGX", "Bloom", "Unity", "Wazowski"];
+        let globalAgents = [];
 
-        function getLocalDateKey() {
-            const d = new Date();
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+        // Fetch agents data live from "agents_data" collection
+        onSnapshot(collection(db, "agents_data"), (snapshot) => {
+            globalAgents = [];
+            snapshot.forEach(docSnap => globalAgents.push({ id: docSnap.id, ...docSnap.data() }));
+            processDashboardData();
+        });
+
+        window.processDashboardData = function() {
+            const selectedMonth = document.getElementById('dashMonthFilter').value;
+            
+            // Filter agents by selected month, active status, and exclude MLA team (CGM only)
+            const filtered = globalAgents.filter(item => {
+                const matchesMonth = (item.month || "2026-09") === selectedMonth;
+                const st = item.status;
+                const isActive = !st || st === 'Active' || st === 'New Comer' || st === 'On Probation' || st === 'Two Weeks Notice';
+                const isNotMla = item.team && item.team.toUpperCase() !== "MLA";
+                return matchesMonth && isActive && isNotMla;
+            });
+
+            let totalTransfers = 0;
+            let totalG2G = 0;
+            let totalAttendedDays = 0;
+
+            filtered.forEach(a => {
+                totalTransfers += Number(a.transfers) || 0;
+                totalG2G += Number(a.g2gs) || 0;
+                totalAttendedDays += Number(a.attended) || 0;
+            });
+
+            // Ratios calculation
+            const transfersRatio = totalAttendedDays > 0 ? (totalTransfers / totalAttendedDays).toFixed(2) : "0.00";
+            const g2gRatio = totalAttendedDays > 0 ? (totalG2G / totalAttendedDays).toFixed(2) : "0.00";
+
+            // Update UI
+            document.getElementById('cgm-total-transfers').innerText = totalTransfers;
+            document.getElementById('cgm-total-g2g').innerText = totalG2G;
+            document.getElementById('cgm-attended-count').innerText = totalAttendedDays;
+            document.getElementById('transfers-per-att').innerText = transfersRatio;
+            document.getElementById('g2g-per-att').innerText = g2gRatio;
         }
-
-        async function loadDashboardData() {
-            const todayKey = getLocalDateKey();
-            try {
-                const docSnap = await getDoc(doc(db, "floor_daily", todayKey));
-                if (docSnap.exists()) {
-                    const saved = docSnap.data().data || {};
-                    
-                    let totalTransfers = 0;
-                    let totalG2G = 0;
-                    let totalAttended = 0;
-
-                    Object.keys(saved).forEach(key => {
-                        // Check if the record belongs to MLA (we want to exclude MLA)
-                        if (!key.toLowerCase().includes("mla")) {
-                            const agentData = saved[key];
-                            const att = agentData.att || 'P';
-                            const transfers = Number(agentData.total) || 0;
-                            const g2g = Number(agentData.g2g) || 0;
-
-                            if (att === 'P') {
-                                totalAttended++;
-                            }
-                            totalTransfers += transfers;
-                            totalG2G += g2g;
-                        }
-                    });
-
-                    // Ratios calculation
-                    const transfersRatio = totalAttended > 0 ? (totalTransfers / totalAttended).toFixed(2) : "0.00";
-                    const g2gRatio = totalAttended > 0 ? (totalG2G / totalAttended).toFixed(2) : "0.00";
-
-                    // Update UI
-                    document.getElementById('cgm-total-transfers').innerText = totalTransfers;
-                    document.getElementById('cgm-total-g2g').innerText = totalG2G;
-                    document.getElementById('cgm-attended-count').innerText = totalAttended;
-                    document.getElementById('transfers-per-att').innerText = transfersRatio;
-                    document.getElementById('g2g-per-att').innerText = g2gRatio;
-                } else {
-                    console.log("No data found for today yet.");
-                }
-            } catch(e) {
-                console.error("Error loading dashboard data:", e);
-            }
-        }
-
-        window.onload = function() {
-            loadDashboardData();
-        };
     </script>
 </body>
 </html>
