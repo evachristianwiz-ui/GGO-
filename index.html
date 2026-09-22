@@ -65,26 +65,6 @@
             padding-left: 12px;
         }
 
-        .filters-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            background-color: var(--card-bg);
-            padding: 12px 20px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            align-items: center;
-        }
-        .filters-bar select {
-            background-color: var(--bg-dark);
-            border: 1px solid var(--card-border);
-            color: var(--accent);
-            padding: 8px 12px;
-            border-radius: 8px;
-            outline: none;
-            font-weight: bold;
-        }
-
         /* KPI Cards Grid */
         .kpi-grid {
             display: grid;
@@ -142,7 +122,7 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="dashboard-header">CGM Floor Performance Ratios (Live from Agents Data)</div>
+            <div class="dashboard-header">CGM Floor Performance Ratios (Active Agents Only)</div>
             <select id="dashMonthFilter" onchange="processDashboardData()" style="background:var(--card-bg); border:1px solid var(--card-border); color:var(--accent); padding:8px 12px; border-radius:8px; font-weight:bold;">
                 <option value="2026-09" selected>📅 September 2026</option>
                 <option value="2026-10">📅 October 2026</option>
@@ -152,21 +132,21 @@
         <!-- KPI Cards Grid -->
         <div class="kpi-grid">
             <div class="kpi-card">
-                <div class="kpi-title">CGM Total Transfers</div>
+                <div class="kpi-title">CGM Active Transfers</div>
                 <div class="kpi-value" id="cgm-total-transfers">0</div>
-                <div class="kpi-sub">Sum of all CGM teams (Excluding MLA)</div>
+                <div class="kpi-sub">Sum of active CGM teams (Excluding Terminated)</div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-title">CGM Total G2G</div>
+                <div class="kpi-title">CGM Active G2G</div>
                 <div class="kpi-value green" id="cgm-total-g2g">0</div>
                 <div class="kpi-sub">Successful verified leads</div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-title">CGM Attended Days</div>
+                <div class="kpi-title">CGM Active Attended Days</div>
                 <div class="kpi-value warning" id="cgm-attended-count">0</div>
-                <div class="kpi-sub">Total attended days for CGM agents</div>
+                <div class="kpi-sub">Total attended days for active agents</div>
             </div>
 
             <div class="kpi-card">
@@ -201,7 +181,6 @@
 
         let globalAgents = [];
 
-        // Fetch agents data live from "agents_data" collection
         onSnapshot(collection(db, "agents_data"), (snapshot) => {
             globalAgents = [];
             snapshot.forEach(docSnap => globalAgents.push({ id: docSnap.id, ...docSnap.data() }));
@@ -211,13 +190,20 @@
         window.processDashboardData = function() {
             const selectedMonth = document.getElementById('dashMonthFilter').value;
             
-            // Filter agents by selected month, active status, and exclude MLA team (CGM only)
             const filtered = globalAgents.filter(item => {
                 const matchesMonth = (item.month || "2026-09") === selectedMonth;
                 const st = item.status;
-                const isActive = !st || st === 'Active' || st === 'New Comer' || st === 'On Probation' || st === 'Two Weeks Notice';
+                
+                // Exclude Terminated and Resigned completely
+                const isNotTerminatedOrResigned = st !== 'Terminated' && st !== 'Resigned';
+                
+                // Active status check
+                const isActiveStatus = !st || st === 'Active' || st === 'New Comer' || st === 'On Probation' || st === 'Two Weeks Notice';
+                
+                // Exclude MLA team (CGM only)
                 const isNotMla = item.team && item.team.toUpperCase() !== "MLA";
-                return matchesMonth && isActive && isNotMla;
+
+                return matchesMonth && isNotTerminatedOrResigned && isActiveStatus && isNotMla;
             });
 
             let totalTransfers = 0;
@@ -230,11 +216,9 @@
                 totalAttendedDays += Number(a.attended) || 0;
             });
 
-            // Ratios calculation
             const transfersRatio = totalAttendedDays > 0 ? (totalTransfers / totalAttendedDays).toFixed(2) : "0.00";
             const g2gRatio = totalAttendedDays > 0 ? (totalG2G / totalAttendedDays).toFixed(2) : "0.00";
 
-            // Update UI
             document.getElementById('cgm-total-transfers').innerText = totalTransfers;
             document.getElementById('cgm-total-g2g').innerText = totalG2G;
             document.getElementById('cgm-attended-count').innerText = totalAttendedDays;
