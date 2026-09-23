@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGO - Knowledge Base & Rebuttals</title>
+    <style>
+        :root {
+            --bg-dark: #070f1e;
+            --card-bg: #0b192c;
+            --card-border: #1e3e62;
+            --accent: #00b4d8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Navbar */
+        .main-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+        }
+        .logo-img { height: 40px; width: auto; object-fit: contain; }
+        .nav-links { display: flex; gap: 15px; }
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+        }
+
+        /* Header & Search Bar */
+        .kb-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .kb-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+        }
+        .search-box-container {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 10px 15px 10px 40px;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-input:focus { border-color: var(--accent); }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .btn {
+            background-color: var(--card-border);
+            color: var(--text-main);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-accent { background-color: var(--accent); color: var(--bg-dark); }
+        .btn:hover { opacity: 0.9; }
+
+        /* Add Modal / Form Container */
+        .add-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: none;
+        }
+        .add-card.show { display: block; }
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .form-row label { font-size: 12px; font-weight: bold; color: var(--text-muted); }
+        .form-row input, .form-row textarea, .form-row select {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+        }
+        .form-row textarea { resize: vertical; height: 80px; }
+
+        /* Cards Grid for Knowledge Base */
+        .kb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .kb-item-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .kb-category-tag {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0, 180, 216, 0.1);
+            color: var(--accent);
+            padding: 3px 8px;
+            border-radius: 6px;
+            width: fit-content;
+        }
+        .kb-question {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+        .kb-answer {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            background: rgba(7, 15, 30, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid var(--success);
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navbar -->
+        <div class="main-navbar">
+            <div class="logo-area">
+                <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">📊 Dashboard</a>
+                <a href="agents.html" class="nav-link">👥 Agents Production</a>
+                <a href="floor.html" class="nav-link">📋 Day-to-Day Floor</a>
+                <a href="knowledge.html" class="nav-link active">💡 Knowledge Base</a>
+            </div>
+        </div>
+
+        <!-- Header & Search -->
+        <div class="kb-header-bar">
+            <div class="kb-title">Floor Knowledge Base & Rebuttals</div>
+            <div class="search-box-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search questions, objections, or keywords..." oninput="filterKnowledgeBase()">
+            </div>
+            <button class="btn btn-accent" onclick="toggleAddForm()">➕ Add New Rebuttal/Rule</button>
+        </div>
+
+        <!-- Add Form Panel -->
+        <div class="add-card" id="addFormCard">
+            <div style="font-size: 16px; font-weight: bold; color: var(--accent); margin-bottom: 12px;">Add New Knowledge Item</div>
+            <div class="form-row">
+                <label>Category / Type</label>
+                <select id="newItemCategory">
+                    <option value="Objection & Rebuttal">Objection & Rebuttal</option>
+                    <option value="Company Rule & Policy">Company Rule & Policy</option>
+                    <option value="System & Process">System & Process</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>Question / Customer Concern / Keyword</label>
+                <input type="text" id="newItemQuestion" placeholder="e.g., Price is too high / Shipping takes too long">
+            </div>
+            <div class="form-row">
+                <label>Agent Answer / Rebuttal / Rule Details</label>
+                <textarea id="newItemAnswer" placeholder="Write the exact response or rule the agent should follow..."></textarea>
+            </div>
+            <button class="btn btn-accent" onclick="saveNewKnowledgeItem()">Save to Cloud</button>
+        </div>
+
+        <!-- Knowledge Cards Grid -->
+        <div class="kb-grid" id="kbGridContainer">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
+            authDomain: "ggo-production-per-agent.firebaseapp.com",
+            projectId: "ggo-production-per-agent",
+            storageBucket: "ggo-production-per-agent.firebasestorage.app",
+            messagingSenderId: "825359557967",
+            appId: "1:825359557967:web:8ef2d2a6e2c23bb439913a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allKnowledgeItems = [];
+
+        window.toggleAddForm = function() {
+            const card = document.getElementById('addFormCard');
+            card.classList.toggle('show');
+        }
+
+        // Fetch live items from Firebase collection "knowledge_base"
+        onSnapshot(collection(db, "knowledge_base"), (snapshot) => {
+            allKnowledgeItems = [];
+            snapshot.forEach(docSnap => {
+                allKnowledgeItems.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            displayItems(allKnowledgeItems);
+        });
+
+        window.saveNewKnowledgeItem = async function() {
+            const category = document.getElementById('newItemCategory').value;
+            const question = document.getElementById('newItemQuestion').value.trim();
+            const answer = document.getElementById('newItemAnswer').value.trim();
+
+            if (!question || !answer) {
+                alert("Please fill in both the question/concern and the answer!");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "knowledge_base"), {
+                    category,
+                    question,
+                    answer,
+                    createdAt: serverTimestamp()
+                });
+
+                document.getElementById('newItemQuestion').value = "";
+                document.getElementById('newItemAnswer').value = "";
+                document.getElementById('addFormCard').classList.remove('show');
+                alert("✅ Successfully added to Knowledge Base!");
+            } catch(e) {
+                alert("Error saving: " + e.message);
+            }
+        }
+
+        window.filterKnowledgeBase = function() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = allKnowledgeItems.filter(item => {
+                const q = (item.question || "").toLowerCase();
+                const a = (item.answer || "").toLowerCase();
+                const c = (item.category || "").toLowerCase();
+                return q.includes(query) || a.includes(query) || c.includes(query);
+            });
+            displayItems(filtered);
+        }
+
+        function displayItems(items) {
+            const container = document.getElementById('kbGridContainer');
+            if (items.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:30px;">No matching rebuttals or rules found.</div>`;
+                return;
+            }
+
+            let html = "";
+            items.forEach(item => {
+                html += `
+                    <div class="kb-item-card">
+                        <div class="kb-category-tag">${item.category}</div>
+                        <div class="kb-question">${item.question}</div>
+                        <div class="kb-answer">${item.answer}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
