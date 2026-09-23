@@ -195,12 +195,12 @@
 
         <!-- Header & Search -->
         <div class="kb-header-bar">
-            <div class="kb-title">Floor Knowledge Base & Rebuttals</div>
+            <div class="kb-title">Floor Knowledge Base & Dispositions</div>
             <div class="search-box-container">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search questions, objections, or keywords..." oninput="filterKnowledgeBase()">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search questions, guidelines, or dispositions..." oninput="filterKnowledgeBase()">
             </div>
-            <button class="btn btn-accent" onclick="toggleAddForm()">➕ Add New Rebuttal/Rule</button>
+            <button class="btn btn-accent" onclick="toggleAddForm()">➕ Add New Item</button>
         </div>
 
         <!-- Add Form Panel -->
@@ -209,18 +209,18 @@
             <div class="form-row">
                 <label>Category / Type</label>
                 <select id="newItemCategory">
-                    <option value="Objection & Rebuttal">Objection & Rebuttal</option>
-                    <option value="Company Rule & Policy">Company Rule & Policy</option>
-                    <option value="System & Process">System & Process</option>
+                    <option value="Common & General">Common & General</option>
+                    <option value="CGM Campaign">CGM Campaign</option>
+                    <option value="Dispositions">Dispositions</option>
                 </select>
             </div>
             <div class="form-row">
-                <label>Question / Customer Concern / Keyword</label>
-                <input type="text" id="newItemQuestion" placeholder="e.g., Price is too high / Shipping takes too long">
+                <label>Question / Concern / Disposition Type</label>
+                <input type="text" id="newItemQuestion" placeholder="e.g., What is Medicare?">
             </div>
             <div class="form-row">
-                <label>Agent Answer / Rebuttal / Rule Details</label>
-                <textarea id="newItemAnswer" placeholder="Write the exact response or rule the agent should follow..."></textarea>
+                <label>Answer / Rebuttal / When to use</label>
+                <textarea id="newItemAnswer" placeholder="Write details here..."></textarea>
             </div>
             <button class="btn btn-accent" onclick="saveNewKnowledgeItem()">Save to Cloud</button>
         </div>
@@ -247,19 +247,84 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let allKnowledgeItems = [];
+        // Preloaded initial data from your excel sheet
+        const initialKnowledgeData = [
+            // Common
+            { category: "Common & General", question: "What is Medicare?", answer: "Medicare is a federal health insurance program mainly for people 65 years and older, and for some younger people with certain disabilities or medical conditions. It helps cover medical costs such as doctor visits, hospital care, medical equipment, and approved supplies." },
+            { category: "Common & General", question: "What is part B?", answer: "Medicare Part B is the part of Medicare that helps cover patients medical services. This includes doctor visits, preventive care, medical equipment (like braces or monitors)" },
+            { category: "Common & General", question: "If the spiff is 50LE, and I get a lead that includes both back and knee braces, does that mean my spiff is 100LE?", answer: "The 50L.E is per lead not per Brace" },
+            { category: "Common & General", question: "Where is the company located?", answer: "Our main office is located in the Bronx, New York, but we are calling you from our office here in [patient’s state]." },
+            { category: "Common & General", question: "How does the company get paid if the patient is not paying out of pocket?", answer: "Basically, this is not free, as his primary health insurance is going to pay for it." },
+            { category: "Common & General", question: "What is the target?", answer: "The target depends on the number of working days in the month. Full-time agents are assigned the full target, while part-time agents are assigned half of the target." },
+
+            // CGM Campaign
+            { category: "CGM Campaign", question: "What's finger pricking?", answer: "It is an old method used to measure blood sugar levels by pricking the finger with a needle." },
+            { category: "CGM Campaign", question: "How does the device work?", answer: "A CGM (Continuous Glucose Monitor) uses a small sensor placed on the skin to measure glucose levels throughout the day and night. The sensor sends readings to a receiver or smartphone, allowing the patient to track their blood sugar without frequent finger pricking." },
+            { category: "CGM Campaign", question: "What does the device look like?", answer: "The CGM device is a small, lightweight sensor that sticks to the skin, usually on the arm or abdomen, and a small transmitter that sends glucose readings to a receiver or smartphone app." },
+            { category: "CGM Campaign", question: "What are the qualifications to get the device with zero charge?", answer: "• Have Medicare Part B coverage\n• Meet the medical eligibility criteria (e.g., diabetes requiring glucose monitoring)\n• Have a prescription from a doctor\n• Meet specific CGM Guidelines" },
+            { category: "CGM Campaign", question: "Should we tell seniors that the device is for free?", answer: "No. We should not say it’s free, because the patient’s insurance pays for it. We must avoid misleading patients." },
+            { category: "CGM Campaign", question: "Are some insulin injections not compatible with the Libre 3 Plus?", answer: "As long as the insulin is pure, it’s okay. The patient can use the Libre 3 Plus regardless of the insulin type." },
+            { category: "CGM Campaign", question: "What are the different Medicare plans?", answer: "• Medicare Part A – Covers hospital and inpatient care.\n• Medicare Part B – Covers doctor visits, outpatient care, and medical supplies.\n• Medicare Part C (Medicare Advantage) – An all-in-one plan that includes Part A, Part B, and sometimes Part D.\n• Medicare Part D – Covers prescription drugs." },
+            { category: "CGM Campaign", question: "If the patient doesn’t know the name of their monitor, what questions should I ask?", answer: "• What does the device look like? (size, color, or shape)\n• Where do you wear it? (arm, abdomen, or other)\n• Do you use a sensor or a patch?\n• Do you check your glucose with a phone app or a separate reader?\n• Who prescribed or provided the device?" },
+            { category: "CGM Campaign", question: "Does the sensor stick firmly or can they fall off easily?", answer: "The CGM sensor is designed to stick securely to the skin and stay in place for several days. However, it can come off if it gets wet, rubbed, or bumped frequently." },
+            { category: "CGM Campaign", question: "Is the sensor accurate and reliable?", answer: "Yes, the CGM sensor is accurate and reliable for monitoring glucose levels." },
+            { category: "CGM Campaign", question: "Does it hurt to stick a sensor to your arm more than pricking?", answer: "No, it usually hurts less than finger pricking. The sensor uses a tiny needle that goes under the skin once, and most patients feel only a small pinch when it is applied." },
+            { category: "CGM Campaign", question: "Is there any side effects for using the device?", answer: "Most patients do not experience serious side effects. Some may have mild skin irritation, redness, or itching where the sensor is applied." },
+            { category: "CGM Campaign", question: "How to use the smartphone app?", answer: "The CGM app receives glucose readings from the sensor and displays them in real time. Patients can check glucose anytime, set alerts, and share data with their doctor." },
+            { category: "CGM Campaign", question: "Can the monitor and the smartphone app be used at the same time?", answer: "Yes. The sensor can send readings to both the monitor and the smartphone app at the same time." },
+            { category: "CGM Campaign", question: "How to convince seniors to quit pricking?", answer: "Encourage seniors by explaining that the CGM allows continuous glucose monitoring without frequent pricks, making it easier, more comfortable, and less painful." },
+            { category: "CGM Campaign", question: "What are the insulin shots that qualify a patient for the device?", answer: "As long as the patient is taking insulin shots, they qualify to use the CGM device, regardless of the type of insulin." },
+            { category: "CGM Campaign", question: "What is hypoglycemia?", answer: "Hypoglycemia is when a person’s blood sugar level drops too low, usually below normal ranges (below 54). Symptoms can include shaking, sweating, dizziness, hunger, or confusion." },
+            { category: "CGM Campaign", question: "What are the physical symptoms in Hypoglycemia Level 3?", answer: "Confusion or difficulty speaking, seizures or convulsions, loss of consciousness, extreme dizziness or weakness, inability to eat or drink safely." },
+            { category: "CGM Campaign", question: "If the lowest ever was exactly 54, would the patient qualify?", answer: "Yes." },
+            { category: "CGM Campaign", question: "What to do if the patient can't remember the lowest level?", answer: "Ask about symptoms they experienced during low blood sugar episodes, such as shaking, sweating, dizziness, or confusion. Document as best estimate." },
+            { category: "CGM Campaign", question: "Would an Insulin pump qualify the patient for the device?", answer: "Yes. Patients who use an insulin pump qualify for the CGM." },
+            { category: "CGM Campaign", question: "Why would a patient use a monitor if he has an insulin pump?", answer: "Track glucose continuously, detect high/low blood sugar early, adjust insulin doses more accurately, and reduce frequent finger pricks." },
+            { category: "CGM Campaign", question: "Is the monitor fully compatible with the insulin pumps?", answer: "Compatible with many insulin pumps, but not all models. Patients should check with their doctor." },
+            { category: "CGM Campaign", question: "If the patient already has a device, can he receive sensors from us?", answer: "Yes, as long as they meet the CGM eligibility requirements." },
+            { category: "CGM Campaign", question: "Can the patient receive the device from two different providers?", answer: "No. A patient must receive it from only one authorized provider to avoid duplication and insurance issues." },
+            { category: "CGM Campaign", question: "How to get a patient to switch their provider to us?", answer: "“We understand that you currently have a provider; however, with us, you'll receive your sensors consistently and on time, with no delays, and fully covered by your insurance...”" },
+
+            // Dispositions
+            { category: "Dispositions", question: "A - Answering Machine", answer: "You hear a recorded message instead of a live person, voicemail, or messages like 'Please leave a message after the beep'." },
+            { category: "Dispositions", question: "B - Busy", answer: "You hear a busy tone or system says 'The line is busy'." },
+            { category: "Dispositions", question: "CallBack", answer: "The Patient answers and asks you to call them later at a specific time or day." },
+            { category: "Dispositions", question: "CS - Cgm Sale", answer: "The Patient successfully agrees to purchase the CGM Device / Monitor and all info has been collected and submitted correctly." },
+            { category: "Dispositions", question: "DAIR - Dead Air", answer: "The call connects, but you hear complete silence and no one responds after you say hello." },
+            { category: "Dispositions", question: "DC - Disconnected Number", answer: "You hear a recorded message saying 'This number has been disconnected' or 'not in service'." },
+            { category: "Dispositions", question: "DEC - Decline Sale", answer: "The patient does not meet or is against any of our quality guidelines. Always leave a comment with the reason." },
+            { category: "Dispositions", question: "DNC - Do Not Call", answer: "The patient clearly says they do not want to receive any more calls ('Do not call me again', 'Remove me'). Leave a comment." },
+            { category: "Dispositions", question: "LB - Language Barrier", answer: "The patient cannot communicate in the required language and no one in the house speaks English." },
+            { category: "Dispositions", question: "MI - Mental Issues", answer: "Patient exhibits mental health concerns (brain damage, memory issues, Alzheimer's, dementia) preventing them from making an informed decision. Leave a comment." },
+            { category: "Dispositions", question: "N - No Answer", answer: "The phone rings several times and stops without anyone answering or voicemail." },
+            { category: "Dispositions", question: "ND - Not Diabetic", answer: "The patient confirms they are not diabetic, so the call cannot proceed." },
+            { category: "Dispositions", question: "NI - Not Interested", answer: "The patient clearly states they are not interested ('I'm not interested', 'No thank you')." },
+            { category: "Dispositions", question: "NP - No Pitch No Price", answer: "The patient interrupts or ends the call before hearing the offer, or technical issues prevent the pitch." },
+            { category: "Dispositions", question: "PGX - Pgx Sale", answer: "The patient successfully agrees to purchase a PGx product and info is confirmed." },
+            { category: "Dispositions", question: "PPOHMO - PPO/HMO", answer: "The patient has a PPO or HMO insurance plan that affects eligibility. Leave a comment." },
+            { category: "Dispositions", question: "Sale - Sale", answer: "The patient successfully agrees to purchase the product and info is confirmed." },
+            { category: "Dispositions", question: "SB - Small Braces", answer: "The patient successfully agrees to purchase a Small Braces product." },
+            { category: "Dispositions", question: "UTI - UTI Sale", answer: "The patient successfully agrees to purchase a UTI-related product." },
+            { category: "Dispositions", question: "Wn - Wrong Number", answer: "The number dialed does not belong to the intended patient or belongs to a different person." },
+            { category: "Dispositions", question: "XFER - Call Transferred", answer: "You transfer the call to another department, team, or agent." }
+        ];
+
+        let allKnowledgeItems = [...initialKnowledgeData];
 
         window.toggleAddForm = function() {
             const card = document.getElementById('addFormCard');
             card.classList.toggle('show');
         }
 
-        // Fetch live items from Firebase collection "knowledge_base"
+        // Fetch live items from Firebase collection "knowledge_base" alongside preloaded data
         onSnapshot(collection(db, "knowledge_base"), (snapshot) => {
-            allKnowledgeItems = [];
+            let firebaseItems = [];
             snapshot.forEach(docSnap => {
-                allKnowledgeItems.push({ id: docSnap.id, ...docSnap.data() });
+                firebaseItems.push({ id: docSnap.id, ...docSnap.data() });
             });
+            
+            // Combine preloaded sheet data and newly added firebase items
+            allKnowledgeItems = [...initialKnowledgeData, ...firebaseItems];
             displayItems(allKnowledgeItems);
         });
 
@@ -269,7 +334,7 @@
             const answer = document.getElementById('newItemAnswer').value.trim();
 
             if (!question || !answer) {
-                alert("Please fill in both the question/concern and the answer!");
+                alert("Please fill in both fields!");
                 return;
             }
 
@@ -304,7 +369,7 @@
         function displayItems(items) {
             const container = document.getElementById('kbGridContainer');
             if (items.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:30px;">No matching rebuttals or rules found.</div>`;
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:30px;">No matching results found.</div>`;
                 return;
             }
 
@@ -320,6 +385,10 @@
             });
             container.innerHTML = html;
         }
+
+        window.onload = function() {
+            displayItems(allKnowledgeItems);
+        };
     </script>
 </body>
 </html>
