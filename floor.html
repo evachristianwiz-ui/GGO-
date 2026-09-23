@@ -37,7 +37,7 @@
             margin-bottom: 25px;
         }
         .logo-img { height: 40px; width: auto; object-fit: contain; }
-        .nav-links { display: flex; gap: 15px; }
+        .nav-links { display: flex; gap: 15px; flex-wrap: wrap; }
         .nav-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -308,7 +308,7 @@
 <body>
 
     <div class="container">
-        <!-- Navbar -->
+        <!-- Navbar (Updated with Knowledge Base Link) -->
         <div class="main-navbar">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -317,6 +317,7 @@
                 <a href="index.html" class="nav-link">📊 Dashboard</a>
                 <a href="agents.html" class="nav-link">👥 Agents Production</a>
                 <a href="floor.html" class="nav-link active">📋 Day-to-Day Floor</a>
+                <a href="knowledge.html" class="nav-link">💡 Knowledge Base</a>
             </div>
         </div>
 
@@ -386,7 +387,6 @@
             document.getElementById('headerDateDisplay').innerText = `📅 ${todayStr}`;
         }
 
-        // Fetch agents status from "agents_data" to filter out Resigned/Terminated automatically
         onSnapshot(collection(db, "agents_data"), (snapshot) => {
             globalAgentsStatus = {};
             snapshot.forEach(docSnap => {
@@ -404,7 +404,6 @@
             let html = "";
 
             defaultTeamsData.forEach((t) => {
-                // Filter out agents who are Resigned or Terminated
                 const activeAgents = t.agents.filter(agentName => {
                     const key = `${t.team}_${agentName}`;
                     const status = globalAgentsStatus[key];

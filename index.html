@@ -37,7 +37,7 @@
             margin-bottom: 25px;
         }
         .logo-img { height: 40px; width: auto; object-fit: contain; }
-        .nav-links { display: flex; gap: 15px; }
+        .nav-links { display: flex; gap: 15px; flex-wrap: wrap; }
         .nav-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -109,7 +109,7 @@
 <body>
 
     <div class="container">
-        <!-- Navbar -->
+        <!-- Navbar (Updated with Knowledge Base Link) -->
         <div class="main-navbar">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -118,6 +118,7 @@
                 <a href="index.html" class="nav-link active">📊 Dashboard</a>
                 <a href="agents.html" class="nav-link">👥 Agents Production</a>
                 <a href="floor.html" class="nav-link">📋 Day-to-Day Floor</a>
+                <a href="knowledge.html" class="nav-link">💡 Knowledge Base</a>
             </div>
         </div>
 
@@ -194,13 +195,8 @@
                 const matchesMonth = (item.month || "2026-09") === selectedMonth;
                 const st = item.status;
                 
-                // Exclude Terminated and Resigned completely
                 const isNotTerminatedOrResigned = st !== 'Terminated' && st !== 'Resigned';
-                
-                // Active status check
                 const isActiveStatus = !st || st === 'Active' || st === 'New Comer' || st === 'On Probation' || st === 'Two Weeks Notice';
-                
-                // Exclude MLA team (CGM only)
                 const isNotMla = item.team && item.team.toUpperCase() !== "MLA";
 
                 return matchesMonth && isNotTerminatedOrResigned && isActiveStatus && isNotMla;

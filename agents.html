@@ -38,7 +38,7 @@
         }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 40px; width: auto; object-fit: contain; }
-        .nav-links { display: flex; gap: 15px; }
+        .nav-links { display: flex; gap: 15px; flex-wrap: wrap; }
         .nav-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -174,7 +174,7 @@
 <body>
 
     <div class="container">
-        <!-- Main Navbar -->
+        <!-- Main Navbar (Updated with Knowledge Base Link) -->
         <div class="main-navbar">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -183,6 +183,7 @@
                 <a href="index.html" class="nav-link">📊 Dashboard</a>
                 <a href="agents.html" class="nav-link active">👥 Agents Production</a>
                 <a href="floor.html" class="nav-link">📋 Day-to-Day Floor</a>
+                <a href="knowledge.html" class="nav-link">💡 Knowledge Base</a>
             </div>
         </div>
 
@@ -350,7 +351,7 @@
         const db = getFirestore(app);
 
         let allAgents = [];
-        let currentKpiFilter = 'all'; // 'all', 'achieved', 'below'
+        let currentKpiFilter = 'all';
 
         window.setKpiFilter = function(filterType) {
             currentKpiFilter = filterType;
@@ -450,7 +451,6 @@
             const teamVal = document.getElementById('teamFilter').value;
             const statusVal = document.getElementById('statusFilter').value;
             
-            // Base filter matching month, search, team, and status dropdowns
             let baseFiltered = allAgents.filter(item => {
                 const matchesMonth = (item.month || "2026-09") === selectedMonth;
                 const matchesSearch = (item.name || '').toLowerCase().includes(searchVal);
@@ -459,12 +459,10 @@
                 return matchesMonth && matchesSearch && matchesTeam && matchesStatus;
             });
 
-            // Helper to check if agent is active (Active, New Comer, On Probation)
             function isAgentActive(st) {
                 return !st || st === 'Active' || st === 'New Comer' || st === 'On Probation' || st === 'Two Weeks Notice';
             }
 
-            // Calculate KPIs exclusively for Active/NewComer/OnProbation (excluding Resigned & Terminated)
             let activeAgentsList = baseFiltered.filter(item => isAgentActive(item.status));
             
             let totalActiveCount = activeAgentsList.length;
@@ -482,9 +480,7 @@
             document.getElementById('kpiG2gAchieved').innerText = g2gAchievedCount;
             document.getElementById('kpiG2gBelow').innerText = g2gBelowCount;
 
-            // Apply KPI Card specific filter if clicked
             let filtered = baseFiltered.filter(item => {
-                // If user selected KPI filters, enforce active status condition + target condition
                 if (currentKpiFilter !== 'all' && !isAgentActive(item.status)) return false;
 
                 const attended = item.attended > 0 ? item.attended : 1;
