@@ -134,7 +134,6 @@
             cursor: pointer;
             font-weight: 600;
         }
-        .btn-accent { background-color: var(--accent); color: var(--bg-dark); }
         .btn-whatsapp { background-color: #25d366; color: white; display: flex; align-items: center; gap: 6px; }
         .btn:hover { opacity: 0.9; }
 
@@ -165,7 +164,6 @@
         .team-name { font-size: 16px; font-weight: bold; color: var(--accent); }
         .team-summary-tag { font-size: 12px; color: var(--success); background: rgba(16, 185, 129, 0.1); padding: 3px 8px; border-radius: 6px; font-weight: bold; }
 
-        /* Strict scroll limitation so footer totals never get covered */
         .agents-list {
             display: flex;
             flex-direction: column;
@@ -308,7 +306,7 @@
 <body>
 
     <div class="container">
-        <!-- Navbar (Updated with Knowledge Base Link) -->
+        <!-- Navbar -->
         <div class="main-navbar">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -328,7 +326,7 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Day-to-Day Floor Live Tracking</div>
+            <div class="nav-title">Day-to-Day Floor Live Tracking (Auto-Saving)</div>
             <div class="header-kpis">
                 <div class="kpi-badge">
                     TOTAL TRANSFERS
@@ -339,7 +337,6 @@
                     <span id="top-g2g-count">0</span>
                 </div>
                 <button class="btn btn-whatsapp" onclick="copyWhatsAppUpdate()">💬 Copy for WhatsApp</button>
-                <button class="btn btn-accent" onclick="saveFloorDataManual()">💾 Save Now</button>
             </div>
         </div>
 
@@ -349,7 +346,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
@@ -371,8 +368,6 @@
             { team: "MLA", leader: "Ashley & Williams", agents: ["Roben", "Ryan", "Haley", "Nina", "Kai", "Elle", "Monica", "Jennie", "Tia", "Riley"] }
         ];
 
-        let globalAgentsStatus = {};
-
         function getLocalDateKey() {
             const d = new Date();
             const year = d.getFullYear();
@@ -387,19 +382,27 @@
             document.getElementById('headerDateDisplay').innerText = `📅 ${todayStr}`;
         }
 
-        onSnapshot(collection(db, "agents_data"), (snapshot) => {
-            globalAgentsStatus = {};
-            snapshot.forEach(docSnap => {
-                const data = docSnap.data();
-                if (data.name && data.team) {
-                    const key = `${data.team}_${data.name.trim()}`;
-                    globalAgentsStatus[key] = data.status || 'Active';
-                }
-            });
-            renderFloorCards();
-        });
+        async function initFloorPage() {
+            updateHeaderDate();
+            
+            let globalAgentsStatus = {};
+            try {
+                const snapshot = await getDocs(collection(db, "agents_data"));
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.name && data.team) {
+                        const key = `${data.team}_${data.name.trim()}`;
+                        globalAgentsStatus[key] = data.status || 'Active';
+                    }
+                });
+            } catch(e) {
+                console.error("Error fetching agent statuses:", e);
+            }
 
-        function renderFloorCards() {
+            renderFloorCards(globalAgentsStatus);
+        }
+
+        function renderFloorCards(globalAgentsStatus) {
             const container = document.getElementById('teamsGridContainer');
             let html = "";
 
@@ -557,16 +560,11 @@
         window.autoSave = function() {
             clearTimeout(saveTimer);
             saveTimer = setTimeout(() => {
-                saveDataToFirebase(true);
+                saveDataToFirebase();
             }, 300);
         }
 
-        window.saveFloorDataManual = async function() {
-            await saveDataToFirebase(false);
-            alert("✅ Floor data successfully saved to cloud!");
-        }
-
-        async function saveDataToFirebase(isQuiet) {
+        async function saveDataToFirebase() {
             const todayKey = getLocalDateKey();
             let payload = {};
 
@@ -587,8 +585,7 @@
             try {
                 await setDoc(doc(db, "floor_daily", todayKey), { data: payload, updatedAt: new Date() });
             } catch(e) {
-                if(!isQuiet) alert("Error saving: " + e.message);
-                console.error("Save error: ", e);
+                console.error("Auto-save error: ", e);
             }
         }
 
@@ -665,7 +662,7 @@
         }
 
         window.onload = function() {
-            updateHeaderDate();
+            initFloorPage();
         };
     </script>
 </body>
