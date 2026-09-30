@@ -174,7 +174,7 @@
 <body>
 
     <div class="container">
-        <!-- Main Navbar (Updated with Knowledge Base Link) -->
+        <!-- Navbar -->
         <div class="main-navbar">
             <div class="logo-area">
                 <img src="GGO-White-Var2.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -188,13 +188,13 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="nav-title">Production per agent & Top Achievers (Cloud Live)</div>
+            <div class="nav-title">Production per agent & Top Achievers (Payroll Cycle: 28th to 27th)</div>
             <div class="nav-buttons">
                 <button class="btn btn-accent" onclick="openModal()">+ Add Agent</button>
             </div>
         </div>
 
-        <!-- KPI Insights Cards (Active Only) -->
+        <!-- KPI Insights Cards -->
         <div class="kpi-container">
             <div class="kpi-card" id="cardTotal" onclick="setKpiFilter('all')">
                 <span class="kpi-title">Active Agents 📊 (Click to Reset)</span>
@@ -213,8 +213,8 @@
         <!-- Filters & Ranking Bar -->
         <div class="filters-bar">
             <select id="monthFilter" onchange="filterTable()" style="font-weight: bold; color: var(--accent);">
-                <option value="2026-09" selected>📅 September 2026</option>
-                <option value="2026-10">📅 October 2026</option>
+                <option value="2026-09">📅 September 2026</option>
+                <option value="2026-10" selected>📅 October 2026 (28 Sep - 27 Oct)</option>
             </select>
 
             <select id="rankingFilter" onchange="filterTable()" style="font-weight: bold; color: #f59e0b; border-color: #f59e0b;">
@@ -353,14 +353,30 @@
         let allAgents = [];
         let currentKpiFilter = 'all';
 
+        // Function to determine payroll month based on 28th to 27th cycle
+        function getPayrollMonth(dateInput) {
+            const d = dateInput ? new Date(dateInput) : new Date();
+            let year = d.getFullYear();
+            let month = d.getMonth() + 1;
+            let day = d.getDate();
+
+            // If day is 28 or later, it belongs to the next month's payroll cycle
+            if (day >= 28) {
+                month += 1;
+                if (month > 12) {
+                    month = 1;
+                    year += 1;
+                }
+            }
+            return `${year}-${String(month).padStart(2, '0')}`;
+        }
+
         window.setKpiFilter = function(filterType) {
             currentKpiFilter = filterType;
-            
             document.querySelectorAll('.kpi-card').forEach(card => card.classList.remove('active-kpi'));
             if(filterType === 'achieved') document.getElementById('cardAchieved').classList.add('active-kpi');
             else if(filterType === 'below') document.getElementById('cardBelow').classList.add('active-kpi');
             else document.getElementById('cardTotal').classList.add('active-kpi');
-
             filterTable();
         }
 
@@ -368,7 +384,7 @@
             document.getElementById('modalTitle').innerText = "Add Agent";
             document.getElementById('editAgentId').value = "";
             document.getElementById('addName').value = '';
-            document.getElementById('addHiring').value = '';
+            document.getElementById('addHiring').value = new Date().toISOString().split('T')[0];
             document.getElementById('addG2gs').value = '';
             document.getElementById('addMlaG2gs').value = '';
             document.getElementById('addAttended').value = '';
@@ -412,10 +428,14 @@
             const name = document.getElementById('addName').value.trim();
             if(!name) { alert("Please enter agent name"); return; }
 
+            const hiringDateStr = document.getElementById('addHiring').value;
+            // Automatically assign month based on the 28th payroll cycle rule
+            const calculatedMonth = getPayrollMonth(hiringDateStr);
+
             const agentData = {
                 name: name,
-                hiring: document.getElementById('addHiring').value,
-                month: document.getElementById('monthFilter').value,
+                hiring: hiringDateStr,
+                month: calculatedMonth, // Automatically mapped to October if >= 28th Sep
                 team: document.getElementById('addTeam').value,
                 type: document.getElementById('addType').value,
                 status: document.getElementById('addStatus').value,
@@ -452,7 +472,7 @@
             const statusVal = document.getElementById('statusFilter').value;
             
             let baseFiltered = allAgents.filter(item => {
-                const matchesMonth = (item.month || "2026-09") === selectedMonth;
+                const matchesMonth = (item.month || "2026-10") === selectedMonth;
                 const matchesSearch = (item.name || '').toLowerCase().includes(searchVal);
                 const matchesTeam = teamVal === "" || item.team === teamVal;
                 const matchesStatus = statusVal === "" || item.status === statusVal;
@@ -482,10 +502,8 @@
 
             let filtered = baseFiltered.filter(item => {
                 if (currentKpiFilter !== 'all' && !isAgentActive(item.status)) return false;
-
                 const attended = item.attended > 0 ? item.attended : 1;
                 const ratio = item.g2gs / attended;
-
                 if (currentKpiFilter === 'achieved') return ratio >= 0.85;
                 if (currentKpiFilter === 'below') return ratio < 0.85;
                 return true;
@@ -509,7 +527,6 @@
                 const transfersRatio = (item.transfers / attended).toFixed(2);
 
                 let statusBadgeHTML = `<span class="status-active">Active</span>`;
-                
                 if (item.status === 'On Probation') {
                     statusBadgeHTML = `<span style="background-color: rgba(239, 68, 68, 0.25); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid #ef4444;">⚠️ On Probation</span>`;
                 } else if (item.status === 'New Comer') {
@@ -541,7 +558,7 @@
                     </td>
                 </tr>`;
             });
-            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="13" style="text-align: center; color: var(--text-muted);">No records found</td></tr>`;
+            document.getElementById('crmTableBody').innerHTML = html || `<tr><td colspan="13" style="text-align: center; color: var(--text-muted);">No records found for this period</td></tr>`;
         }
 
         document.getElementById('cardTotal').classList.add('active-kpi');
