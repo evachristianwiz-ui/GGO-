@@ -424,7 +424,7 @@
         }
 
         window.saveAgentData = async function() {
-            const id = document.getElementById('editAgentId').value;
+            const id = document.getElementById('editAgentId').value.trim();
             const name = document.getElementById('addName').value.trim();
             if(!name) { alert("Please enter agent name"); return; }
 
@@ -446,8 +446,10 @@
             };
 
             try {
-                if(id) {
-                    await updateDoc(doc(db, "agents_data", id), agentData);
+                if(id !== "") {
+                    // حماية وتأكيد التحديث بدون حذف أو إنشاء مستند جديد
+                    const agentRef = doc(db, "agents_data", id);
+                    await updateDoc(agentRef, agentData);
                 } else {
                     await addDoc(collection(db, "agents_data"), agentData);
                 }
@@ -457,11 +459,9 @@
             }
         }
 
-        // دالة ترحيل الأجنست النشطين من سبتمبر إلى أكتوبر أوتوماتيك
         window.migrateSeptemberToOctober = async function() {
             if (!confirm("هل أنت متأكد من رغبتك في نقل جميع الأجنست النشطين من شهر سبتمبر (2026-09) إلى شهر أكتوبر (2026-10)؟")) return;
 
-            // تصفية أجنست سبتمبر النشطين فقط
             const septemberActive = allAgents.filter(item => {
                 const itemMonth = item.month || "2026-10";
                 const st = item.status;
@@ -477,18 +477,17 @@
             try {
                 let count = 0;
                 for (let agent of septemberActive) {
-                    // التحقق هل الأجنست مسجل بالفعل في أكتوبر بنفس الاسم لتجنب التكرار
                     const existsInOctober = allAgents.some(item => (item.month === "2026-10") && (item.name.toLowerCase() === agent.name.toLowerCase()));
                     
                     if (!existsInOctober) {
                         const newAgentRecord = {
                             name: agent.name,
                             hiring: agent.hiring || "",
-                            month: "2026-10", // النقل لشهر أكتوبر
+                            month: "2026-10",
                             team: agent.team || "Wazowski 1",
                             type: agent.type || "FT",
                             status: agent.status || "Active",
-                            g2gs: 0,          // يبدأ بصفار لتتم إدخاله يدويًا
+                            g2gs: 0,
                             mlaG2gs: 0,
                             attended: 0,
                             transfers: 0,
