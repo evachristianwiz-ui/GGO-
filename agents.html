@@ -79,6 +79,7 @@
             gap: 8px;
         }
         .btn-accent { background-color: var(--accent); color: var(--bg-dark); }
+        .btn-migrate { background-color: #10b981; color: white; }
         .btn-edit { background-color: #3b82f6; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; border: none; }
         .btn-danger { background-color: #ef4444; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; border: none; }
         .btn:hover { opacity: 0.9; }
@@ -190,6 +191,7 @@
         <div class="top-action-bar">
             <div class="nav-title">Production per agent & Top Achievers (Payroll Cycle: 28th to 27th)</div>
             <div class="nav-buttons">
+                <button class="btn btn-migrate" onclick="migrateSeptemberToOctober()">⚡ Migrate Active to October</button>
                 <button class="btn btn-accent" onclick="openModal()">+ Add Agent</button>
             </div>
         </div>
@@ -353,14 +355,12 @@
         let allAgents = [];
         let currentKpiFilter = 'all';
 
-        // Function to determine payroll month based on 28th to 27th cycle
         function getPayrollMonth(dateInput) {
             const d = dateInput ? new Date(dateInput) : new Date();
             let year = d.getFullYear();
             let month = d.getMonth() + 1;
             let day = d.getDate();
 
-            // If day is 28 or later, it belongs to the next month's payroll cycle
             if (day >= 28) {
                 month += 1;
                 if (month > 12) {
@@ -429,13 +429,12 @@
             if(!name) { alert("Please enter agent name"); return; }
 
             const hiringDateStr = document.getElementById('addHiring').value;
-            // Automatically assign month based on the 28th payroll cycle rule
             const calculatedMonth = getPayrollMonth(hiringDateStr);
 
             const agentData = {
                 name: name,
                 hiring: hiringDateStr,
-                month: calculatedMonth, // Automatically mapped to October if >= 28th Sep
+                month: calculatedMonth,
                 team: document.getElementById('addTeam').value,
                 type: document.getElementById('addType').value,
                 status: document.getElementById('addStatus').value,
@@ -455,6 +454,53 @@
                 closeModal();
             } catch(e) {
                 alert("Error saving: " + e.message);
+            }
+        }
+
+        // دالة ترحيل الأجنست النشطين من سبتمبر إلى أكتوبر أوتوماتيك
+        window.migrateSeptemberToOctober = async function() {
+            if (!confirm("هل أنت متأكد من رغبتك في نقل جميع الأجنست النشطين من شهر سبتمبر (2026-09) إلى شهر أكتوبر (2026-10)؟")) return;
+
+            // تصفية أجنست سبتمبر النشطين فقط
+            const septemberActive = allAgents.filter(item => {
+                const itemMonth = item.month || "2026-10";
+                const st = item.status;
+                const isActive = !st || st === 'Active' || st === 'New Comer' || st === 'On Probation' || st === 'Two Weeks Notice';
+                return itemMonth === "2026-09" && isActive;
+            });
+
+            if (septemberActive.length === 0) {
+                alert("لا توجد بيانات لأجنست نشطين في شهر سبتمبر لتنسيقهم!");
+                return;
+            }
+
+            try {
+                let count = 0;
+                for (let agent of septemberActive) {
+                    // التحقق هل الأجنست مسجل بالفعل في أكتوبر بنفس الاسم لتجنب التكرار
+                    const existsInOctober = allAgents.some(item => (item.month === "2026-10") && (item.name.toLowerCase() === agent.name.toLowerCase()));
+                    
+                    if (!existsInOctober) {
+                        const newAgentRecord = {
+                            name: agent.name,
+                            hiring: agent.hiring || "",
+                            month: "2026-10", // النقل لشهر أكتوبر
+                            team: agent.team || "Wazowski 1",
+                            type: agent.type || "FT",
+                            status: agent.status || "Active",
+                            g2gs: 0,          // يبدأ بصفار لتتم إدخاله يدويًا
+                            mlaG2gs: 0,
+                            attended: 0,
+                            transfers: 0,
+                            mlaTransfers: 0
+                        };
+                        await addDoc(collection(db, "agents_data"), newAgentRecord);
+                        count++;
+                    }
+                }
+                alert(`تم بنجاح نقل ${count} أجنست نشط إلى شهر أكتوبر مع الاحتفاظ بتاريخ التعيين وباقي البيانات الأساسية!`);
+            } catch (e) {
+                alert("حدث خطأ أثناء الترحيل: " + e.message);
             }
         }
 
