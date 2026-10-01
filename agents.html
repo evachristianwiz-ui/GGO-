@@ -385,6 +385,9 @@
             document.getElementById('editAgentId').value = "";
             document.getElementById('addName').value = '';
             document.getElementById('addHiring').value = new Date().toISOString().split('T')[0];
+            document.getElementById('addTeam').value = 'Wazowski 1';
+            document.getElementById('addType').value = 'FT';
+            document.getElementById('addStatus').value = 'Active';
             document.getElementById('addG2gs').value = '';
             document.getElementById('addMlaG2gs').value = '';
             document.getElementById('addAttended').value = '';
@@ -398,18 +401,18 @@
         window.editAgent = function(id) {
             const agent = allAgents.find(a => a.id === id);
             if (!agent) return;
-            document.getElementById('modalTitle').innerText = "Edit Agent";
+            document.getElementById('modalTitle').innerText = "Edit Agent Production & Inputs";
             document.getElementById('editAgentId').value = agent.id;
             document.getElementById('addName').value = agent.name || '';
             document.getElementById('addHiring').value = agent.hiring || '';
             document.getElementById('addTeam').value = agent.team || 'Wazowski 1';
             document.getElementById('addType').value = agent.type || 'FT';
             document.getElementById('addStatus').value = agent.status || 'Active';
-            document.getElementById('addG2gs').value = agent.g2gs || 0;
-            document.getElementById('addMlaG2gs').value = agent.mlaG2gs || 0;
-            document.getElementById('addAttended').value = agent.attended || 0;
-            document.getElementById('addTransfers').value = agent.transfers || 0;
-            document.getElementById('addMlaTransfers').value = agent.mlaTransfers || 0;
+            document.getElementById('addG2gs').value = agent.g2gs ?? 0;
+            document.getElementById('addMlaG2gs').value = agent.mlaG2gs ?? 0;
+            document.getElementById('addAttended').value = agent.attended ?? 0;
+            document.getElementById('addTransfers').value = agent.transfers ?? 0;
+            document.getElementById('addMlaTransfers').value = agent.mlaTransfers ?? 0;
             document.getElementById('agentModal').style.display = 'flex';
         }
 
@@ -428,13 +431,12 @@
             const name = document.getElementById('addName').value.trim();
             if(!name) { alert("Please enter agent name"); return; }
 
-            const hiringDateStr = document.getElementById('addHiring').value;
-            const calculatedMonth = getPayrollMonth(hiringDateStr);
+            const selectedMonth = document.getElementById('monthFilter').value;
 
             const agentData = {
                 name: name,
-                hiring: hiringDateStr,
-                month: calculatedMonth,
+                hiring: document.getElementById('addHiring').value,
+                month: selectedMonth, // يحفظ البيانات للشهر المختار حالياً (أكتوبر مثلاً)
                 team: document.getElementById('addTeam').value,
                 type: document.getElementById('addType').value,
                 status: document.getElementById('addStatus').value,
@@ -447,7 +449,6 @@
 
             try {
                 if(id !== "") {
-                    // حماية وتأكيد التحديث بدون حذف أو إنشاء مستند جديد
                     const agentRef = doc(db, "agents_data", id);
                     await updateDoc(agentRef, agentData);
                 } else {
@@ -477,6 +478,7 @@
             try {
                 let count = 0;
                 for (let agent of septemberActive) {
+                    // تحقق هل الأجنت موجود بالفعل في شهر أكتوبر
                     const existsInOctober = allAgents.some(item => (item.month === "2026-10") && (item.name.toLowerCase() === agent.name.toLowerCase()));
                     
                     if (!existsInOctober) {
@@ -497,7 +499,9 @@
                         count++;
                     }
                 }
-                alert(`تم بنجاح نقل ${count} أجنست نشط إلى شهر أكتوبر مع الاحتفاظ بتاريخ التعيين وباقي البيانات الأساسية!`);
+                alert(`تم بنجاح نقل ${count} أجنست نشط إلى شهر أكتوبر ببيانات صفرية جديدة وجاهزين لإدخال الـ Inputs!`);
+                document.getElementById('monthFilter').value = "2026-10";
+                filterTable();
             } catch (e) {
                 alert("حدث خطأ أثناء الترحيل: " + e.message);
             }
