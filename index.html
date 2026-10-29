@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -125,10 +126,12 @@
         </div>
 
         <div class="top-action-bar">
-            <div class="dashboard-header" id="dashTitleHeader">CGM Floor Performance Ratios (October 2026)</div>
+            <div class="dashboard-header" id="dashTitleHeader">CGM Floor Performance Ratios (November 2026)</div>
+
             <select id="dashMonthFilter" onchange="processDashboardData()" style="background:var(--card-bg); border:1px solid var(--card-border); color:var(--accent); padding:10px 16px; border-radius:8px; font-weight:bold; font-size:14px;">
                 <option value="2026-09">📅 September 2026 (Archived)</option>
-                <option value="2026-10" selected>📅 October 2026 (Current Cycle)</option>
+                <option value="2026-10">📅 October 2026 (Archived)</option>
+                <option value="2026-11" selected>📅 November 2026 (Current Cycle)</option>
             </select>
         </div>
 
@@ -171,7 +174,7 @@
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyCuddApsA14FoAUMqBGlc1wNlE2T3fEwTM",
+            apiKey: "AIzaSyCuddApsA14FoAUMqBGl1cWn1E2T3fEwTM",
             authDomain: "ggo-production-per-agent.firebaseapp.com",
             projectId: "ggo-production-per-agent",
             storageBucket: "ggo-production-per-agent.firebasestorage.app",
